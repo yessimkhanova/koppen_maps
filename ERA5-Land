@@ -1,31 +1,31 @@
 // export GEOBoarders
-var path = "FAO/GAUL_SIMPLIFIED_500m/2015/level0" //whole country
-var country_code = 132 //Kazakhstan 
-var country = ee.FeatureCollection(path).filter(ee.Filter.eq('ADM0_CODE', country_code))
+var path = "FAO/GAUL_SIMPLIFIED_500m/2015/level0"; //whole country
+var country_code = 132; //Kazakhstan 
+var country = ee.FeatureCollection(path).filter(ee.Filter.eq('ADM0_CODE', country_code));
 // export collection
-var collection_path = "ECMWF/ERA5_LAND/MONTHLY_AGGR"
-var collection = ee.ImageCollection(collection_path)
+var collection_path = "ECMWF/ERA5_LAND/MONTHLY_AGGR";
+var collection = ee.ImageCollection(collection_path);
 //print(collection)
-var dateRange = collection.reduceColumns(ee.Reducer.minMax(), ['system:time_start'])
-var startDate = ee.Date(dateRange.get('min'))
-var endDate = ee.Date(dateRange.get('max'))
+var dateRange = collection.reduceColumns(ee.Reducer.minMax(), ['system:time_start']);
+var startDate = ee.Date(dateRange.get('min'));
+var endDate = ee.Date(dateRange.get('max'));
 //print(startDate)
 //print(endDate)
 if (startDate.getMonth != 12) {
   var newStartDate = startDate.advance(1, 'year').update({
     month:1
-  })
+  });
 } else {
-  var newStartDate = startDate
+  var newStartDate = startDate;
 }
 //print(newStartDate)
 if (endDate.getMonth != 12){
   var newEndDate = endDate.advance(-1, 'year').update({
     month: 12,
     day:31
-  })
+  });
 } else {
-  var newEndDate = endDate
+  var newEndDate = endDate;
 }
 //print(newEndDate)
 
@@ -38,7 +38,7 @@ var keyMap = {
     "symbol": "p",
     "band": "total_precipitation_sum"
   }
-}
+};
 // Init directory: colors, zoneNames, zoneCodes
 var colors=["000000",
   "0000FF", "4169E1", "6495ED", "00BFFF", // 1-4
@@ -93,29 +93,29 @@ var zoneNames = {
 
 // create ImageCollection with calculation
 function createImageCollection(startDate, endDate, args){
-  var listOfImages = []
-  var filteredCollection = collection.filter(ee.Filter.calendarRange(startDate, endDate, 'year'))
-  var selectedImage = filteredCollection.select(args['band']).toBands();
-  var years = ee.List.sequence(startDate, endDate)
+  var listOfImages = [];
+  var filteredCollection = collection.filter(ee.Filter.calendarRange(startDate, endDate, 'year'));
+  var selectedImage = filteredCollection.select(args.band).toBands();
+  var years = ee.List.sequence(startDate, endDate);
   var listOfDim = [];
   for(var i=1; i<=12; i++){
-    listOfDim.push(args['symbol']+i);
+    listOfDim.push(args.symbol+i);
   }
   years.getInfo().forEach(function(year){
     var startBand = (year - startDate) * 12;
     var endBand = startBand + 11;
-    var yearImage = selectedImage.select(ee.List.sequence(startBand, endBand))
-    yearImage = yearImage.rename(listOfDim)
-    if (args['symbol'] == 't') {
+    var yearImage = selectedImage.select(ee.List.sequence(startBand, endBand));
+    yearImage = yearImage.rename(listOfDim);
+    if (args.symbol == 't') {
       
       var avgT = yearImage.reduce(ee.Reducer.mean()).subtract(273).rename('avgtemp');
       
       var minT = yearImage.reduce(ee.Reducer.min()).subtract(273).rename('mintemp');
       var maxT = yearImage.reduce(ee.Reducer.max()).subtract(273).rename('maxtemp');
       var monthsGreaterThan10 = yearImage.gt(10).reduce('sum').rename('tenplusmonths');
-      yearImage = yearImage.addBands([avgT, minT, maxT, monthsGreaterThan10])
+      yearImage = yearImage.addBands([avgT, minT, maxT, monthsGreaterThan10]);
     }
-    if (args['symbol'] == 'p') {
+    if (args.symbol == 'p') {
       var totalP = yearImage.reduce(ee.Reducer.sum()).multiply(1000).rename('totalprecip');
       var minP = yearImage.reduce(ee.Reducer.min()).multiply(1000).rename('minprecip');
       var maxP = yearImage.reduce(ee.Reducer.max()).multiply(1000).rename('maxprecip');
@@ -137,12 +137,12 @@ function createImageCollection(startDate, endDate, args){
       var minSummerP = yearImage.select(['p4','p5','p6', 'p7', 'p8', 'p9'])
                                         .reduce('min')
                                         .multiply(1000).rename('minsprecip');
-      yearImage = yearImage.addBands([totalP, minP, maxP, summerP, winterP, maxWinterP, minWinterP, maxSummerP, minSummerP])
+      yearImage = yearImage.addBands([totalP, minP, maxP, summerP, winterP, maxWinterP, minWinterP, maxSummerP, minSummerP]);
     }
     yearImage = yearImage.set('year', year);
-    listOfImages.push(yearImage)
-  })
-  return ee.ImageCollection.fromImages(listOfImages)
+    listOfImages.push(yearImage);
+  });
+  return ee.ImageCollection.fromImages(listOfImages);
 }
 
 // Classification 
@@ -276,11 +276,11 @@ function koppenClass(image) {
 }
 //
 function classificateImage(startDate, endDate){
-  var tempImage = createImageCollection(startDate, endDate, keyMap['temperature']);
-  var precipImage = createImageCollection(startDate, endDate, keyMap['precipitation']);
+  var tempImage = createImageCollection(startDate, endDate, keyMap.temperature);
+  var precipImage = createImageCollection(startDate, endDate, keyMap.precipitation);
   var tempMeanImage = tempImage.mean();
   var precipMeanImage = precipImage.mean();
-  var finalYearlyImage = precipMeanImage.addBands(tempMeanImage)
+  var finalYearlyImage = precipMeanImage.addBands(tempMeanImage);
   var classification = koppenClass(finalYearlyImage);
   return classification;
 }
@@ -288,7 +288,7 @@ function classificateImage(startDate, endDate){
 //-------------------------------------------------------//
 // UI Sector
 //  Map Settings
-var customMap = ui.Map()
+var customMap = ui.Map();
 customMap.setControlVisibility({
   zoomControl: false,
   drawingToolsControl: false,
@@ -371,7 +371,7 @@ var generateButton = ui.Button({
     startDate = startYearSlider.getValue();
     endDate = endYearSlider.getValue();
 function updateMap(){
-      var selectedMap = classificateImage(startDate, endDate)
+      var selectedMap = classificateImage(startDate, endDate);
       
       customMap.layers().set(0, ui.Map.Layer(selectedMap.clip(country), {
         bands: 'zone',
@@ -440,7 +440,7 @@ var makeLegendRecord = function (color, zoneCode, zoneName){
 var legendPanel = ui.Panel({
   // TODO: add style
   style: {}
-}).add(legendTitle)
+}).add(legendTitle);
 
 // Add legendRecord to Legend Panel
 for (var i=0; i<Object.keys(zoneNames).length-1; i++){
