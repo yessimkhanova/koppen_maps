@@ -7,6 +7,8 @@ var country = ee.FeatureCollection(path).filter(ee.Filter.eq('ADM0_CODE', countr
 var collection_path = "ECMWF/ERA5/MONTHLY"; // Set the path to the ERA5-Land monthly aggregated dataset.
 var collection = ee.ImageCollection(collection_path); // Create an ImageCollection from the specified path.
 //print(collection)
+var multibandImageP = ee.Image("users/yessimkhanovakalamkas/pr_monthly_CRU");
+var multibandImageT = ee.Image("users/yessimkhanovakalamkas/tmean_monthly_CRU");
 
 var dateRange = collection.reduceColumns(ee.Reducer.minMax(), ['system:time_start']); // Calculate the minimum and maximum time start values in the collection.
 var startDate = ee.Date(dateRange.get('min')); // Extract the minimum date from the date range.
