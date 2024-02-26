@@ -223,38 +223,71 @@ function createImageCollection(startDate, endDate, args){
   }
 
 // Classification function for Köppen climate classification
-  var northernHemishere=ee.Image.pixelLonLat().select('latitude').gt(0); // Determine which hemisphere the pixel belongs to
+var northernHemishere=ee.Image.pixelLonLat().select('latitude').gt(0); // Determine which hemisphere the pixel belongs to
 
 function koppenClass(image) {
-  // Extract relevant bands from the input image
-  var mintemp=image.select('mintemp');
-  var maxtemp=image.select('maxtemp');
-  var avgtemp=image.select('avgtemp');
-  var tenplus=image.select('tenplusmonths');
-  var minprecip=image.select('minprecip');
-  var maxprecip=image.select('maxprecip');
-  var minsprecip=image.select('minsprecip').multiply(northernHemishere)
-                          .add(image.select('minwprecip').multiply(northernHemishere.not()));
-  var maxsprecip=image.select('maxsprecip').multiply(northernHemishere)
-                          .add(image.select('maxwprecip').multiply(northernHemishere.not()));
-  var minwprecip=image.select('minwprecip').multiply(northernHemishere)
-                          .add(image.select('minsprecip').multiply(northernHemishere.not()));
-  var maxwprecip=image.select('maxwprecip').multiply(northernHemishere)
-                          .add(image.select('maxsprecip').multiply(northernHemishere.not()));
+  // Extract relevant temperature and precipitation related bands from the input image.
   
-  var precip=image.select('totalprecip');
+  // Select the band 'mintemp' from the input image and assign it to the variable 'mintemp'
+  var mintemp = image.select('mintemp'); // Represents the minimum temperature for each pixel across all months in the year.
   
-  var monsoonminimum=precip.divide(-25).add(100); // Calculate monsoon minimum threshold based on precipitation.
-                                                  // The formula is: 100 - (totalprecip / 25)
-                                                  // Divide total precipitation (totalprecip) by -25, then add 100 to get the monsoon minimum threshold.
-  var sprecip=image.select('nsummerprecip');
+  // Select the band 'maxtemp' from the input image and assign it to the variable 'maxtemp'
+  var maxtemp = image.select('maxtemp'); // Represents the maximum temperature for each pixel across all months in the year.
+  
+  // Select the band 'avgtemp' from the input image and assign it to the variable 'avgtemp'
+  var avgtemp = image.select('avgtemp'); // Represents the average temperature for each pixel across all months in the year.
+  
+  // Select the band 'tenplusmonths' from the input image and assign it to the variable 'tenplus'
+  var tenplus = image.select('tenplusmonths'); // Represents the number of months where the temperature is greater than 10 degrees Celsius.
+  
+  // Select the band 'minprecip' from the input image and assign it to the variable 'minprecip'
+  var minprecip = image.select('minprecip'); // Represents the minimum precipitation for each pixel across all months in the year.
+  
+  // Select the band 'maxprecip' from the input image and assign it to the variable 'maxprecip'
+  var maxprecip = image.select('maxprecip'); // Represents the maximum precipitation for each pixel across all months in the year.
+  
+  // Select the band 'minsprecip' from the input image, multiply it by the northern hemisphere condition,
+  // and assign the result to the variable 'minsprecip'
+  var minsprecip = image.select('minsprecip').multiply(northernHemisphere)
+      .add(image.select('minwprecip').multiply(northernHemisphere.not())); // Represents the minimum summer precipitation adjusted for the northern hemisphere.
+  
+  // Select the band 'maxsprecip' from the input image, multiply it by the northern hemisphere condition,
+  // and assign the result to the variable 'maxsprecip'
+  var maxsprecip = image.select('maxsprecip').multiply(northernHemisphere)
+      .add(image.select('maxwprecip').multiply(northernHemisphere.not())); // Represents the maximum summer precipitation adjusted for the northern hemisphere.
+  
+  // Select the band 'minwprecip' from the input image, multiply it by the northern hemisphere condition,
+  // and assign the result to the variable 'minwprecip'
+  var minwprecip = image.select('minwprecip').multiply(northernHemisphere)
+      .add(image.select('minsprecip').multiply(northernHemisphere.not())); // Represents the minimum winter precipitation adjusted for the northern hemisphere.
+  
+  // Select the band 'maxwprecip' from the input image, multiply it by the northern hemisphere condition,
+  // and assign the result to the variable 'maxwprecip'
+  var maxwprecip = image.select('maxwprecip').multiply(northernHemisphere)
+      .add(image.select('maxsprecip').multiply(northernHemisphere.not())); // Represents the maximum winter precipitation adjusted for the northern hemisphere.
+  
+  // Select the band 'totalprecip' from the input image and assign it to the variable 'precip'
+  var precip = image.select('totalprecip'); // Represents the total precipitation for each pixel across all months in the year.
 
-  // determining which season is the summer and select that half year's precipitation
-  var summerprecip=sprecip.multiply(northernHemishere)
-                          .add(precip.subtract(sprecip).multiply(northernHemishere.not()));
-  var summerratio=summerprecip.divide(precip);
-  var aridthreshold = avgtemp.multiply(20)
-                             .add(summerratio.gt(0.3).and(summerratio.lt(0.7)).multiply(140));
+  // Calculate monsoon minimum threshold based on precipitation.
+  var monsoonminimum=precip.divide(-25).add(100); // The formula is: 100 - (totalprecip / 25)
+                                                  // Divide total precipitation (totalprecip) by -25, then add 100 to get the monsoon minimum threshold.
+  
+  // Select the band 'nsummerprecip' from the input image and assign it to the variable 'sprecip'
+  var sprecip = image.select('nsummerprecip'); // Represents the summer precipitation for each pixel in the year.
+  
+  // Determine which season is considered as summer and select that half year's precipitation.
+  // Multiply 'sprecip' by the northern hemisphere condition and add the precipitation for the other half of the year.
+  var summerprecip = sprecip.multiply(northernHemisphere)
+      .add(precip.subtract(sprecip).multiply(northernHemisphere.not())); // 'summerprecip' now represents the adjusted summer precipitation based on the northern hemisphere.
+  
+  // Calculate the ratio of 'summerprecip' to 'precip' and assign it to the variable 'summerratio'
+  var summerratio = summerprecip.divide(precip); // Represents the ratio of summer precipitation to total precipitation.
+  
+  // Calculate an aridity threshold based on average temperature and the 'summerratio'.
+  // The formula is: aridthreshold = avgtemp * 20 + (summerratio between 0.3 and 0.7) * 140
+  var aridthreshold = avgtemp.multiply(20).add(summerratio.gt(0.3).and(summerratio.lt(0.7)).multiply(140)); // 'aridthreshold' now represents the calculated aridity threshold based on temperature and summer precipitation ratio.
+
                                             // Group B - Arid climates  
   var B=maxtemp.gt(10).and(aridthreshold.gt(precip)); 
   var W=precip.lt(aridthreshold.multiply(0.5)); 
