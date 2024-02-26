@@ -426,14 +426,14 @@ var BSk = BS.and(h.not()); // Arid climates with sufficient precipitation during
 var A = B.not().and(mintemp.gte(18));
 
 // Subcategories within tropical climates:
-// - Af: Tropical climates with minimum precipitation greater than or equal to 60mm.
+// Af: Tropical climates with minimum precipitation greater than or equal to 60mm.
 var Af = A.and(minprecip.gte(60));
 
-// - Am: Tropical climates with minimum precipitation less than 60mm and greater than or equal to the monsoon minimum threshold.
+// Am: Tropical climates with minimum precipitation less than 60mm and greater than or equal to the monsoon minimum threshold.
 var Am = A.and(minprecip.lt(60))
           .and(minprecip.gte(monsoonminimum));
 
-// - Aw: Tropical climates with minimum precipitation less than 60mm and less than the monsoon minimum threshold.
+// Aw: Tropical climates with minimum precipitation less than 60mm and less than the monsoon minimum threshold.
 var Aw = A.and(minprecip.lt(60))
           .and(minprecip.lt(monsoonminimum));
 
