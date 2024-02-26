@@ -6,8 +6,6 @@ var path = "FAO/GAUL_SIMPLIFIED_500m/2015/level0"; // Set the path to the GAUL d
 var country_code = 132; // Set the country code for Kazakhstan.
 var country = ee.FeatureCollection(path).filter(ee.Filter.eq('ADM0_CODE', country_code)); // Filter the country feature collection for Kazakhstan.
 
-
-
 var multibandImageT = ee.Image("users/yessimkhanovakalamkas/temp_avgmodels");
 print(multibandImageT)
 
@@ -157,8 +155,8 @@ print('Yearly Images Collection:Precip', yearlyImagesP);
 print('Yearly Images Collection:Temp', yearlyImagesT);
 print('Yearly Images Collection together', yearlyImages);
 
-// var finalyearlyImages = yearlyImages.mean();
-// print(finalyearlyImages);
+var finalyearlyImages = yearlyImages.mean();
+print(finalyearlyImages);
 
 
 // Classification 
@@ -292,12 +290,9 @@ function koppenClass(image) {
 }
 //
 function classificateImage(startDate, endDate){
-  var tempImage = createImageCollection(startDate, endDate, keyMap['temperature']);
-  var precipImage = createImageCollection(startDate, endDate, keyMap['precipitation']);
-  var tempMeanImage = tempImage.mean();
-  var precipMeanImage = precipImage.mean();
-  var finalYearlyImage = precipMeanImage.addBands(tempMeanImage)
-  var classification = koppenClass(finalYearlyImage);
+  
+  
+  var classification = koppenClass(finalyearlyImages);
   return classification;
 }
 
