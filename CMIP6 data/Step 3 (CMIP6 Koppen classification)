@@ -9,57 +9,153 @@ print(multibandImageT)
 var multibandImageP = ee.Image("users/yessimkhanovakalamkas/precip_avgmodels");
 print(multibandImageP)
 
-// Init directory: colors, zoneNames, zoneCodes
-var colors=["000000",
-  "0000FF", "4169E1", "6495ED", "00BFFF", // 1-4
-  "FF0000", "F08080", "FF8C00", "FFD700", // 5-8
-  "98FB98", "3CB371", "2E8B57", "ADFF2F", "00FF00", "32CD32", "FFFF00", "BDB76B", "808000", // 9-17
-  "7B68EE", "6A5ACD", "483D8B", "191970", "00FFFF", "87CEFF", "008080", "2F4F4F", // 18-25
-  "FF00FF", "9400D3", "800080", "D8BFD8", // 26-29
-  "A9A9A9", "696969"]; // 30-31
+// Initialize arrays and dictionaries for colors, zone codes, and zone names
+//Init directory: Köppen climate classification system colors, zoneNames, zoneCodes
 
-var zoneCodes=['-',
-    'Af','Am','Aw', 'As', // 1-4
-    'BWh','BWk','BSh','BSk', // 5-8
-    'Cwa','Cwb','Cwc','Cfa','Cfb','Cfc','Csa','Csb','Csc', // 9-17
-    'Dwa','Dwb','Dwc','Dwd','Dfa','Dfb','Dfc','Dfd', // 18-25
-    'Dsa','Dsb','Dsc','Dsd', // 26-29
-    'ET','EF']; // 30-31
+// Explanation:
+// - Each color is represented by a hexadecimal code.
+// - The numeric value next to each color corresponds to its index in the 'colors' array.
+// - These numeric values are used later in the classification to assign colors to specific climate zones.
+   
+    var colors = [
+      "000000",        // 0: Black
+      "0000FF",        // 1: Blue
+      "4169E1",        // 2: Royal Blue
+      "6495ED",        // 3: Cornflower Blue
+      "00BFFF",        // 4: Deep Sky Blue
+      "FF0000",        // 5: Red
+      "F08080",        // 6: Light Coral
+      "FF8C00",        // 7: Dark Orange
+      "FFD700",        // 8: Gold
+      "98FB98",        // 9: Pale Green
+      "3CB371",        // 10: Medium Sea Green
+      "2E8B57",        // 11: Sea Green
+      "ADFF2F",        // 12: Green Yellow
+      "00FF00",        // 13: Lime
+      "32CD32",        // 14: Lime Green
+      "FFFF00",        // 15: Yellow
+      "BDB76B",        // 16: Dark Khaki
+      "808000",        // 17: Olive
+      "7B68EE",        // 18: Medium Slate Blue
+      "6A5ACD",        // 19: Slate Blue
+      "483D8B",        // 20: Dark Slate Blue
+      "191970",        // 21: Midnight Blue
+      "00FFFF",        // 22: Aqua / Cyan
+      "87CEFF",        // 23: Light Sky Blue
+      "008080",        // 24: Teal
+      "2F4F4F",        // 25: Dark Slate Gray
+      "FF00FF",        // 26: Magenta / Fuchsia
+      "9400D3",        // 27: Dark Violet
+      "800080",        // 28: Purple
+      "D8BFD8",        // 29: Thistle
+      "A9A9A9",        // 30: Dark Gray
+      "696969"         // 31: Dim Gray
+    ];
+
+// Explanation:
+// - Each code represents a specific climate zone or category.
+// - The numeric value next to each code corresponds to its index in the 'zoneCodes' array.
+// - These numeric values are later used for color representation in the classification.
+
+    var zoneCodes = [
+      '-',    // 0: No specific climate zone
     
-var zoneNames = {
-  '-': 'No data',
-  'Af': 'Tropical Rainforest',
-  'Am': 'Tropical Monsoon',
-  'Aw': 'Tropical Wet & Dry',
-  'As': 'Tropical Savanna',
-  'BWh': 'Hot Desert',
-  'BWk': 'Cold Desert',
-  'BSh': 'Hot Semi-Arid',
-  'BSk': 'Cold Semi-Arid',
-  'Cwa': 'Humid Subtropical',
-  'Cwb': 'Subtropical Highland',
-  'Cwc': 'Cold Subtropical Highland',
-  'Cfa': 'Humid Continental',
-  'Cfb': 'Oceanic Climate',
-  'Cfc': 'Subpolar Oceanic Climate',
-  'Csa': 'Mediterranean',
-  'Csb': 'Warm Summer Mediterranean',
-  'Csc': 'Cold Summer Mediterranean',
-  'Dwa': 'Humid Continental Hot Summer',
-  'Dwb': 'Humid Continental Mild Summer',
-  'Dwc': 'Subarctic Hot Summer',
-  'Dwd': 'Subarctic Mild Summer',
-  'Dfa': 'Humid Continental Hot Summer',
-  'Dfb': 'Humid Continental Mild Summer',
-  'Dfc': 'Subarctic',
-  'Dfd': 'Subarctic Extreme Winter',
-  'Dsa': 'Dry Hot Summer',
-  'Dsb': 'Dry Mild Summer',
-  'Dsc': 'Dry Cold Summer',
-  'Dsd': 'Dry Extreme Winter',
-  'ET': 'Tundra',
-  'EF': 'Ice Cap'
-};
+      // Group A - Tropical climates
+      'Af',    // 1: Tropical rainforest climate
+      'Am',    // 2: Monsoon climate
+      'Aw',    // 3: Tropical savanna climate
+      'As',    // 4: Tropical wet and dry or savanna climate
+    
+      // Group B - Arid climates
+      'BWh',   // 5: Hot desert climate
+      'BWk',   // 6: Cold desert climate
+      'BSh',   // 7: Hot semi-arid climate
+      'BSk',   // 8: Cold semi-arid climate
+    
+      // Group C - Temperate climates
+      'Cwa',   // 9: Humid subtropical climate with dry winters
+      'Cwb',   // 10: Humid subtropical climate with dry winters and hot summers
+      'Cwc',   // 11: Humid subtropical climate with dry winters and cool summers
+      'Cfa',   // 12: Humid subtropical climate with no dry season and hot summers
+      'Cfb',   // 13: Humid subtropical climate with no dry season and warm summers
+      'Cfc',   // 14: Humid subtropical climate with no dry season and cool summers
+      'Csa',   // 15: Mediterranean climate with hot, dry summers
+      'Csb',   // 16: Mediterranean climate with warm, dry summers
+      'Csc',   // 17: Mediterranean climate with cool, dry summers
+    
+      // Group D - Continental climates
+      'Dwa',   // 18: Humid continental climate with hot summers
+      'Dwb',   // 19: Humid continental climate with warm summers
+      'Dwc',   // 20: Humid continental climate with cool summers
+      'Dwd',   // 21: Humid continental climate with very cold winters
+      'Dfa',   // 22: Humid continental climate with hot summers and severe winters
+      'Dfb',   // 23: Humid continental climate with warm summers and severe winters
+      'Dfc',   // 24: Humid continental climate with cool summers and severe winters
+      'Dfd',   // 25: Humid continental climate with very cold winters and severe winters
+    
+      // Group E - Polar and alpine climates
+      'Dsa',   // 26: Subarctic climate with short, mild summers
+      'Dsb',   // 27: Subarctic climate with short, warm summers
+      'Dsc',   // 28: Subarctic climate with short, cool summers
+      'Dsd',   // 29: Subarctic climate with very cold winters
+    
+      // Group E - Polar and alpine climates continued
+      'ET',    // 30: Tundra climate
+      'EF'     // 31: Ice cap climate
+    ];
+
+// Explanation:
+// - Each code represents a specific climate zone or category.
+// - The corresponding value is the descriptive name of the climate zone.
+
+    var zoneNames = {
+      '-': 'No data',                      // 0: No specific climate zone
+    
+      // Group A - Tropical climates
+      'Af': 'Tropical Rainforest',         // 1: Tropical rainforest climate
+      'Am': 'Tropical Monsoon',            // 2: Monsoon climate
+      'Aw': 'Tropical Wet & Dry',          // 3: Tropical savanna climate
+      'As': 'Tropical Savanna',            // 4: Tropical wet and dry or savanna climate
+    
+      // Group B - Arid climates
+      'BWh': 'Hot Desert',                 // 5: Hot desert climate
+      'BWk': 'Cold Desert',                // 6: Cold desert climate
+      'BSh': 'Hot Semi-Arid',              // 7: Hot semi-arid climate
+      'BSk': 'Cold Semi-Arid',             // 8: Cold semi-arid climate
+    
+      // Group C - Temperate climates
+      'Cwa': 'Humid Subtropical',          // 9: Humid subtropical climate with dry winters
+      'Cwb': 'Subtropical Highland',      // 10: Humid subtropical climate with dry winters and hot summers
+      'Cwc': 'Cold Subtropical Highland',  // 11: Humid subtropical climate with dry winters and cool summers
+      'Cfa': 'Humid Continental',          // 12: Humid subtropical climate with no dry season and hot summers
+      'Cfb': 'Oceanic Climate',            // 13: Humid subtropical climate with no dry season and warm summers
+      'Cfc': 'Subpolar Oceanic Climate',   // 14: Humid subtropical climate with no dry season and cool summers
+      'Csa': 'Mediterranean',              // 15: Mediterranean climate with hot, dry summers
+      'Csb': 'Warm Summer Mediterranean',  // 16: Mediterranean climate with warm, dry summers
+      'Csc': 'Cold Summer Mediterranean',  // 17: Mediterranean climate with cool, dry summers
+    
+      // Group D - Continental climates
+      'Dwa': 'Humid Continental Hot Summer',  // 18: Humid continental climate with hot summers
+      'Dwb': 'Humid Continental Mild Summer', // 19: Humid continental climate with warm summers
+      'Dwc': 'Subarctic Hot Summer',          // 20: Humid continental climate with cool summers
+      'Dwd': 'Subarctic Mild Summer',         // 21: Humid continental climate with very cold winters
+      'Dfa': 'Humid Continental Hot Summer',  // 22: Humid continental climate with hot summers and severe winters
+      'Dfb': 'Humid Continental Mild Summer', // 23: Humid continental climate with warm summers and severe winters
+      'Dfc': 'Subarctic',                     // 24: Humid continental climate with cool summers and severe winters
+      'Dfd': 'Subarctic Extreme Winter',      // 25: Humid continental climate with very cold winters and severe winters
+    
+      // Group E - Polar and alpine climates
+      'Dsa': 'Dry Hot Summer',      // 26: Subarctic climate with short, mild summers
+      'Dsb': 'Dry Mild Summer',     // 27: Subarctic climate with short, warm summers
+      'Dsc': 'Dry Cold Summer',     // 28: Subarctic climate with short, cool summers
+      'Dsd': 'Dry Extreme Winter',  // 29: Subarctic climate with very cold winters
+    
+      // Group E - Polar and alpine climates continued
+      'ET': 'Tundra',               // 30: Tundra climate
+      'EF': 'Ice Cap'               // 31: Ice cap climate
+    };
+
+
 var startDate = 1950;
 var endDate = 2014;
 
