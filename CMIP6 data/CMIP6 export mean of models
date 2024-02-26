@@ -1,0 +1,58 @@
+var countries = ee.FeatureCollection('FAO/GAUL_SIMPLIFIED_500m/2015/level0');
+var country = countries.filter(ee.Filter.eq('ADM0_CODE', 132));
+
+var collection = ee.ImageCollection('NASA/GDDP-CMIP6').filter(ee.Filter.eq('scenario', 'historical'));
+var models = ['ACCESS-CM2', 'ACCESS-ESM1-5', 'BCC-CSM2-MR', 'CESM2', 'CESM2-WACCM', 'CMCC-CM2-SR5', 'CMCC-ESM2', 'CNRM-CM6-1', 'CNRM-ESM2-1', 'CanESM5', 'EC-Earth3', 'EC-Earth3-Veg-LR', 'FGOALS-g3', 'GFDL-CM4', 'GFDL-ESM4', 'GISS-E2-1-G', 'HadGEM3-GC31-LL', 'HadGEM3-GC31-MM', 'IITM-ESM', 'INM-CM4-8', 'INM-CM5-0', 'IPSL-CM6A-LR', 'KACE-1-0-G', 'KIOST-ESM', 'MIROC-ES2L', 'MIROC6', 'MPI-ESM1-2-HR', 'MPI-ESM1-2-LR', 'MRI-ESM2-0', 'NESM3', 'NorESM2-MM', 'TaiESM1', 'UKESM1-0-LL'];
+
+var startDate = ee.Date('1950-01-01');
+var endDate = ee.Date('2014-12-31');
+
+// Loop over years and export images
+for (var year = 1950; year <= 2014; year++) {
+  var dateRange = ee.DateRange(ee.Date(year + '-01-01'), ee.Date(year + '-12-31'));
+  var filteredCollection = collection.filterDate(dateRange);
+
+  var temperatureBand = 'tas';
+  var precipitationBand = 'pr';
+
+  var monthlyMeansCollection = ee.ImageCollection.fromImages(
+    ee.List.sequence(year, year).map(function (y) {
+      return ee.List.sequence(1, 12).map(function (month) {
+        var monthlyCollection = filteredCollection
+          .filter(ee.Filter.calendarRange(y, y, 'year'))
+          .filter(ee.Filter.calendarRange(month, month, 'month'));
+
+        var meanTemperature = monthlyCollection.select(temperatureBand)
+                                               .mean().subtract(273)
+                                               .rename(['meanTemperature']);
+        
+        var mp = ee.ImageCollection.fromImages(models.map(function(m) {
+          return monthlyCollection.filter(ee.Filter.eq('model', m))
+                                  .select(precipitationBand)
+                                  .sum().multiply(1000).multiply(86400).divide(997)
+                                  .rename('sumPrecipitation');
+        }));
+        
+        return meanTemperature.addBands(mp.select('sumPrecipitation').mean()).set('year', y).set('month', month);
+      });
+    }).flatten()
+  );
+
+  // Create multiband images for temperature and precipitation
+  var temperatureImage = monthlyMeansCollection.select('meanTemperature').toBands().rename(['t1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12']);
+  var precipitationImage = monthlyMeansCollection.select('sumPrecipitation').toBands().rename(['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12']);
+  print(temperatureImage)
+  var multiBandImage = temperatureImage.addBands(precipitationImage);
+//print(multiBandImage)
+
+/*
+  // Export the image to your Earth Engine Assets
+  Export.image.toAsset({
+    image: precipitationImage,
+    description: 'pr' + year + '-avgmodels',
+    assetId: 'users/yessimkhanovakalamkas/CMIP6_precip/pr' + year + '-avgmodels',
+    region: country,
+    scale: 27830,
+   });
+   */
+}
