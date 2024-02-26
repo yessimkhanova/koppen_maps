@@ -43,42 +43,5 @@ for (var year = 1950; year <= 2014; year++) {
     }).flatten()
   );
 print('Monthly Means Collection for year ' + year + ':', monthlyMeansCollection);
-  // Assuming you have an ImageCollection named 'monthlyDataCollection'
-// with bands 'meanTemperature', 'sumPrecipitation', 'year', and 'month'
-
-// Define a function to convert each image in the collection to a single image
-var convertToSingleImage = function(image) {
-  // Get year and month properties
-  var year = image.get('year');
-  var month = image.get('month');
-
-  // Create a unique identifier for the image based on year and month
-  var imageId = ee.String('monthly_data_')
-    .cat(ee.Number(year).int())
-    .cat('_')
-    .cat(ee.Number(month).int());
-
-  // Create a single-band image with year and month as properties
-  var singleImage = ee.Image(0).set({
-    'year': year,
-    'month': month,
-    'system:index': imageId
-  });
-
-  // Add bands from the original image to the single-image
-  return singleImage
-    .addBands(image.select(['meanTemperature']), ['meanTemperature'])
-    .addBands(image.select(['sumPrecipitation']), ['sumPrecipitation']);
-};
-
-// Map over the ImageCollection to convert each image to a single image
-var singleImages = monthlyMeansCollection.map(convertToSingleImage);
-
-// Print the resulting ImageCollection with single images
-print('Single Images Collection:', singleImages);
-
-// Optionally, visualize one of the single images
-var sampleImage = singleImages.first();
-Map.addLayer(sampleImage, {bands: ['meanTemperature'], min: -30, max: 30, palette: ['blue', 'white', 'red']}, 'Sample Image');
 
 }
