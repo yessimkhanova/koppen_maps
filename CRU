@@ -2,12 +2,10 @@
 var path = "FAO/GAUL_SIMPLIFIED_500m/2015/level0"; var country_code = 132; // Set the country code for Kazakhstan.
 var country = ee.FeatureCollection(path).filter(ee.Filter.eq('ADM0_CODE', country_code)); // Filter the country feature collection for Kazakhstan.
 
-var multibandImageT = ee.Image("users/yessimkhanovakalamkas/temp_avgmodels");
-print(multibandImageT)
-
-var multibandImageP = ee.Image("users/yessimkhanovakalamkas/precip_avgmodels");
-print(multibandImageP)
-
+var multibandImageP = ee.Image("users/yessimkhanovakalamkas/pr_monthly_CRU");
+print(multiBandImageP)
+var multibandImageT = ee.Image("users/yessimkhanovakalamkas/tmean_monthly_CRU");
+print(multiBandImageT)
 // Initialize arrays and dictionaries for colors, zone codes, and zone names
 //Init directory: Köppen climate classification system colors, zoneNames, zoneCodes
 
@@ -162,8 +160,8 @@ print(multibandImageP)
 // - These ImageCollections will be used to accumulate precipitation, temperature, and combined images over multiple years.
 
       // Set the start and end years for the analysis based on the available date range of the source data
-      var startDate = 1950;
-      var endDate = 2014;
+      var startDate = 1901;
+      var endDate = 2020;
       
       // Generate a list of years from the start to the end year
       var years = ee.List.sequence(startDate, endDate);
@@ -175,12 +173,12 @@ print(multibandImageP)
 
 // Loop through each year in the specified date range
 years.getInfo().forEach(function (year) {
-  var startBand = (year - 1950) * 12; // Calculate the start and end bands for the current year.
+  var startBand = (year - 1901) * 12; // Calculate the start and end bands for the current year.
   var endBand = startBand + 11;
         
         // Rename precipitation bands from generic names to more meaningful names ('p1' to 'p12') for better interpretation
         // Correspondence: 'p1' represents January, 'p2' represents February, ..., 'p12' represents December
-        var yearImageP = multibandImageP.select(ee.List.sequence(startBand, endBand)); 
+        var yearImageP = multiBandImageP.select(ee.List.sequence(startBand, endBand)); 
             // Select bands corresponding to the current year.
             yearImageP = yearImageP.rename(['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12']);
 
@@ -240,7 +238,7 @@ years.getInfo().forEach(function (year) {
       
             
         // Rename temperature bands from generic names to more meaningful names ('t1' to 't12') for better interpretation
-        var yearImageT = multibandImageT.select(ee.List.sequence(startBand, endBand));
+        var yearImageT = multiBandImageT.select(ee.List.sequence(startBand, endBand));
             
             // Correspondence: 't1' represents January, 't2' represents February, ..., 't12' represents December
             yearImageT = yearImageT.rename(['t1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12']);
