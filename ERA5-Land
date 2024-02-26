@@ -103,59 +103,85 @@ var zoneNames = {
   'EF': 'Ice Cap'
 };
 
-// create ImageCollection with calculation
+// Create a function to generate an ImageCollection with calculations
 function createImageCollection(startDate, endDate, args){
-  var listOfImages = [];
-  var filteredCollection = collection.filter(ee.Filter.calendarRange(startDate, endDate, 'year'));
-  var selectedImage = filteredCollection.select(args.band).toBands();
-  var years = ee.List.sequence(startDate, endDate);
+  var listOfImages = []; // Initialize an empty array to store individual images.
+  var filteredCollection = collection.filter(ee.Filter.calendarRange(startDate, endDate, 'year')); // Filter the collection based on the specified date range.
+  var selectedImage = filteredCollection.select(args.band).toBands(); // Select the specified band(s) and convert them to bands.
+  var years = ee.List.sequence(startDate, endDate); // Generate a list of band names for each month.
   var listOfDim = [];
-  for(var i=1; i<=12; i++){
-    listOfDim.push(args.symbol+i);
+    for(var i=1; i<=12; i++){
+      listOfDim.push(args.symbol+i);
   }
+  
+  // Loop through each year in the specified date range
   years.getInfo().forEach(function(year){
-    var startBand = (year - startDate) * 12;
+    var startBand = (year - startDate) * 12; // Calculate the start and end bands for the current year.
     var endBand = startBand + 11;
-    var yearImage = selectedImage.select(ee.List.sequence(startBand, endBand));
-    yearImage = yearImage.rename(listOfDim);
-    if (args.symbol == 't') {
-      
-      var avgT = yearImage.reduce(ee.Reducer.mean()).subtract(273).rename('avgtemp');
-      
-      var minT = yearImage.reduce(ee.Reducer.min()).subtract(273).rename('mintemp');
-      var maxT = yearImage.reduce(ee.Reducer.max()).subtract(273).rename('maxtemp');
-      var monthsGreaterThan10 = yearImage.gt(10).reduce('sum').rename('tenplusmonths');
-      yearImage = yearImage.addBands([avgT, minT, maxT, monthsGreaterThan10]);
-    }
-    if (args.symbol == 'p') {
-      var totalP = yearImage.reduce(ee.Reducer.sum()).multiply(1000).rename('totalprecip');
-      var minP = yearImage.reduce(ee.Reducer.min()).multiply(1000).rename('minprecip');
-      var maxP = yearImage.reduce(ee.Reducer.max()).multiply(1000).rename('maxprecip');
-      var summerP = yearImage.select(['p4','p5','p6', 'p7', 'p8', 'p9'])
-                                      .reduce('sum')
-                                      .multiply(1000).rename('nsummerprecip');
-      var winterP = yearImage.select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
-                                      .reduce('sum')
-                                      .multiply(1000).rename('winterprecip');
-      var maxWinterP = yearImage.select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
-                                        .reduce('max')
-                                        .multiply(1000).rename('maxwprecip');
-      var minWinterP = yearImage.select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
-                                        .reduce('min')
-                                        .multiply(1000).rename('minwprecip');
-      var maxSummerP = yearImage.select(['p4','p5','p6', 'p7', 'p8', 'p9'])
-                                        .reduce('max')
-                                        .multiply(1000).rename('maxsprecip');
-      var minSummerP = yearImage.select(['p4','p5','p6', 'p7', 'p8', 'p9'])
-                                        .reduce('min')
-                                        .multiply(1000).rename('minsprecip');
-      yearImage = yearImage.addBands([totalP, minP, maxP, summerP, winterP, maxWinterP, minWinterP, maxSummerP, minSummerP]);
-    }
-    yearImage = yearImage.set('year', year);
-    listOfImages.push(yearImage);
-  });
-  return ee.ImageCollection.fromImages(listOfImages);
-}
+    
+    var yearImage = selectedImage.select(ee.List.sequence(startBand, endBand)); // Select bands corresponding to the current year.
+        yearImage = yearImage.rename(listOfDim); // Rename bands with the generated list of dimension names.
+          
+          // Additional calculations for temperature ('t') and precipitation ('p')
+          if (args.symbol == 't') {
+            
+            // Calculate the average temperature for each pixel across all months in the year
+            var avgT = yearImage.reduce(ee.Reducer.mean())
+              .subtract(273) // Convert from Kelvin to Celsius
+              .rename('avgtemp'); // Rename the resulting band as 'avgtemp'
+            
+            // Calculate the minimum temperature for each pixel across all months in the year
+            var minT = yearImage.reduce(ee.Reducer.min())
+              .subtract(273) // Convert from Kelvin to Celsius
+              .rename('mintemp'); // Rename the resulting band as 'mintemp'
+            
+            // Calculate the maximum temperature for each pixel across all months in the year
+            var maxT = yearImage.reduce(ee.Reducer.max())
+              .subtract(273) // Convert from Kelvin to Celsius
+              .rename('maxtemp'); // Rename the resulting band as 'maxtemp'
+            
+            // Count the number of months where the temperature is greater than 10 degrees Celsius
+            var monthsGreaterThan10 = yearImage.gt(10)
+              .reduce('sum') // Sum the number of occurrences
+              .rename('tenplusmonths'); // Rename the resulting band as 'tenplusmonths'
+            
+            // Add the calculated temperature bands to the original image
+            yearImage = yearImage.addBands([avgT, minT, maxT, monthsGreaterThan10]);
+
+          }
+          
+          // Additional calculations precipitation ('p')
+          if (args.symbol == 'p') {
+            var totalP = yearImage.reduce(ee.Reducer.sum()).multiply(1000).rename('totalprecip');
+            var minP = yearImage.reduce(ee.Reducer.min()).multiply(1000).rename('minprecip');
+            var maxP = yearImage.reduce(ee.Reducer.max()).multiply(1000).rename('maxprecip');
+            var summerP = yearImage.select(['p4','p5','p6', 'p7', 'p8', 'p9'])
+                                            .reduce('sum')
+                                            .multiply(1000).rename('nsummerprecip');
+            var winterP = yearImage.select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
+                                            .reduce('sum')
+                                            .multiply(1000).rename('winterprecip');
+            var maxWinterP = yearImage.select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
+                                              .reduce('max')
+                                              .multiply(1000).rename('maxwprecip');
+            var minWinterP = yearImage.select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
+                                              .reduce('min')
+                                              .multiply(1000).rename('minwprecip');
+            var maxSummerP = yearImage.select(['p4','p5','p6', 'p7', 'p8', 'p9'])
+                                              .reduce('max')
+                                              .multiply(1000).rename('maxsprecip');
+            var minSummerP = yearImage.select(['p4','p5','p6', 'p7', 'p8', 'p9'])
+                                              .reduce('min')
+                                              .multiply(1000).rename('minsprecip');
+            yearImage = yearImage.addBands([totalP, minP, maxP, summerP, winterP, maxWinterP, minWinterP, maxSummerP, minSummerP]);
+          }
+          
+          yearImage = yearImage.set('year', year); // Set the 'year' property and add the current year image to the list.
+          listOfImages.push(yearImage); // Add the current yearImage to the listOfImages array.
+      });
+        
+        return ee.ImageCollection.fromImages(listOfImages); // Create and return an ImageCollection from the list of generated images
+  }
 
 // Classification 
 var nhemi=ee.Image.pixelLonLat().select('latitude').gt(0);
