@@ -41,25 +41,44 @@ for (var year = 1950; year <= 2014; year++) {
                             .set('system:time_end', endDate.millis());
       });
     }).flatten()
-    
-    
   );
+print('Monthly Means Collection for year ' + year + ':', monthlyMeansCollection);
+  // Assuming you have an ImageCollection named 'monthlyDataCollection'
+// with bands 'meanTemperature', 'sumPrecipitation', 'year', and 'month'
 
-  // Create multiband images for temperature and precipitation
-  var temperatureImage = monthlyMeansCollection.select('meanTemperature').toBands().rename(['t1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12']);
-  var precipitationImage = monthlyMeansCollection.select('sumPrecipitation').toBands().rename(['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12']);
-  //print(temperatureImage)
-  var multiBandImage = temperatureImage.addBands(precipitationImage);
-  print(multiBandImage)
+// Define a function to convert each image in the collection to a single image
+var convertToSingleImage = function(image) {
+  // Get year and month properties
+  var year = image.get('year');
+  var month = image.get('month');
 
-/*
-  // Export the image to your Earth Engine Assets
-  Export.image.toAsset({
-    image: precipitationImage,
-    description: 'pr' + year + '-avgmodels',
-    assetId: 'users/yessimkhanovakalamkas/CMIP6_precip/pr' + year + '-avgmodels',
-    region: country,
-    scale: 27830,
-   });
-   */
-} 
+  // Create a unique identifier for the image based on year and month
+  var imageId = ee.String('monthly_data_')
+    .cat(ee.Number(year).int())
+    .cat('_')
+    .cat(ee.Number(month).int());
+
+  // Create a single-band image with year and month as properties
+  var singleImage = ee.Image(0).set({
+    'year': year,
+    'month': month,
+    'system:index': imageId
+  });
+
+  // Add bands from the original image to the single-image
+  return singleImage
+    .addBands(image.select(['meanTemperature']), ['meanTemperature'])
+    .addBands(image.select(['sumPrecipitation']), ['sumPrecipitation']);
+};
+
+// Map over the ImageCollection to convert each image to a single image
+var singleImages = monthlyMeansCollection.map(convertToSingleImage);
+
+// Print the resulting ImageCollection with single images
+print('Single Images Collection:', singleImages);
+
+// Optionally, visualize one of the single images
+var sampleImage = singleImages.first();
+Map.addLayer(sampleImage, {bands: ['meanTemperature'], min: -30, max: 30, palette: ['blue', 'white', 'red']}, 'Sample Image');
+
+}
