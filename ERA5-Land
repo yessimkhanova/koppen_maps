@@ -222,9 +222,11 @@ function createImageCollection(startDate, endDate, args){
         return ee.ImageCollection.fromImages(listOfImages); // Create and return an ImageCollection from the list of generated images
   }
 
-// Classification 
-var nhemi=ee.Image.pixelLonLat().select('latitude').gt(0);
+// Classification function for Köppen climate classification
+  var northernHemishere=ee.Image.pixelLonLat().select('latitude').gt(0); // Determine which hemisphere the pixel belongs to
+
 function koppenClass(image) {
+  // Extract relevant bands from the input image
   var mintemp=image.select('mintemp');
   var maxtemp=image.select('maxtemp');
   var avgtemp=image.select('avgtemp');
@@ -232,15 +234,19 @@ function koppenClass(image) {
   var minprecip=image.select('minprecip');
   var maxprecip=image.select('maxprecip');
   var minsprecip=image.select('minsprecip').multiply(nhemi)
-                          .add(image.select('minwprecip').multiply(nhemi.not()));
+                          .add(image.select('minwprecip').multiply(northernHemishere.not()));
   var maxsprecip=image.select('maxsprecip').multiply(nhemi)
-                          .add(image.select('maxwprecip').multiply(nhemi.not()));
+                          .add(image.select('maxwprecip').multiply(northernHemishere.not()));
   var minwprecip=image.select('minwprecip').multiply(nhemi)
-                          .add(image.select('minsprecip').multiply(nhemi.not()));
+                          .add(image.select('minsprecip').multiply(northernHemishere.not()));
   var maxwprecip=image.select('maxwprecip').multiply(nhemi)
-                          .add(image.select('maxsprecip').multiply(nhemi.not()));
+                          .add(image.select('maxsprecip').multiply(northernHemishere.not()));
+  
   var precip=image.select('totalprecip');
-  var monsoonminimum=precip.divide(-25).add(100); // 100-totalprecip/25
+  
+  var monsoonminimum=precip.divide(-25).add(100); // Calculate monsoon minimum threshold based on precipitation.
+                                                  // The formula is: 100 - (totalprecip / 25)
+                                                  // Divide total precipitation (totalprecip) by -25, then add 100 to get the monsoon minimum threshold.
   var sprecip=image.select('nsummerprecip');
 
   // determining which season is the summer and select that half year's precipitation
