@@ -169,8 +169,8 @@ print(multiBandImageP)
       var years = ee.List.sequence(startDate, endDate);
       
       // Initialize empty Earth Engine ImageCollections to store cumulative yearly precipitation, temperature, and combined images
-      var yearlyImagesP = ee.ImageCollection([]);
       var yearlyImagesT = ee.ImageCollection([]);
+      var yearlyImagesP = ee.ImageCollection([]);
       var yearlyImages = ee.ImageCollection([]);
 
 // Loop through each year in the specified date range
