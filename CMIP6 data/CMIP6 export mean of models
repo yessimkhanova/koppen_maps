@@ -55,6 +55,6 @@ for (var year = 1950; year <= 2014; year++) {
     region: country,
     scale: 27830,
    });
-   */
+  
    
 }
