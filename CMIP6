@@ -1,0 +1,6 @@
+ee.ImageCollection("NASA/GDDP-CMIP6")
+  .filter(ee.Filter.and(
+    ee.Filter.eq('model', 'GISS-E2-1-G'),
+    ee.Filter.eq('scenario', 'historical')
+  ))
+  .filterBounds(country);
