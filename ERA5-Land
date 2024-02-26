@@ -114,7 +114,6 @@ function createImageCollection(startDate, endDate, args){
           listOfDim.push(args.symbol + i); // Each band name is formed by concatenating the symbol from args
                                           // (which is derived from the keyMap configuration) and the current value of i.
     }
-  }
   
   // Loop through each year in the specified date range
   years.getInfo().forEach(function(year){
@@ -152,7 +151,6 @@ function createImageCollection(startDate, endDate, args){
             
             // Add the calculated temperature bands to the original image
             yearImage = yearImage.addBands([avgT, minT, maxT, monthsGreaterThan10]);
-
           }
           
           // Additional calculations precipitation ('p')
