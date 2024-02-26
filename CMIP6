@@ -1,6 +1,3 @@
-/**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var imageCollection = ee.ImageCollection("NASA/GDDP-CMIP6");
-/***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Export GEOBoarders
 var path = "FAO/GAUL_SIMPLIFIED_500m/2015/level0"; // Set the path to the GAUL dataset, which contains simplified country borders at 500m resolution in 2015.
 var country_code = 132; // Set the country code for Kazakhstan.
