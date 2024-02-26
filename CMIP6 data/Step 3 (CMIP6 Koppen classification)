@@ -154,15 +154,24 @@ print(multibandImageP)
       'EF': 'Ice Cap'               // 31: Ice cap climate
     };
 
+// Explanation:
+// - The 'startDate' and 'endDate' variables define the temporal range for the analysis,
+//   considering the available date range of the source data.
+// - The 'years' list is generated to represent each year within the specified range.
+// - Three empty ImageCollections ('yearlyImagesP', 'yearlyImagesT', and 'yearlyImages') are created to store cumulative yearly images.
+// - These ImageCollections will be used to accumulate precipitation, temperature, and combined images over multiple years.
 
-var startDate = 1950;
-var endDate = 2014;
-
-var years = ee.List.sequence(startDate, endDate);
-
-var yearlyImagesP = ee.ImageCollection([]);
-var yearlyImagesT = ee.ImageCollection([]);
-var yearlyImages = ee.ImageCollection([]);
+      // Set the start and end years for the analysis based on the available date range of the source data
+      var startDate = 1950;
+      var endDate = 2014;
+      
+      // Generate a list of years from the start to the end year
+      var years = ee.List.sequence(startDate, endDate);
+      
+      // Initialize empty Earth Engine ImageCollections to store cumulative yearly precipitation, temperature, and combined images
+      var yearlyImagesP = ee.ImageCollection([]);
+      var yearlyImagesT = ee.ImageCollection([]);
+      var yearlyImages = ee.ImageCollection([]);
 
 // Loop through each year in the specified date range
 years.getInfo().forEach(function (year) {
