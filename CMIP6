@@ -53,11 +53,11 @@ var monthlyMeansCollection = ee.ImageCollection.fromImages(
     });
   }).flatten()
 );
+print(monthlyMeansCollection)
 
-
-var dateRange = monthlyMeansCollection.reduceColumns(ee.Reducer.minMax(), ['system:time_start']); // Calculate the minimum and maximum time start values in the collection.
-var startDate = ee.Date(dateRange.get('min')); // Extract the minimum date from the date range.
-var endDate = ee.Date(dateRange.get('max')); // Extract the maximum date from the date range.
+var dateRange = monthlyMeansCollection.reduceColumns(ee.Reducer.minMax(), ['system:time_end']); // Calculate the minimum and maximum time start values in the collection.
+var startDate = ee.Date(dateRange.get('max')); // Extract the minimum date from the date range.
+var endDate = ee.Date(dateRange.get('min')); // Extract the maximum date from the date range.
 print(startDate)
 print(endDate)
 
