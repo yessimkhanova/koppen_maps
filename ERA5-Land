@@ -107,11 +107,13 @@ var zoneNames = {
 function createImageCollection(startDate, endDate, args){
   var listOfImages = []; // Initialize an empty array to store individual images.
   var filteredCollection = collection.filter(ee.Filter.calendarRange(startDate, endDate, 'year')); // Filter the collection based on the specified date range.
-  var selectedImage = filteredCollection.select(args.band).toBands(); // Select the specified band(s) and convert them to bands.
+  var selectedImage = filteredCollection.select(args.band).toBands(); // Select the specified band(s) from the keyMap configuration and convert them to bands.
   var years = ee.List.sequence(startDate, endDate); // Generate a list of band names for each month.
-  var listOfDim = [];
-    for(var i=1; i<=12; i++){
-      listOfDim.push(args.symbol+i);
+  var listOfDim = []; // Initialize an empty array to store band names.
+    for (var i = 1; i <= 12; i++) { // Loop from 1 to 12 (representing months) and push new band names to the array.
+          listOfDim.push(args.symbol + i); // Each band name is formed by concatenating the symbol from args
+                                          // (which is derived from the keyMap configuration) and the current value of i.
+    }
   }
   
   // Loop through each year in the specified date range
@@ -123,7 +125,10 @@ function createImageCollection(startDate, endDate, args){
         yearImage = yearImage.rename(listOfDim); // Rename bands with the generated list of dimension names.
           
           // Additional calculations for temperature ('t') and precipitation ('p')
-          if (args.symbol == 't') {
+          if (args.symbol == 't') { // Check if the symbol from the arguments (args.symbol) is equal to 't'
+                                    // The argument symbol is derived from the keyMap configuration.
+                                    // This condition is checking whether the data being processed is related to temperature ('t').
+                                    // If true, additional calculations for temperature will be performed.
             
             // Calculate the average temperature for each pixel across all months in the year
             var avgT = yearImage.reduce(ee.Reducer.mean())
@@ -151,8 +156,11 @@ function createImageCollection(startDate, endDate, args){
           }
           
           // Additional calculations precipitation ('p')
-          if (args.symbol == 'p') {
-            
+          if (args.symbol == 'p') { // Check if the symbol from the arguments (args.symbol) is equal to 'p'
+                                    // The argument symbol is derived from the keyMap configuration.
+                                    // This condition is checking whether the data being processed is related to precipitation ('p').
+                                    // If true, additional calculations for precipitation will be performed.
+
             // Calculate the total precipitation for each pixel across all months in the year and convert to millimeters
             var totalP = yearImage.reduce(ee.Reducer.sum())
               .multiply(1000) // Convert from meters to millimeters
