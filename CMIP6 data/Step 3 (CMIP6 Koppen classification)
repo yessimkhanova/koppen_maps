@@ -2,11 +2,17 @@
 var path = "FAO/GAUL_SIMPLIFIED_500m/2015/level0"; var country_code = 132; // Set the country code for Kazakhstan.
 var country = ee.FeatureCollection(path).filter(ee.Filter.eq('ADM0_CODE', country_code)); // Filter the country feature collection for Kazakhstan.
 
-var multibandImageT = ee.Image("users/yessimkhanovakalamkas/temp_avgmodels");
-print(multibandImageT)
+// Load the multi-band temperature image from the specified Earth Engine asset
+// Note: To add your own dataset, replace the asset ID with the proper path to your temperature image
+var multiBandImageT = ee.Image("users/yessimkhanovakalamkas/temp_avgmodels");
+// Print the information about the loaded temperature image to the console
+//print(multiBandImageT);
 
-var multibandImageP = ee.Image("users/yessimkhanovakalamkas/precip_avgmodels");
-print(multibandImageP)
+// Load the multi-band precipitation image from the specified Earth Engine asset
+// Note: To add your own dataset, replace the asset ID with the proper path to your precipitation image
+var multiBandImageP = ee.Image("users/yessimkhanovakalamkas/precip_avgmodels");
+// Print the information about the loaded precipitation image to the console
+//print(multiBandImageP);
 
 // Initialize arrays and dictionaries for colors, zone codes, and zone names
 //Init directory: Köppen climate classification system colors, zoneNames, zoneCodes
