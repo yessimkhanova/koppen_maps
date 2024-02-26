@@ -534,7 +534,8 @@ function classificateImage(startDate, endDate) {
 //-------------------------------------------------------//
                     // UI Sector
 //  Map Settings
-var customMap = ui.Map(); // Creates a new map object using the Earth Engine UI library.
+// Creates a new map object using the Earth Engine UI library.
+var customMap = ui.Map(); 
     customMap.setControlVisibility({ // Configures map control visibility settings.
   zoomControl: false,
   drawingToolsControl: false,
