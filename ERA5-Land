@@ -288,44 +288,97 @@ function koppenClass(image) {
   // The formula is: aridthreshold = avgtemp * 20 + (summerratio between 0.3 and 0.7) * 140
   var aridthreshold = avgtemp.multiply(20).add(summerratio.gt(0.3).and(summerratio.lt(0.7)).multiply(140)); // 'aridthreshold' now represents the calculated aridity threshold based on temperature and summer precipitation ratio.
 
-                                            // Group B - Arid climates  
-  var B=maxtemp.gt(10).and(aridthreshold.gt(precip)); 
-  var W=precip.lt(aridthreshold.multiply(0.5)); 
-  var h=avgtemp.gt(18); 
-  var BW=B.and(W); 
-  var BWh=BW.and(h); 
-  var BWk=BW.and(h.not()); 
-  var BS=B.and(W.not()); 
-  var BSh=BS.and(h); 
-  var BSk=BS.and(h.not()); 
+                                                
+                                                // Group B - Arid climates
+
+// Condition to identify arid climates (B): Maximum temperature greater than 10°C and aridity threshold greater than total precipitation.
+var B = maxtemp.gt(10).and(aridthreshold.gt(precip));
+
+// Condition to identify dry winters (W): Total precipitation less than half of the aridity threshold.
+var W = precip.lt(aridthreshold.multiply(0.5));
+
+// Condition to identify hot climates (h): Average temperature greater than 18°C.
+var h = avgtemp.gt(18);
+
+// Combination of conditions for B and W to identify arid climates with dry winters (BW)
+var BW = B.and(W);
+
+// Further conditions based on temperature and h for subcategories of BW
+var BWh = BW.and(h); // Arid climates with dry winters and hot conditions
+var BWk = BW.and(h.not()); // Arid climates with dry winters and not hot conditions
+
+// Conditions for B excluding W to identify arid climates with sufficient precipitation during winters (BS)
+var BS = B.and(W.not());
+
+// Further conditions based on temperature and h for subcategories of BS
+var BSh = BS.and(h); // Arid climates with sufficient precipitation during winters and hot conditions
+var BSk = BS.and(h.not()); // Arid climates with sufficient precipitation during winters and not hot conditions
+
                                             // Group A - Tropical climates  
-  var A=B.not().and(mintemp.gte(18)); 
-  var Af=A.and(minprecip.gte(60)); 
-  var Am=A.and(minprecip.lt(60)).and(minprecip.gte(monsoonminimum)); 
-  var Aw=A.and(minprecip.lt(60)).and(minprecip.lt(monsoonminimum)); 
-  //var As=A.and(minprecip.lt(0.060)).and(minprecip.gt(monsoonminimum));
-  
-                                            // Group C - Temperate climates  
-                                            
-  var C=B.not().and(mintemp.gte(0)).and(mintemp.lte(18)).and(maxtemp.gte(10));
-  var Cw=C.and(maxsprecip.gte(minwprecip.multiply(10)));
-  var Cs=C.and(Cw.not()).and(maxwprecip.gte(minsprecip.multiply(3))).and(minsprecip.lt(40));
-  var Cf=C.and(Cw.not()).and(Cs.not());
-  
-  var Cwa=Cw.and(maxtemp.gt(22)).and(tenplus.gte(4));
-  var Cwb=Cw.and(maxtemp.lt(22)).and(tenplus.gte(4));
-  //var Cwc=Cw.and(Cwa.not()).and(Cwb.not()).and(tenplus.gte(1)).and(tenplus.lt(4));
-  var Cwc=Cw.and(tenplus.gte(1)).and(tenplus.lt(4));
-  
-  var Csa=Cs.and(maxtemp.gt(22)).and(tenplus.gte(4));
-  var Csb=Cs.and(maxtemp.lt(22)).and(tenplus.gte(4));
-  //var Csc=Cs.and(Csa.not()).and(Csb.not());
-  var Csc=Cs.and(tenplus.gte(1)).and(tenplus.lt(4));
  
-  var Cfa=Cf.and(maxtemp.gt(22)).and(tenplus.gte(4)).and(summerprecip.gt(0));
-  var Cfb=Cf.and(maxtemp.lt(22)).and(tenplus.gte(4));
-  //var Cfc=Cf.and(Cfa.not()).and(Cfb.not());
-  var Cfc=Cf.and(tenplus.gte(1)).and(tenplus.lt(4));
+// Condition to identify tropical climates (A): Not in Group B (Arid climates) and minimum temperature greater than or equal to 18°C.
+var A = B.not().and(mintemp.gte(18));
+
+// Subcategories within tropical climates:
+// - Af: Tropical climates with minimum precipitation greater than or equal to 60mm.
+var Af = A.and(minprecip.gte(60));
+
+// - Am: Tropical climates with minimum precipitation less than 60mm and greater than or equal to the monsoon minimum threshold.
+var Am = A.and(minprecip.lt(60)).and(minprecip.gte(monsoonminimum));
+
+// - Aw: Tropical climates with minimum precipitation less than 60mm and less than the monsoon minimum threshold.
+var Aw = A.and(minprecip.lt(60)).and(minprecip.lt(monsoonminimum));
+
+                                            // Group C - Temperate climates  
+ 
+// Conditions for identifying temperate climates based on various parameters.
+
+// C represents the general conditions for temperate climates.
+var C = B.not() // Not part of Group B (Arid climates)
+    .and(mintemp.gte(0)) // Minimum temperature greater than or equal to 0°C
+    .and(mintemp.lte(18)) // Minimum temperature less than or equal to 18°C
+    .and(maxtemp.gte(10)); // Maximum temperature greater than or equal to 10°C
+
+// Cw represents conditions for winter precipitation in temperate climates.
+var Cw = C.and(maxsprecip.gte(minwprecip.multiply(10))); // Winter precipitation greater than or equal to 10 times the minimum summer precipitation.
+
+// Cs represents conditions for summer precipitation in temperate climates.
+var Cs = C.and(Cw.not()) // Not part of the winter precipitation conditions
+         .and(maxwprecip.gte(minsprecip.multiply(3))) // Maximum winter precipitation greater than or equal to 3 times the minimum summer precipitation
+         .and(minsprecip.lt(40)); // Minimum summer precipitation less than 40mm.
+
+// Cf represents conditions for other cases within temperate climates.
+var Cf = C.and(Cw.not()).and(Cs.not()); // Conditions not meeting winter or summer precipitation criteria.
+
+// Sub-conditions based on temperature and months with temperature above 10°C (tenplus).
+
+// Cwa represents conditions for warm temperate climates with high precipitation.
+var Cwa = Cw.and(maxtemp.gt(22)).and(tenplus.gte(4)); // Maximum temperature above 22°C and at least 4 months with temperature above 10°C.
+
+// Cwb represents conditions for warm temperate climates with lower precipitation.
+var Cwb = Cw.and(maxtemp.lt(22)).and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
+
+// Cwc represents transitional conditions within warm temperate climates.
+var Cwc = Cw.and(tenplus.gte(1)).and(tenplus.lt(4)); // Between 1 and 3 months with temperature above 10°C.
+
+// Csa represents conditions for cold temperate climates with high precipitation.
+var Csa = Cs.and(maxtemp.gt(22)).and(tenplus.gte(4)); // Maximum temperature above 22°C and at least 4 months with temperature above 10°C.
+
+// Csb represents conditions for cold temperate climates with lower precipitation.
+var Csb = Cs.and(maxtemp.lt(22)).and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
+
+// Csc represents transitional conditions within cold temperate climates.
+var Csc = Cs.and(tenplus.gte(1)).and(tenplus.lt(4)); // Between 1 and 3 months with temperature above 10°C.
+
+// Cfa represents conditions for temperate climates with significant summer precipitation.
+var Cfa = Cf.and(maxtemp.gt(22)).and(tenplus.gte(4)).and(summerprecip.gt(0)); // Maximum temperature above 22°C, at least 4 months with temperature above 10°C, and summer precipitation greater than 0.
+
+// Cfb represents conditions for temperate climates with lower summer precipitation.
+var Cfb = Cf.and(maxtemp.lt(22)).and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
+
+// Cfc represents transitional conditions within temperate climates.
+var Cfc = Cf.and(tenplus.gte(1)).and(tenplus.lt(4)); // Between 1 and 3 months with temperature above 10°C.
+
                                               
                                               // Group D - Continental climates  
                                             
