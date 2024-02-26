@@ -38,7 +38,11 @@ for (var year = 1950; year <= 2014; year++) {
                                   .rename('sumPrecipitation');
         }));
         
-        return meanTemperature.addBands(mp.select('sumPrecipitation').mean()).set('year', y).set('month', month);
+        return meanTemperature.addBands(mp.select('sumPrecipitation').mean())
+                            .set('year', year)
+                            .set('month', month)
+                            .set('system:time_start', startDate.millis())
+                            .set('system:time_end', endDate.millis());
       });
     }).flatten()
   );
