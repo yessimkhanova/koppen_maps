@@ -152,28 +152,61 @@ function createImageCollection(startDate, endDate, args){
           
           // Additional calculations precipitation ('p')
           if (args.symbol == 'p') {
-            var totalP = yearImage.reduce(ee.Reducer.sum()).multiply(1000).rename('totalprecip');
-            var minP = yearImage.reduce(ee.Reducer.min()).multiply(1000).rename('minprecip');
-            var maxP = yearImage.reduce(ee.Reducer.max()).multiply(1000).rename('maxprecip');
+            
+            // Calculate the total precipitation for each pixel across all months in the year and convert to millimeters
+            var totalP = yearImage.reduce(ee.Reducer.sum())
+              .multiply(1000) // Convert from meters to millimeters
+              .rename('totalprecip'); // Rename the resulting band as 'totalprecip'
+            
+            // Calculate the minimum precipitation for each pixel across all months in the year and convert to millimeters
+            var minP = yearImage.reduce(ee.Reducer.min())
+              .multiply(1000) // Convert from meters to millimeters
+              .rename('minprecip'); // Rename the resulting band as 'minprecip'
+            
+            // Calculate the maximum precipitation for each pixel across all months in the year and convert to millimeters
+            var maxP = yearImage.reduce(ee.Reducer.max())
+              .multiply(1000) // Convert from meters to millimeters
+              .rename('maxprecip'); // Rename the resulting band as 'maxprecip'
+            
+            // Calculate the summer precipitation (months 4-9) for each pixel in the year and convert to millimeters
             var summerP = yearImage.select(['p4','p5','p6', 'p7', 'p8', 'p9'])
-                                            .reduce('sum')
-                                            .multiply(1000).rename('nsummerprecip');
+              .reduce('sum') // Sum the precipitation for selected months (April to September)
+              .multiply(1000) // Convert from meters to millimeters
+              .rename('nsummerprecip'); // Rename the resulting band as 'nsummerprecip'
+            
+            // Calculate the winter precipitation (months 10-3) for each pixel in the year and convert to millimeters
             var winterP = yearImage.select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
-                                            .reduce('sum')
-                                            .multiply(1000).rename('winterprecip');
+              .reduce('sum') // Sum the precipitation for selected months (October to March)
+              .multiply(1000) // Convert from meters to millimeters
+              .rename('winterprecip'); // Rename the resulting band as 'winterprecip'
+            
+            // Calculate the maximum winter precipitation for each pixel in the year and convert to millimeters
             var maxWinterP = yearImage.select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
-                                              .reduce('max')
-                                              .multiply(1000).rename('maxwprecip');
+              .reduce('max') // Find the maximum precipitation for selected months (October to March)
+              .multiply(1000) // Convert from meters to millimeters
+              .rename('maxwprecip'); // Rename the resulting band as 'maxwprecip'
+            
+            // Calculate the minimum winter precipitation for each pixel in the year and convert to millimeters
             var minWinterP = yearImage.select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
-                                              .reduce('min')
-                                              .multiply(1000).rename('minwprecip');
+              .reduce('min') // Find the minimum precipitation for selected months (October to March)
+              .multiply(1000) // Convert from meters to millimeters
+              .rename('minwprecip'); // Rename the resulting band as 'minwprecip'
+            
+            // Calculate the maximum summer precipitation for each pixel in the year and convert to millimeters
             var maxSummerP = yearImage.select(['p4','p5','p6', 'p7', 'p8', 'p9'])
-                                              .reduce('max')
-                                              .multiply(1000).rename('maxsprecip');
+              .reduce('max') // Find the maximum precipitation for selected months (April to September)
+              .multiply(1000) // Convert from meters to millimeters
+              .rename('maxsprecip'); // Rename the resulting band as 'maxsprecip'
+            
+            // Calculate the minimum summer precipitation for each pixel in the year and convert to millimeters
             var minSummerP = yearImage.select(['p4','p5','p6', 'p7', 'p8', 'p9'])
-                                              .reduce('min')
-                                              .multiply(1000).rename('minsprecip');
+              .reduce('min') // Find the minimum precipitation for selected months (April to September)
+              .multiply(1000) // Convert from meters to millimeters
+              .rename('minsprecip'); // Rename the resulting band as 'minsprecip'
+            
+            // Add the calculated precipitation bands to the original image
             yearImage = yearImage.addBands([totalP, minP, maxP, summerP, winterP, maxWinterP, minWinterP, maxSummerP, minSummerP]);
+
           }
           
           yearImage = yearImage.set('year', year); // Set the 'year' property and add the current year image to the list.
