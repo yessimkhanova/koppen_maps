@@ -13,7 +13,7 @@ var startDate = ee.Date('1950-01-01');
 var endDate = ee.Date('2014-12-31');
 
 // Loop over years and export images
-for (var year = 1950; year <= 2015; year++) {
+for (var year = 1950; year <= 2014; year++) {
   var dateRange = ee.DateRange(ee.Date(year + '-01-01'), ee.Date(year + '-12-31'));
   var filteredCollection = collection.filterDate(dateRange);
 
