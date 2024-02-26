@@ -575,13 +575,15 @@ var classes = Af.multiply(1)                // Af class assigned numeric value 1
                 .add(Dsd.multiply(29))      // Dsd class assigned numeric value 29 (color "D8BFD8")
                 .add(ET.multiply(30))       // ET class assigned numeric value 30 (color "A9A9A9")
                 .add(EF.multiply(31))       // EF class assigned numeric value 31 (color "696969")
-    .rename('zone')
-      .set({year:image.get('year'),
-      zoneNames: zoneNames
+            .rename('zone')                 // Renames the resulting image to 'zone'.
+        .set({                              // Sets metadata for the resulting image.
+              year: image.get('year'),      // Sets the 'year' metadata to the value obtained from the input image.
+              zoneNames: zoneNames          // Sets the 'zoneNames' metadata to the 'zoneNames' object.
     });
-  return classes;
+  return classes; // The resulting image with climate zone classifications and metadata is returned when the function is called.
 }
-//
+
+
 function classificateImage(startDate, endDate){
   var tempImage = createImageCollection(startDate, endDate, keyMap.temperature);
   var precipImage = createImageCollection(startDate, endDate, keyMap.precipitation);
