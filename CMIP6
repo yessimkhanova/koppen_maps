@@ -1,19 +1,11 @@
-ee.ImageCollection("NASA/GDDP-CMIP6")
-  .filter(ee.Filter.and(
-    ee.Filter.eq('model', 'GISS-E2-1-G'),
-    ee.Filter.eq('scenario', 'historical')
-  ))
-  .filterBounds(country);
-  
-  
 // Export GEOBoarders
 var path = "FAO/GAUL_SIMPLIFIED_500m/2015/level0"; // Set the path to the GAUL dataset, which contains simplified country borders at 500m resolution in 2015.
 var country_code = 132; //// Set the country code for Kazakhstan.
 var country = ee.FeatureCollection(path).filter(ee.Filter.eq('ADM0_CODE', country_code)); // Filter the country feature collection for Kazakhstan.
 
 // Export collection
-var collection_path = "ECMWF/ERA5/MONTHLY"; // Set the path to the ERA5-Land monthly aggregated dataset.
-var collection = ee.ImageCollection(collection_path); // Create an ImageCollection from the specified path.
+var collection_path = "NASA/GDDP-CMIP6"; // Set the path to the ERA5-Land monthly aggregated dataset.
+var collection = ee.ImageCollection(collection_path).filter(ee.Filter.eq('scenario', 'historical')); // Create an ImageCollection from the specified path.
 //print(collection)
 
 var dateRange = collection.reduceColumns(ee.Reducer.minMax(), ['system:time_start']); // Calculate the minimum and maximum time start values in the collection.
