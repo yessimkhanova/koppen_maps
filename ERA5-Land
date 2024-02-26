@@ -423,6 +423,7 @@ var BSk = BS.and(h.not()); // Arid climates with sufficient precipitation during
 var A = B.not().and(mintemp.gte(18));
 
 // Subcategories within tropical climates:
+
 // Af: Tropical climates with minimum precipitation greater than or equal to 60mm.
 var Af = A.and(minprecip.gte(60));
 
