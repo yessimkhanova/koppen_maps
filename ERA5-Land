@@ -585,10 +585,10 @@ var classes = Af.multiply(1)                // Af class assigned numeric value 1
 
 
 function classificateImage(startDate, endDate) {
-  // Create an image collection for temperature data between startDate and endDate
+  // Create an image collection for temperature data between startDate and endDate and uses the key associated with temperature data from 'keyMap'
   var tempImage = createImageCollection(startDate, endDate, keyMap.temperature);
 
-  // Create an image collection for precipitation data between startDate and endDate
+  // Create an image collection for precipitation data between startDate and endDate and uses the key associated with precipitation data from 'keyMap'
   var precipImage = createImageCollection(startDate, endDate, keyMap.precipitation);
 
   // Calculate the mean temperature image from the temperature image collection
