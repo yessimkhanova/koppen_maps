@@ -254,7 +254,9 @@ function createImageCollection(startDate, endDate, args){
                                     // The argument symbol is derived from the keyMap configuration.
                                     // This condition is checking whether the data being processed is related to precipitation ('p').
                                     // If true, additional calculations for precipitation will be performed.
-
+                                    // Rename precipitation bands from generic names to more meaningful names ('p1' to 'p12') for better interpretation
+                                    // Correspondence: 'p1' represents January, 'p2' represents February, ..., 'p12' represents December
+            
             // Calculate the total precipitation for each pixel across all months in the year and convert to millimeters
             var totalP = yearImage.reduce(ee.Reducer.sum())
               .multiply(1000) // Convert from meters to millimeters
