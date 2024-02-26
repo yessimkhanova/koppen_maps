@@ -70,7 +70,8 @@ for (var year = 1950; year <= 2014; year++) {
   var multiBandImage = temperatureImage.addBands(precipitationImage);
   multiBandImage = multiBandImage.set('year', year);
 
-  // Export the multiband image for precipitation to Earth Engine Assets
+/*
+ // Export the multiband image for precipitation to Earth Engine Assets
   Export.image.toAsset({
     image: precipitationImage,
     description: 'pr' + year + '-avgmodels',
@@ -85,4 +86,5 @@ for (var year = 1950; year <= 2014; year++) {
     assetId: 'users/yessimkhanovakalamkas/CMIP6_temperatureMeanOfModels/tas' + year + '-avgmodels',
     scale: 27830 // Resolution of the source dataset is 27830 meters, so it is set by default
    });
+*/
 }
