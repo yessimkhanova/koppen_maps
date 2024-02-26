@@ -1,6 +1,5 @@
 // Export GEOBoarders
-var path = "FAO/GAUL_SIMPLIFIED_500m/2015/level0"; // Set the path to the GAUL dataset, which contains simplified country borders at 500m resolution in 2015.
-var country_code = 132; // Set the country code for Kazakhstan.
+var path = "FAO/GAUL_SIMPLIFIED_500m/2015/level0"; var country_code = 132; // Set the country code for Kazakhstan.
 var country = ee.FeatureCollection(path).filter(ee.Filter.eq('ADM0_CODE', country_code)); // Filter the country feature collection for Kazakhstan.
 
 var multibandImageT = ee.Image("users/yessimkhanovakalamkas/temp_avgmodels");
