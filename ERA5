@@ -224,6 +224,8 @@ function createImageCollection(startDate, endDate, args){
                                     // The argument symbol is derived from the keyMap configuration.
                                     // This condition is checking whether the data being processed is related to temperature ('t').
                                     // If true, additional calculations for temperature will be performed.
+                                    // Rename temperature bands from generic names to more meaningful names ('t1' to 't12') for better interpretation
+                                    // Correspondence: 't1' represents January, 't2' represents February, ..., 't12' represents December
             
             // Calculate the average temperature for each pixel across all months in the year
             var avgT = yearImage.reduce(ee.Reducer.mean())
