@@ -248,8 +248,8 @@ print('Yearly Images Collection:Precip', yearlyImagesP);
 print('Yearly Images Collection:Temp', yearlyImagesT);
 print('Yearly Images Collection together', yearlyImages);
 
-var finalyearlyImages = yearlyImages.mean();
-print(finalyearlyImages);
+var finalYearlyImages = yearlyImages.mean();
+print(finalYearlyImages);
 
 
 var northernHemisphere=ee.Image.pixelLonLat().select('latitude').gt(0); // Determine which hemisphere the pixel belongs to
@@ -522,23 +522,9 @@ var classes = Af.multiply(1)                // Af class assigned numeric value 1
 
 
 function classificateImage(startDate, endDate) {
-  // Create an image collection for temperature data between startDate and endDate and uses the key associated with temperature data from 'keyMap'
-  var tempImage = createImageCollection(startDate, endDate, keyMap.temperature);
-
-  // Create an image collection for precipitation data between startDate and endDate and uses the key associated with precipitation data from 'keyMap'
-  var precipImage = createImageCollection(startDate, endDate, keyMap.precipitation);
-
-  // Calculate the mean temperature image from the temperature image collection
-  var tempMeanImage = tempImage.mean();
-
-  // Calculate the mean precipitation image from the precipitation image collection
-  var precipMeanImage = precipImage.mean();
-
-  // Combine the mean temperature and precipitation images into a single image
-  var finalYearlyImage = precipMeanImage.addBands(tempMeanImage);
-
+  
   // Perform climate zone classification using the Koppen climate classification function
-  var classification = koppenClass(finalYearlyImage);
+  var classification = koppenClass(finalYearlyImages);
 
   // Return the resulting climate zone classification image
   return classification;
@@ -574,15 +560,15 @@ var projectTitleLabel = ui.Label({ // Creates a label widget for the project tit
 // Info Text
 var infoPanel = ui.Panel({ // Creates a panel to display information about the project.
   widgets: [ // Contains multiple label widgets with project information.
-    ui.Label('This Köppen Climate Classification map is generated using Google Earth Engine and ERA5 Monthly Aggregated climate reanalysis data.', { fontSize: '14px' }),
-    ui.Label('The map classifies climate of Kazakhstan based on monthly mean temperature and precipitation amount parameters. ', { fontSize: '14px' }),
-    ui.Label('More information about methodology DOI [place here]. ', { fontSize: '14px' }),
-    ui.Label('Access the script DOI [place here]. ', { fontSize: '14px' }),ui.Label('This work is part of a doctoral research project conducted by Kalamkas Yessimkhanova, supervised by Dr. Matyas Gede at Eötvös Loránd University, Budapest.', { fontSize: '14px' }),
-    ui.Label('Credit is given to Google Earth Engine for its powerful geospatial analysis capabilities and ECMWF / Copernicus Climate Change Service for providing valuable climate data.', { fontSize: '14px' }),
+     ui.Label('This Köppen Climate Classification map is generated using Google Earth Engine and CMIP6 models.', { fontSize: '14px' }),
+    ui.Label('The map classifies climate of Kazakhstan based on monthly mean temperature and precipitation amount parameters of CMIP6 climate models mean values. ', { fontSize: '14px' }),
+    ui.Label('More information about methodology DOI. ', { fontSize: '14px' }),
+    ui.Label('Access the script DOI. ', { fontSize: '14px' }),ui.Label('This work is part of a doctoral research project conducted by Kalamkas Yessimkhanova, supervised by Dr. Matyas Gede at Eötvös Loránd University, Budapest.', { fontSize: '14px' }),
+    ui.Label('Credit is given to Google Earth Engine for its powerful geospatial analysis capabilities and NASA/Climate Analytics Group for providing valuable climate data.', { fontSize: '14px' }),
     ui.Label('Please contact Kalamkas Yessimkhanova for questions, comments, and feedback.', { fontSize: '12px' }),
     ui.Label('Email: kalamkasyessimkhanova@gmail.com', { fontSize: '12px', fontWeight: 'bold'}),
-    ui.Label('Use the slider to select the time period for visualizing Köppen climate maps.', { fontSize: '15px', fontWeight: 'bold'}),
-  ],
+    ui.Label('Use the slider to select the time period for visualizing Köppen climate maps.', { fontSize: '17px', fontWeight: 'bold'}),
+ ],
   style: {
     width: '300px'
   }
