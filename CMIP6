@@ -42,6 +42,7 @@ for (var year = 1950; year <= 2014; year++) {
       });
     }).flatten()
   );
+  print(monthlyMeansCollection)
+
   
 }
-print(monthlyMeansCollection)
