@@ -1,10 +1,13 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var imageCollection = ee.ImageCollection("ECMWF/ERA5/MONTHLY");
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Export GEOBoarders
 var path = "FAO/GAUL_SIMPLIFIED_500m/2015/level0"; // Set the path to the GAUL dataset, which contains simplified country borders at 500m resolution in 2015.
 var country_code = 132; //// Set the country code for Kazakhstan.
 var country = ee.FeatureCollection(path).filter(ee.Filter.eq('ADM0_CODE', country_code)); // Filter the country feature collection for Kazakhstan.
 
 // Export collection
-var collection_path = "ECMWF/ERA5_LAND/MONTHLY_AGGR"; // Set the path to the ERA5-Land monthly aggregated dataset.
+var collection_path = "ECMWF/ERA5/MONTHLY"; // Set the path to the ERA5-Land monthly aggregated dataset.
 var collection = ee.ImageCollection(collection_path); // Create an ImageCollection from the specified path.
 //print(collection)
 
@@ -42,11 +45,11 @@ var endDate = ee.Date(dateRange.get('max')); // Extract the maximum date from th
 var keyMap = {
   "temperature": {
     "symbol": "t",
-    "band": "temperature_2m"
+    "band": "mean_2m_air_temperature"
   },
   "precipitation": {
     "symbol": "p",
-    "band": "total_precipitation_sum"
+    "band": "total_precipitation"
   }
 };
 
