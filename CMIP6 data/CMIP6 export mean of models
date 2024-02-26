@@ -46,6 +46,8 @@ for (var year = 1950; year <= 2014; year++) {
   var multiBandImage = temperatureImage.addBands(precipitationImage);
   //print(multiBandImage)
 
+// Set the 'year' property to the multiband image
+multiBandImage = multiBandImage.set('year', year);
 
   // Export the image to your Earth Engine Assets
   Export.image.toAsset({
