@@ -233,13 +233,13 @@ function koppenClass(image) {
   var tenplus=image.select('tenplusmonths');
   var minprecip=image.select('minprecip');
   var maxprecip=image.select('maxprecip');
-  var minsprecip=image.select('minsprecip').multiply(nhemi)
+  var minsprecip=image.select('minsprecip').multiply(northernHemishere)
                           .add(image.select('minwprecip').multiply(northernHemishere.not()));
-  var maxsprecip=image.select('maxsprecip').multiply(nhemi)
+  var maxsprecip=image.select('maxsprecip').multiply(northernHemishere)
                           .add(image.select('maxwprecip').multiply(northernHemishere.not()));
-  var minwprecip=image.select('minwprecip').multiply(nhemi)
+  var minwprecip=image.select('minwprecip').multiply(northernHemishere)
                           .add(image.select('minsprecip').multiply(northernHemishere.not()));
-  var maxwprecip=image.select('maxwprecip').multiply(nhemi)
+  var maxwprecip=image.select('maxwprecip').multiply(northernHemishere)
                           .add(image.select('maxsprecip').multiply(northernHemishere.not()));
   
   var precip=image.select('totalprecip');
@@ -250,8 +250,8 @@ function koppenClass(image) {
   var sprecip=image.select('nsummerprecip');
 
   // determining which season is the summer and select that half year's precipitation
-  var summerprecip=sprecip.multiply(nhemi)
-                          .add(precip.subtract(sprecip).multiply(nhemi.not()));
+  var summerprecip=sprecip.multiply(northernHemishere)
+                          .add(precip.subtract(sprecip).multiply(northernHemishere.not()));
   var summerratio=summerprecip.divide(precip);
   var aridthreshold = avgtemp.multiply(20)
                              .add(summerratio.gt(0.3).and(summerratio.lt(0.7)).multiply(140));
