@@ -326,7 +326,8 @@ function createImageCollection(startDate, endDate, args){
         return ee.ImageCollection.fromImages(listOfImages); // Create and return an ImageCollection from the list of generated images
   }
 
-var northernHemisphere=ee.Image.pixelLonLat().select('latitude').gt(0); // Determine which hemisphere the pixel belongs to
+// Determine which hemisphere the pixel belongs to
+var northernHemisphere=ee.Image.pixelLonLat().select('latitude').gt(0); 
 
 // Classification function for Köppen climate classification
 function koppenClass(image) {
