@@ -2,10 +2,12 @@
 var path = "FAO/GAUL_SIMPLIFIED_500m/2015/level0"; var country_code = 132; // Set the country code for Kazakhstan.
 var country = ee.FeatureCollection(path).filter(ee.Filter.eq('ADM0_CODE', country_code)); // Filter the country feature collection for Kazakhstan.
 
-var multibandImageP = ee.Image("users/yessimkhanovakalamkas/pr_monthly_CRU");
-print(multiBandImageP)
-var multibandImageT = ee.Image("users/yessimkhanovakalamkas/tmean_monthly_CRU");
+var multiBandImageT = ee.Image("users/yessimkhanovakalamkas/tmean_monthly_CRU");
 print(multiBandImageT)
+
+var multiBandImageP = ee.Image("users/yessimkhanovakalamkas/pr_monthly_CRU");
+print(multiBandImageP)
+
 // Initialize arrays and dictionaries for colors, zone codes, and zone names
 //Init directory: Köppen climate classification system colors, zoneNames, zoneCodes
 
@@ -176,10 +178,38 @@ years.getInfo().forEach(function (year) {
   var startBand = (year - 1901) * 12; // Calculate the start and end bands for the current year.
   var endBand = startBand + 11;
         
+        // Rename temperature bands from generic names to more meaningful names ('t1' to 't12') for better interpretation
+        var yearImageT = multiBandImageT.select(ee.List.sequence(startBand, endBand));
+            
+            // Correspondence: 't1' represents January, 't2' represents February, ..., 't12' represents December
+            yearImageT = yearImageT.rename(['t1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12']);
+
+                // Calculate the average temperature for each pixel across all months in the year
+                var avgT = yearImageT.reduce(ee.Reducer.mean())
+                                      // .subtract(273) // Convert from Kelvin to Celsius
+                                      .rename('avgtemp'); // Rename the resulting band as 'avgtemp'
+                
+                // Calculate the minimum temperature for each pixel across all months in the year
+                var minT = yearImageT.reduce(ee.Reducer.min())
+                                      // .subtract(273) // Convert from Kelvin to Celsius
+                                      .rename('mintemp'); // Rename the resulting band as 'mintemp'
+                
+                // Calculate the maximum temperature for each pixel across all months in the year
+                var maxT = yearImageT.reduce(ee.Reducer.max())
+                                      // .subtract(273) // Convert from Kelvin to Celsius
+                                      .rename('maxtemp'); // Rename the resulting band as 'maxtemp'
+                
+                // Count the number of months where the temperature is greater than 10 degrees Celsius
+                var monthsGreaterThan10 = yearImageT.gt(10)
+                                                    .reduce('sum') // Sum the number of occurrences
+                                                    .rename('tenplusmonths'); // Rename the resulting band as 'tenplusmonths'
+            
+            // Add the calculated temperature bands to the original image
+            yearImageT = yearImageT.addBands([avgT, minT, maxT, monthsGreaterThan10]);
+    
         // Rename precipitation bands from generic names to more meaningful names ('p1' to 'p12') for better interpretation
-        // Correspondence: 'p1' represents January, 'p2' represents February, ..., 'p12' represents December
         var yearImageP = multiBandImageP.select(ee.List.sequence(startBand, endBand)); 
-            // Select bands corresponding to the current year.
+            // Correspondence: 'p1' represents January, 'p2' represents February, ..., 'p12' represents December
             yearImageP = yearImageP.rename(['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12']);
 
                 // Calculate the total precipitation for each pixel across all months in the year and convert to millimeters
@@ -235,51 +265,19 @@ years.getInfo().forEach(function (year) {
             
             // Add the calculated precipitation bands to the original image
             yearImageP = yearImageP.addBands([totalP, minP, maxP, summerP, winterP, maxWinterP, minWinterP, maxSummerP, minSummerP]);
-      
-            
-        // Rename temperature bands from generic names to more meaningful names ('t1' to 't12') for better interpretation
-        var yearImageT = multiBandImageT.select(ee.List.sequence(startBand, endBand));
-            
-            // Correspondence: 't1' represents January, 't2' represents February, ..., 't12' represents December
-            yearImageT = yearImageT.rename(['t1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12']);
-
-                // Calculate the average temperature for each pixel across all months in the year
-                var avgT = yearImageT.reduce(ee.Reducer.mean())
-                                      // .subtract(273) // Convert from Kelvin to Celsius
-                                      .rename('avgtemp'); // Rename the resulting band as 'avgtemp'
-                
-                // Calculate the minimum temperature for each pixel across all months in the year
-                var minT = yearImageT.reduce(ee.Reducer.min())
-                                      // .subtract(273) // Convert from Kelvin to Celsius
-                                      .rename('mintemp'); // Rename the resulting band as 'mintemp'
-                
-                // Calculate the maximum temperature for each pixel across all months in the year
-                var maxT = yearImageT.reduce(ee.Reducer.max())
-                                      // .subtract(273) // Convert from Kelvin to Celsius
-                                      .rename('maxtemp'); // Rename the resulting band as 'maxtemp'
-                
-                // Count the number of months where the temperature is greater than 10 degrees Celsius
-                var monthsGreaterThan10 = yearImageT.gt(10)
-                                                    .reduce('sum') // Sum the number of occurrences
-                                                    .rename('tenplusmonths'); // Rename the resulting band as 'tenplusmonths'
-            
-            // Add the calculated temperature bands to the original image
-            yearImageT = yearImageT.addBands([avgT, minT, maxT, monthsGreaterThan10]);
-    
    
-  yearImageP = yearImageP.set('year', year);
   yearImageT = yearImageT.set('year', year);
-
+  yearImageP = yearImageP.set('year', year);
   
-  yearlyImagesP = yearlyImagesP.merge(yearImageP);
   yearlyImagesT = yearlyImagesT.merge(yearImageT);
+  yearlyImagesP = yearlyImagesP.merge(yearImageP);
   
   var yearTogether = yearImageP.addBands(yearImageT);
   yearlyImages = yearlyImages.merge(yearTogether);
 });
 
-print('Yearly Images Collection:Precip', yearlyImagesP);
 print('Yearly Images Collection:Temp', yearlyImagesT);
+print('Yearly Images Collection:Precip', yearlyImagesP);
 print('Yearly Images Collection together', yearlyImages);
 
 var finalYearlyImages = yearlyImages.mean();
