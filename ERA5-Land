@@ -223,7 +223,7 @@ function createImageCollection(startDate, endDate, args){
   }
 
 // Classification function for Köppen climate classification
-var northernHemishere=ee.Image.pixelLonLat().select('latitude').gt(0); // Determine which hemisphere the pixel belongs to
+var northernHemisphere=ee.Image.pixelLonLat().select('latitude').gt(0); // Determine which hemisphere the pixel belongs to
 
 function koppenClass(image) {
   // Extract relevant temperature and precipitation related bands from the input image.
