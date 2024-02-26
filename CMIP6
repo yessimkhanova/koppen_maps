@@ -46,7 +46,14 @@ for (var year = 1950; year <= 2014; year++) {
       });
     }).flatten()
   );
-  print(monthlyMeansCollection)
 
-  
+  print(monthlyMeansCollection)
 }
+
+
+  Export.image.toAsset({
+  imageCollection: monthlyMeansCollection,
+  description: 'Monthly_Means_Collection_CMIP6',
+  assetId: 'users/your_username/yessimkhanovakalamkas/monthly_means_collection_CMIP6',
+  
+});
