@@ -51,8 +51,8 @@ for (var year = 1950; year <= 2014; year++) {
   Export.image.toAsset({
     image: precipitationImage,
     description: 'pr' + year + '-avgmodels',
-    assetId: 'users/yessimkhanovakalamkas/CMIP6_precip/pr' + year + '-avgmodels',
-    region: country,
+    assetId: 'users/yessimkhanovakalamkas/CMIP6_precipMeanOfModels/pr' + year + '-avgmodels',
+    //region: country,
     scale: 27830,
    });
   
