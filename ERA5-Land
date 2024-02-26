@@ -221,7 +221,9 @@ function createImageCollection(startDate, endDate, args){
                                     // The argument symbol is derived from the keyMap configuration.
                                     // This condition is checking whether the data being processed is related to temperature ('t').
                                     // If true, additional calculations for temperature will be performed.
-            
+                                    // Rename temperature bands from generic names to more meaningful names ('t1' to 't12') for better interpretation
+                                    // Correspondence: 't1' represents January, 't2' represents February, ..., 't12' represents December
+
             // Calculate the average temperature for each pixel across all months in the year
             var avgT = yearImage.reduce(ee.Reducer.mean())
               .subtract(273) // Convert from Kelvin to Celsius
@@ -251,6 +253,8 @@ function createImageCollection(startDate, endDate, args){
                                     // The argument symbol is derived from the keyMap configuration.
                                     // This condition is checking whether the data being processed is related to precipitation ('p').
                                     // If true, additional calculations for precipitation will be performed.
+                                    // Rename precipitation bands from generic names to more meaningful names ('p1' to 'p12') for better interpretation
+                                    // Correspondence: 'p1' represents January, 'p2' represents February, ..., 'p12' represents December
 
             // Calculate the total precipitation for each pixel across all months in the year and convert to millimeters
             var totalP = yearImage.reduce(ee.Reducer.sum())
