@@ -283,8 +283,8 @@ print('Yearly Images Collection together', yearlyImages);
 var finalYearlyImages = yearlyImages.mean();
 print(finalYearlyImages);
 
-
-var northernHemisphere=ee.Image.pixelLonLat().select('latitude').gt(0); // Determine which hemisphere the pixel belongs to
+// Determine which hemisphere the pixel belongs to
+var northernHemisphere=ee.Image.pixelLonLat().select('latitude').gt(0); 
 
 // Classification function for Köppen climate classification
 function koppenClass(image) {
@@ -311,22 +311,25 @@ function koppenClass(image) {
   // Select the band 'minsprecip' from the input image, multiply it by the northern hemisphere condition,
   // and assign the result to the variable 'minsprecip'
   var minsprecip = image.select('minsprecip').multiply(northernHemisphere)
-      .add(image.select('minwprecip').multiply(northernHemisphere.not())); // Represents the minimum summer precipitation adjusted for the northern hemisphere.
+                        .add(image.select('minwprecip')
+                        .multiply(northernHemisphere.not())); // Represents the minimum summer precipitation adjusted for the northern hemisphere.
   
   // Select the band 'maxsprecip' from the input image, multiply it by the northern hemisphere condition,
   // and assign the result to the variable 'maxsprecip'
   var maxsprecip = image.select('maxsprecip').multiply(northernHemisphere)
-      .add(image.select('maxwprecip').multiply(northernHemisphere.not())); // Represents the maximum summer precipitation adjusted for the northern hemisphere.
+                        .add(image.select('maxwprecip').multiply(northernHemisphere.not())); // Represents the maximum summer precipitation adjusted for the northern hemisphere.
   
   // Select the band 'minwprecip' from the input image, multiply it by the northern hemisphere condition,
   // and assign the result to the variable 'minwprecip'
   var minwprecip = image.select('minwprecip').multiply(northernHemisphere)
-      .add(image.select('minsprecip').multiply(northernHemisphere.not())); // Represents the minimum winter precipitation adjusted for the northern hemisphere.
+                        .add(image.select('minsprecip')
+                        .multiply(northernHemisphere.not())); // Represents the minimum winter precipitation adjusted for the northern hemisphere.
   
   // Select the band 'maxwprecip' from the input image, multiply it by the northern hemisphere condition,
   // and assign the result to the variable 'maxwprecip'
   var maxwprecip = image.select('maxwprecip').multiply(northernHemisphere)
-      .add(image.select('maxsprecip').multiply(northernHemisphere.not())); // Represents the maximum winter precipitation adjusted for the northern hemisphere.
+                        .add(image.select('maxsprecip')
+                        .multiply(northernHemisphere.not())); // Represents the maximum winter precipitation adjusted for the northern hemisphere.
   
   // Select the band 'totalprecip' from the input image and assign it to the variable 'precip'
   var precip = image.select('totalprecip'); // Represents the total precipitation for each pixel across all months in the year.
@@ -341,7 +344,7 @@ function koppenClass(image) {
   // Determine which season is considered as summer and select that half year's precipitation.
   // Multiply 'sprecip' by the northern hemisphere condition and add the precipitation for the other half of the year.
   var summerprecip = sprecip.multiply(northernHemisphere)
-      .add(precip.subtract(sprecip).multiply(northernHemisphere.not())); // 'summerprecip' now represents the adjusted summer precipitation based on the northern hemisphere.
+                            .add(precip.subtract(sprecip).multiply(northernHemisphere.not())); // 'summerprecip' now represents the adjusted summer precipitation based on the northern hemisphere.
   
   // Calculate the ratio of 'summerprecip' to 'precip' and assign it to the variable 'summerratio'
   var summerratio = summerprecip.divide(precip); // Represents the ratio of summer precipitation to total precipitation.
@@ -381,14 +384,17 @@ var BSk = BS.and(h.not()); // Arid climates with sufficient precipitation during
 var A = B.not().and(mintemp.gte(18));
 
 // Subcategories within tropical climates:
-// - Af: Tropical climates with minimum precipitation greater than or equal to 60mm.
+
+// Af: Tropical climates with minimum precipitation greater than or equal to 60mm.
 var Af = A.and(minprecip.gte(60));
 
-// - Am: Tropical climates with minimum precipitation less than 60mm and greater than or equal to the monsoon minimum threshold.
-var Am = A.and(minprecip.lt(60)).and(minprecip.gte(monsoonminimum));
+// Am: Tropical climates with minimum precipitation less than 60mm and greater than or equal to the monsoon minimum threshold.
+var Am = A.and(minprecip.lt(60))
+          .and(minprecip.gte(monsoonminimum));
 
-// - Aw: Tropical climates with minimum precipitation less than 60mm and less than the monsoon minimum threshold.
-var Aw = A.and(minprecip.lt(60)).and(minprecip.lt(monsoonminimum));
+// Aw: Tropical climates with minimum precipitation less than 60mm and less than the monsoon minimum threshold.
+var Aw = A.and(minprecip.lt(60))
+          .and(minprecip.lt(monsoonminimum));
 
                     // Group C - Temperate climates  
  
@@ -414,31 +420,41 @@ var Cf = C.and(Cw.not()).and(Cs.not()); // Conditions not meeting winter or summ
 // Sub-conditions based on temperature and months with temperature above 10°C (tenplus).
 
 // Cwa represents conditions for warm temperate climates with high precipitation.
-var Cwa = Cw.and(maxtemp.gt(22)).and(tenplus.gte(4)); // Maximum temperature above 22°C and at least 4 months with temperature above 10°C.
+var Cwa = Cw.and(maxtemp.gt(22))
+            .and(tenplus.gte(4)); // Maximum temperature above 22°C and at least 4 months with temperature above 10°C.
 
 // Cwb represents conditions for warm temperate climates with lower precipitation.
-var Cwb = Cw.and(maxtemp.lt(22)).and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
+var Cwb = Cw.and(maxtemp.lt(22))
+            .and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
 
 // Cwc represents transitional conditions within warm temperate climates.
-var Cwc = Cw.and(tenplus.gte(1)).and(tenplus.lt(4)); // Between 1 and 3 months with temperature above 10°C.
+var Cwc = Cw.and(tenplus.gte(1))
+            .and(tenplus.lt(4)); // Between 1 and 3 months with temperature above 10°C.
 
 // Csa represents conditions for cold temperate climates with high precipitation.
-var Csa = Cs.and(maxtemp.gt(22)).and(tenplus.gte(4)); // Maximum temperature above 22°C and at least 4 months with temperature above 10°C.
+var Csa = Cs.and(maxtemp.gt(22))
+            .and(tenplus.gte(4)); // Maximum temperature above 22°C and at least 4 months with temperature above 10°C.
 
 // Csb represents conditions for cold temperate climates with lower precipitation.
-var Csb = Cs.and(maxtemp.lt(22)).and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
+var Csb = Cs.and(maxtemp.lt(22))
+            .and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
 
 // Csc represents transitional conditions within cold temperate climates.
-var Csc = Cs.and(tenplus.gte(1)).and(tenplus.lt(4)); // Between 1 and 3 months with temperature above 10°C.
+var Csc = Cs.and(tenplus.gte(1))
+            .and(tenplus.lt(4)); // Between 1 and 3 months with temperature above 10°C.
 
 // Cfa represents conditions for temperate climates with significant summer precipitation.
-var Cfa = Cf.and(maxtemp.gt(22)).and(tenplus.gte(4)).and(summerprecip.gt(0)); // Maximum temperature above 22°C, at least 4 months with temperature above 10°C, and summer precipitation greater than 0.
+var Cfa = Cf.and(maxtemp.gt(22))
+            .and(tenplus.gte(4))
+            .and(summerprecip.gt(0)); // Maximum temperature above 22°C, at least 4 months with temperature above 10°C, and summer precipitation greater than 0.
 
 // Cfb represents conditions for temperate climates with lower summer precipitation.
-var Cfb = Cf.and(maxtemp.lt(22)).and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
+var Cfb = Cf.and(maxtemp.lt(22))
+            .and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
 
 // Cfc represents transitional conditions within temperate climates.
-var Cfc = Cf.and(tenplus.gte(1)).and(tenplus.lt(4)); // Between 1 and 3 months with temperature above 10°C.
+var Cfc = Cf.and(tenplus.gte(1))
+            .and(tenplus.lt(4)); // Between 1 and 3 months with temperature above 10°C.
 
                                               
                     // Group D - Continental climates
@@ -447,61 +463,77 @@ var Cfc = Cf.and(tenplus.gte(1)).and(tenplus.lt(4)); // Between 1 and 3 months w
 
 // D represents the general conditions for continental climates.
 var D = B.not() // Not part of Group B (Arid climates)
-    .and(C.not()) // Not part of Group C (Temperate climates)
-    .and(mintemp.lt(0)) // Minimum temperature less than 0°C
-    .and(maxtemp.gt(10)); // Maximum temperature greater than 10°C
+         .and(C.not()) // Not part of Group C (Temperate climates)
+         .and(mintemp.lt(0)) // Minimum temperature less than 0°C
+         .and(maxtemp.gt(10)); // Maximum temperature greater than 10°C
 
 // Dw represents conditions for winter precipitation in continental climates.
 var Dw = D.and(maxsprecip.gt(minwprecip.multiply(10))); // Winter precipitation greater than 10 times the minimum summer precipitation.
 
 // Ds represents conditions for summer precipitation in continental climates.
 var Ds = D.and(maxwprecip.gt(minsprecip.multiply(3))) // Maximum winter precipitation greater than 3 times the minimum summer precipitation
-         .and(minsprecip.lt(30)); // Minimum summer precipitation less than 30mm.
+          .and(minsprecip.lt(30)); // Minimum summer precipitation less than 30mm.
 
 // Df represents conditions for other cases within continental climates.
-var Df = D.and(Dw.not()).and(Ds.not()); // Conditions not meeting winter or summer precipitation criteria.
+var Df = D.and(Dw.not())
+          .and(Ds.not()); // Conditions not meeting winter or summer precipitation criteria.
 
 // Sub-conditions based on temperature and months with temperature above 10°C (tenplus).
 
 // Dfa represents conditions for continental climates with significant summer precipitation and high temperatures.
-var Dfa = Df.and(maxtemp.gt(22)).and(tenplus.gte(4)); // Maximum temperature above 22°C and at least 4 months with temperature above 10°C.
+var Dfa = Df.and(maxtemp.gt(22))
+            .and(tenplus.gte(4)); // Maximum temperature above 22°C and at least 4 months with temperature above 10°C.
 
 // Dfb represents conditions for continental climates with lower summer precipitation and high temperatures.
-var Dfb = Df.and(maxtemp.lte(22)).and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
+var Dfb = Df.and(maxtemp.lte(22))
+            .and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
 
 // Dfd represents conditions for continental climates with low temperatures and minimal summer precipitation.
-var Dfd = Df.and(mintemp.lte(-38)).and(tenplus.lt(4)); // Minimum temperature below or equal to -38°C and less than 4 months with temperature above 10°C.
+var Dfd = Df.and(mintemp.lte(-38))
+            .and(tenplus.lt(4)); // Minimum temperature below or equal to -38°C and less than 4 months with temperature above 10°C.
 
 // Dfc represents transitional conditions within continental climates.
-var Dfc = Df.and(Dfa.not()).and(Dfb.not()).and(Dfd.not()); // Conditions not meeting Dfa, Dfb, or Dfd criteria.
+var Dfc = Df.and(Dfa.not())
+            .and(Dfb.not())
+            .and(Dfd.not()); // Conditions not meeting Dfa, Dfb, or Dfd criteria.
 
 // Sub-conditions within Dw:
 
 // Dwa represents conditions for continental climates with significant summer precipitation and high temperatures.
-var Dwa = Dw.and(maxtemp.gte(22)).and(tenplus.gte(4)); // Maximum temperature above or equal to 22°C and at least 4 months with temperature above 10°C.
+var Dwa = Dw.and(maxtemp.gte(22)) 
+            .and(tenplus.gte(4)); // Maximum temperature above or equal to 22°C and at least 4 months with temperature above 10°C.
 
 // Dwb represents conditions for continental climates with lower summer precipitation and high temperatures.
-var Dwb = Dw.and(maxtemp.lt(22)).and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
+var Dwb = Dw.and(maxtemp.lt(22))
+            .and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
 
 // Dwd represents conditions for continental climates with low temperatures and minimal summer precipitation.
-var Dwd = Dw.and(mintemp.lte(-38)).and(tenplus.lt(4)); // Minimum temperature below or equal to -38°C and less than 4 months with temperature above 10°C.
+var Dwd = Dw.and(mintemp.lte(-38))
+            .and(tenplus.lt(4)); // Minimum temperature below or equal to -38°C and less than 4 months with temperature above 10°C.
 
 // Dwc represents transitional conditions within Dw.
-var Dwc = Dw.and(Dwa.not()).and(Dwb.not()).and(Dwd.not()); // Conditions not meeting Dwa, Dwb, or Dwd criteria.
+var Dwc = Dw.and(Dwa.not())
+            .and(Dwb.not())
+            .and(Dwd.not()); // Conditions not meeting Dwa, Dwb, or Dwd criteria.
 
 // Sub-conditions within Ds:
 
 // Dsa represents conditions for continental climates with significant summer precipitation and high temperatures.
-var Dsa = Ds.and(maxtemp.gt(22)).and(tenplus.gte(4)); // Maximum temperature above 22°C and at least 4 months with temperature above 10°C.
+var Dsa = Ds.and(maxtemp.gt(22))
+            .and(tenplus.gte(4)); // Maximum temperature above 22°C and at least 4 months with temperature above 10°C.
 
 // Dsb represents conditions for continental climates with lower summer precipitation and high temperatures.
-var Dsb = Ds.and(maxtemp.lt(22)).and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
+var Dsb = Ds.and(maxtemp.lt(22))
+            .and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
 
 // Dsd represents conditions for continental climates with low temperatures and minimal summer precipitation.
-var Dsd = Ds.and(mintemp.lte(-38)).and(tenplus.lt(4)); // Minimum temperature below or equal to -38°C and less than 4 months with temperature above 10°C.
+var Dsd = Ds.and(mintemp.lte(-38))
+            .and(tenplus.lt(4)); // Minimum temperature below or equal to -38°C and less than 4 months with temperature above 10°C.
 
 // Dsc represents transitional conditions within Ds.
-var Dsc = Ds.and(Dsa.not()).and(Dsb.not()).and(Dsd.not()); // Conditions not meeting Dsa, Dsb, or Dsd criteria.
+var Dsc = Ds.and(Dsa.not())
+            .and(Dsb.not())
+            .and(Dsd.not()); // Conditions not meeting Dsa, Dsb, or Dsd criteria.
 
                     // Group E - Polar and alpine climates
 
@@ -551,6 +583,7 @@ var classes = Af.multiply(1)                // Af class assigned numeric value 1
     });
   return classes; // The resulting image with climate zone classifications and metadata is returned when the function is called.
 }
+
 
 
 function classificateImage(startDate, endDate) {
