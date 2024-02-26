@@ -170,6 +170,7 @@ years.getInfo().forEach(function (year) {
   var endBand = startBand + 11;
         
         // Rename precipitation bands from generic names to more meaningful names ('p1' to 'p12') for better interpretation
+        // Correspondence: 'p1' represents January, 'p2' represents February, ..., 'p12' represents December
         var yearImageP = multibandImageP.select(ee.List.sequence(startBand, endBand)); 
             // Select bands corresponding to the current year.
             yearImageP = yearImageP.rename(['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12']);
