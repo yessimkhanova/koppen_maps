@@ -198,10 +198,14 @@ var keyMap = {
 
 // Create a function to generate an ImageCollection with calculations
 function createImageCollection(startDate, endDate, args){
+  
   var listOfImages = []; // Initialize an empty array to store individual images.
+  
   var filteredCollection = collection.filter(ee.Filter.calendarRange(startDate, endDate, 'year')); // Filter the collection based on the specified date range.
   var selectedImage = filteredCollection.select(args.band).toBands(); // Select the specified band(s) from the keyMap configuration and convert them to bands.
+ 
   var years = ee.List.sequence(startDate, endDate); // Generate a list of band names for each month.
+  
   var listOfDim = []; // Initialize an empty array to store band names.
     for (var i = 1; i <= 12; i++) { // Loop from 1 to 12 (representing months) and push new band names to the array.
           listOfDim.push(args.symbol + i); // Each band name is formed by concatenating the symbol from args
@@ -223,26 +227,26 @@ function createImageCollection(startDate, endDate, args){
                                     // If true, additional calculations for temperature will be performed.
                                     // Rename temperature bands from generic names to more meaningful names ('t1' to 't12') for better interpretation
                                     // Correspondence: 't1' represents January, 't2' represents February, ..., 't12' represents December
-
+            
             // Calculate the average temperature for each pixel across all months in the year
             var avgT = yearImage.reduce(ee.Reducer.mean())
-              .subtract(273) // Convert from Kelvin to Celsius
-              .rename('avgtemp'); // Rename the resulting band as 'avgtemp'
+                                .subtract(273) // Convert from Kelvin to Celsius
+                                .rename('avgtemp'); // Rename the resulting band as 'avgtemp'
             
             // Calculate the minimum temperature for each pixel across all months in the year
             var minT = yearImage.reduce(ee.Reducer.min())
-              .subtract(273) // Convert from Kelvin to Celsius
-              .rename('mintemp'); // Rename the resulting band as 'mintemp'
+                                .subtract(273) // Convert from Kelvin to Celsius
+                                .rename('mintemp'); // Rename the resulting band as 'mintemp'
             
             // Calculate the maximum temperature for each pixel across all months in the year
             var maxT = yearImage.reduce(ee.Reducer.max())
-              .subtract(273) // Convert from Kelvin to Celsius
-              .rename('maxtemp'); // Rename the resulting band as 'maxtemp'
+                                .subtract(273) // Convert from Kelvin to Celsius
+                                .rename('maxtemp'); // Rename the resulting band as 'maxtemp'
             
             // Count the number of months where the temperature is greater than 10 degrees Celsius
             var monthsGreaterThan10 = yearImage.gt(10)
-              .reduce('sum') // Sum the number of occurrences
-              .rename('tenplusmonths'); // Rename the resulting band as 'tenplusmonths'
+                                                .reduce('sum') // Sum the number of occurrences
+                                                .rename('tenplusmonths'); // Rename the resulting band as 'tenplusmonths'
             
             // Add the calculated temperature bands to the original image
             yearImage = yearImage.addBands([avgT, minT, maxT, monthsGreaterThan10]);
@@ -255,57 +259,57 @@ function createImageCollection(startDate, endDate, args){
                                     // If true, additional calculations for precipitation will be performed.
                                     // Rename precipitation bands from generic names to more meaningful names ('p1' to 'p12') for better interpretation
                                     // Correspondence: 'p1' represents January, 'p2' represents February, ..., 'p12' represents December
-
+            
             // Calculate the total precipitation for each pixel across all months in the year and convert to millimeters
             var totalP = yearImage.reduce(ee.Reducer.sum())
-              .multiply(1000) // Convert from meters to millimeters
-              .rename('totalprecip'); // Rename the resulting band as 'totalprecip'
+                                  .multiply(1000) // Convert from meters to millimeters
+                                  .rename('totalprecip'); // Rename the resulting band as 'totalprecip'
             
             // Calculate the minimum precipitation for each pixel across all months in the year and convert to millimeters
             var minP = yearImage.reduce(ee.Reducer.min())
-              .multiply(1000) // Convert from meters to millimeters
-              .rename('minprecip'); // Rename the resulting band as 'minprecip'
+                                .multiply(1000) // Convert from meters to millimeters
+                                .rename('minprecip'); // Rename the resulting band as 'minprecip'
             
             // Calculate the maximum precipitation for each pixel across all months in the year and convert to millimeters
             var maxP = yearImage.reduce(ee.Reducer.max())
-              .multiply(1000) // Convert from meters to millimeters
-              .rename('maxprecip'); // Rename the resulting band as 'maxprecip'
+                                .multiply(1000) // Convert from meters to millimeters
+                                .rename('maxprecip'); // Rename the resulting band as 'maxprecip'
             
             // Calculate the summer precipitation (months 4-9) for each pixel in the year and convert to millimeters
             var summerP = yearImage.select(['p4','p5','p6', 'p7', 'p8', 'p9'])
-              .reduce('sum') // Sum the precipitation for selected months (April to September)
-              .multiply(1000) // Convert from meters to millimeters
-              .rename('nsummerprecip'); // Rename the resulting band as 'nsummerprecip'
+                                   .reduce('sum') // Sum the precipitation for selected months (April to September)
+                                   .multiply(1000) // Convert from meters to millimeters
+                                   .rename('nsummerprecip'); // Rename the resulting band as 'nsummerprecip'
             
             // Calculate the winter precipitation (months 10-3) for each pixel in the year and convert to millimeters
             var winterP = yearImage.select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
-              .reduce('sum') // Sum the precipitation for selected months (October to March)
-              .multiply(1000) // Convert from meters to millimeters
-              .rename('winterprecip'); // Rename the resulting band as 'winterprecip'
-            
+                                   .reduce('sum') // Sum the precipitation for selected months (October to March)
+                                   .multiply(1000) // Convert from meters to millimeters
+                                   .rename('winterprecip'); // Rename the resulting band as 'winterprecip'
+                                
             // Calculate the maximum winter precipitation for each pixel in the year and convert to millimeters
             var maxWinterP = yearImage.select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
-              .reduce('max') // Find the maximum precipitation for selected months (October to March)
-              .multiply(1000) // Convert from meters to millimeters
-              .rename('maxwprecip'); // Rename the resulting band as 'maxwprecip'
+                                      .reduce('max') // Find the maximum precipitation for selected months (October to March)
+                                      .multiply(1000) // Convert from meters to millimeters
+                                      .rename('maxwprecip'); // Rename the resulting band as 'maxwprecip'
             
             // Calculate the minimum winter precipitation for each pixel in the year and convert to millimeters
             var minWinterP = yearImage.select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
-              .reduce('min') // Find the minimum precipitation for selected months (October to March)
-              .multiply(1000) // Convert from meters to millimeters
-              .rename('minwprecip'); // Rename the resulting band as 'minwprecip'
+                                      .reduce('min') // Find the minimum precipitation for selected months (October to March)
+                                      .multiply(1000) // Convert from meters to millimeters
+                                      .rename('minwprecip'); // Rename the resulting band as 'minwprecip'
             
             // Calculate the maximum summer precipitation for each pixel in the year and convert to millimeters
             var maxSummerP = yearImage.select(['p4','p5','p6', 'p7', 'p8', 'p9'])
-              .reduce('max') // Find the maximum precipitation for selected months (April to September)
-              .multiply(1000) // Convert from meters to millimeters
-              .rename('maxsprecip'); // Rename the resulting band as 'maxsprecip'
+                                      .reduce('max') // Find the maximum precipitation for selected months (April to September)
+                                      .multiply(1000) // Convert from meters to millimeters
+                                      .rename('maxsprecip'); // Rename the resulting band as 'maxsprecip'
             
             // Calculate the minimum summer precipitation for each pixel in the year and convert to millimeters
             var minSummerP = yearImage.select(['p4','p5','p6', 'p7', 'p8', 'p9'])
-              .reduce('min') // Find the minimum precipitation for selected months (April to September)
-              .multiply(1000) // Convert from meters to millimeters
-              .rename('minsprecip'); // Rename the resulting band as 'minsprecip'
+                                      .reduce('min') // Find the minimum precipitation for selected months (April to September)
+                                      .multiply(1000) // Convert from meters to millimeters
+                                      .rename('minsprecip'); // Rename the resulting band as 'minsprecip'
             
             // Add the calculated precipitation bands to the original image
             yearImage = yearImage.addBands([totalP, minP, maxP, summerP, winterP, maxWinterP, minWinterP, maxSummerP, minSummerP]);
@@ -346,22 +350,25 @@ function koppenClass(image) {
   // Select the band 'minsprecip' from the input image, multiply it by the northern hemisphere condition,
   // and assign the result to the variable 'minsprecip'
   var minsprecip = image.select('minsprecip').multiply(northernHemisphere)
-      .add(image.select('minwprecip').multiply(northernHemisphere.not())); // Represents the minimum summer precipitation adjusted for the northern hemisphere.
+                        .add(image.select('minwprecip')
+                        .multiply(northernHemisphere.not())); // Represents the minimum summer precipitation adjusted for the northern hemisphere.
   
   // Select the band 'maxsprecip' from the input image, multiply it by the northern hemisphere condition,
   // and assign the result to the variable 'maxsprecip'
   var maxsprecip = image.select('maxsprecip').multiply(northernHemisphere)
-      .add(image.select('maxwprecip').multiply(northernHemisphere.not())); // Represents the maximum summer precipitation adjusted for the northern hemisphere.
+                        .add(image.select('maxwprecip').multiply(northernHemisphere.not())); // Represents the maximum summer precipitation adjusted for the northern hemisphere.
   
   // Select the band 'minwprecip' from the input image, multiply it by the northern hemisphere condition,
   // and assign the result to the variable 'minwprecip'
   var minwprecip = image.select('minwprecip').multiply(northernHemisphere)
-      .add(image.select('minsprecip').multiply(northernHemisphere.not())); // Represents the minimum winter precipitation adjusted for the northern hemisphere.
+                        .add(image.select('minsprecip')
+                        .multiply(northernHemisphere.not())); // Represents the minimum winter precipitation adjusted for the northern hemisphere.
   
   // Select the band 'maxwprecip' from the input image, multiply it by the northern hemisphere condition,
   // and assign the result to the variable 'maxwprecip'
   var maxwprecip = image.select('maxwprecip').multiply(northernHemisphere)
-      .add(image.select('maxsprecip').multiply(northernHemisphere.not())); // Represents the maximum winter precipitation adjusted for the northern hemisphere.
+                        .add(image.select('maxsprecip')
+                        .multiply(northernHemisphere.not())); // Represents the maximum winter precipitation adjusted for the northern hemisphere.
   
   // Select the band 'totalprecip' from the input image and assign it to the variable 'precip'
   var precip = image.select('totalprecip'); // Represents the total precipitation for each pixel across all months in the year.
@@ -376,7 +383,7 @@ function koppenClass(image) {
   // Determine which season is considered as summer and select that half year's precipitation.
   // Multiply 'sprecip' by the northern hemisphere condition and add the precipitation for the other half of the year.
   var summerprecip = sprecip.multiply(northernHemisphere)
-      .add(precip.subtract(sprecip).multiply(northernHemisphere.not())); // 'summerprecip' now represents the adjusted summer precipitation based on the northern hemisphere.
+                            .add(precip.subtract(sprecip).multiply(northernHemisphere.not())); // 'summerprecip' now represents the adjusted summer precipitation based on the northern hemisphere.
   
   // Calculate the ratio of 'summerprecip' to 'precip' and assign it to the variable 'summerratio'
   var summerratio = summerprecip.divide(precip); // Represents the ratio of summer precipitation to total precipitation.
@@ -416,14 +423,16 @@ var BSk = BS.and(h.not()); // Arid climates with sufficient precipitation during
 var A = B.not().and(mintemp.gte(18));
 
 // Subcategories within tropical climates:
-// - Af: Tropical climates with minimum precipitation greater than or equal to 60mm.
+// Af: Tropical climates with minimum precipitation greater than or equal to 60mm.
 var Af = A.and(minprecip.gte(60));
 
-// - Am: Tropical climates with minimum precipitation less than 60mm and greater than or equal to the monsoon minimum threshold.
-var Am = A.and(minprecip.lt(60)).and(minprecip.gte(monsoonminimum));
+// Am: Tropical climates with minimum precipitation less than 60mm and greater than or equal to the monsoon minimum threshold.
+var Am = A.and(minprecip.lt(60))
+          .and(minprecip.gte(monsoonminimum));
 
-// - Aw: Tropical climates with minimum precipitation less than 60mm and less than the monsoon minimum threshold.
-var Aw = A.and(minprecip.lt(60)).and(minprecip.lt(monsoonminimum));
+// Aw: Tropical climates with minimum precipitation less than 60mm and less than the monsoon minimum threshold.
+var Aw = A.and(minprecip.lt(60))
+          .and(minprecip.lt(monsoonminimum));
 
                     // Group C - Temperate climates  
  
@@ -449,31 +458,41 @@ var Cf = C.and(Cw.not()).and(Cs.not()); // Conditions not meeting winter or summ
 // Sub-conditions based on temperature and months with temperature above 10°C (tenplus).
 
 // Cwa represents conditions for warm temperate climates with high precipitation.
-var Cwa = Cw.and(maxtemp.gt(22)).and(tenplus.gte(4)); // Maximum temperature above 22°C and at least 4 months with temperature above 10°C.
+var Cwa = Cw.and(maxtemp.gt(22))
+            .and(tenplus.gte(4)); // Maximum temperature above 22°C and at least 4 months with temperature above 10°C.
 
 // Cwb represents conditions for warm temperate climates with lower precipitation.
-var Cwb = Cw.and(maxtemp.lt(22)).and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
+var Cwb = Cw.and(maxtemp.lt(22))
+            .and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
 
 // Cwc represents transitional conditions within warm temperate climates.
-var Cwc = Cw.and(tenplus.gte(1)).and(tenplus.lt(4)); // Between 1 and 3 months with temperature above 10°C.
+var Cwc = Cw.and(tenplus.gte(1))
+            .and(tenplus.lt(4)); // Between 1 and 3 months with temperature above 10°C.
 
 // Csa represents conditions for cold temperate climates with high precipitation.
-var Csa = Cs.and(maxtemp.gt(22)).and(tenplus.gte(4)); // Maximum temperature above 22°C and at least 4 months with temperature above 10°C.
+var Csa = Cs.and(maxtemp.gt(22))
+            .and(tenplus.gte(4)); // Maximum temperature above 22°C and at least 4 months with temperature above 10°C.
 
 // Csb represents conditions for cold temperate climates with lower precipitation.
-var Csb = Cs.and(maxtemp.lt(22)).and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
+var Csb = Cs.and(maxtemp.lt(22))
+            .and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
 
 // Csc represents transitional conditions within cold temperate climates.
-var Csc = Cs.and(tenplus.gte(1)).and(tenplus.lt(4)); // Between 1 and 3 months with temperature above 10°C.
+var Csc = Cs.and(tenplus.gte(1))
+            .and(tenplus.lt(4)); // Between 1 and 3 months with temperature above 10°C.
 
 // Cfa represents conditions for temperate climates with significant summer precipitation.
-var Cfa = Cf.and(maxtemp.gt(22)).and(tenplus.gte(4)).and(summerprecip.gt(0)); // Maximum temperature above 22°C, at least 4 months with temperature above 10°C, and summer precipitation greater than 0.
+var Cfa = Cf.and(maxtemp.gt(22))
+            .and(tenplus.gte(4))
+            .and(summerprecip.gt(0)); // Maximum temperature above 22°C, at least 4 months with temperature above 10°C, and summer precipitation greater than 0.
 
 // Cfb represents conditions for temperate climates with lower summer precipitation.
-var Cfb = Cf.and(maxtemp.lt(22)).and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
+var Cfb = Cf.and(maxtemp.lt(22))
+            .and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
 
 // Cfc represents transitional conditions within temperate climates.
-var Cfc = Cf.and(tenplus.gte(1)).and(tenplus.lt(4)); // Between 1 and 3 months with temperature above 10°C.
+var Cfc = Cf.and(tenplus.gte(1))
+            .and(tenplus.lt(4)); // Between 1 and 3 months with temperature above 10°C.
 
                                               
                     // Group D - Continental climates
@@ -482,61 +501,77 @@ var Cfc = Cf.and(tenplus.gte(1)).and(tenplus.lt(4)); // Between 1 and 3 months w
 
 // D represents the general conditions for continental climates.
 var D = B.not() // Not part of Group B (Arid climates)
-    .and(C.not()) // Not part of Group C (Temperate climates)
-    .and(mintemp.lt(0)) // Minimum temperature less than 0°C
-    .and(maxtemp.gt(10)); // Maximum temperature greater than 10°C
+         .and(C.not()) // Not part of Group C (Temperate climates)
+         .and(mintemp.lt(0)) // Minimum temperature less than 0°C
+         .and(maxtemp.gt(10)); // Maximum temperature greater than 10°C
 
 // Dw represents conditions for winter precipitation in continental climates.
 var Dw = D.and(maxsprecip.gt(minwprecip.multiply(10))); // Winter precipitation greater than 10 times the minimum summer precipitation.
 
 // Ds represents conditions for summer precipitation in continental climates.
 var Ds = D.and(maxwprecip.gt(minsprecip.multiply(3))) // Maximum winter precipitation greater than 3 times the minimum summer precipitation
-         .and(minsprecip.lt(30)); // Minimum summer precipitation less than 30mm.
+          .and(minsprecip.lt(30)); // Minimum summer precipitation less than 30mm.
 
 // Df represents conditions for other cases within continental climates.
-var Df = D.and(Dw.not()).and(Ds.not()); // Conditions not meeting winter or summer precipitation criteria.
+var Df = D.and(Dw.not())
+          .and(Ds.not()); // Conditions not meeting winter or summer precipitation criteria.
 
 // Sub-conditions based on temperature and months with temperature above 10°C (tenplus).
 
 // Dfa represents conditions for continental climates with significant summer precipitation and high temperatures.
-var Dfa = Df.and(maxtemp.gt(22)).and(tenplus.gte(4)); // Maximum temperature above 22°C and at least 4 months with temperature above 10°C.
+var Dfa = Df.and(maxtemp.gt(22))
+            .and(tenplus.gte(4)); // Maximum temperature above 22°C and at least 4 months with temperature above 10°C.
 
 // Dfb represents conditions for continental climates with lower summer precipitation and high temperatures.
-var Dfb = Df.and(maxtemp.lte(22)).and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
+var Dfb = Df.and(maxtemp.lte(22))
+            .and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
 
 // Dfd represents conditions for continental climates with low temperatures and minimal summer precipitation.
-var Dfd = Df.and(mintemp.lte(-38)).and(tenplus.lt(4)); // Minimum temperature below or equal to -38°C and less than 4 months with temperature above 10°C.
+var Dfd = Df.and(mintemp.lte(-38))
+            .and(tenplus.lt(4)); // Minimum temperature below or equal to -38°C and less than 4 months with temperature above 10°C.
 
 // Dfc represents transitional conditions within continental climates.
-var Dfc = Df.and(Dfa.not()).and(Dfb.not()).and(Dfd.not()); // Conditions not meeting Dfa, Dfb, or Dfd criteria.
+var Dfc = Df.and(Dfa.not())
+            .and(Dfb.not())
+            .and(Dfd.not()); // Conditions not meeting Dfa, Dfb, or Dfd criteria.
 
 // Sub-conditions within Dw:
 
 // Dwa represents conditions for continental climates with significant summer precipitation and high temperatures.
-var Dwa = Dw.and(maxtemp.gte(22)).and(tenplus.gte(4)); // Maximum temperature above or equal to 22°C and at least 4 months with temperature above 10°C.
+var Dwa = Dw.and(maxtemp.gte(22)) 
+            .and(tenplus.gte(4)); // Maximum temperature above or equal to 22°C and at least 4 months with temperature above 10°C.
 
 // Dwb represents conditions for continental climates with lower summer precipitation and high temperatures.
-var Dwb = Dw.and(maxtemp.lt(22)).and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
+var Dwb = Dw.and(maxtemp.lt(22))
+            .and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
 
 // Dwd represents conditions for continental climates with low temperatures and minimal summer precipitation.
-var Dwd = Dw.and(mintemp.lte(-38)).and(tenplus.lt(4)); // Minimum temperature below or equal to -38°C and less than 4 months with temperature above 10°C.
+var Dwd = Dw.and(mintemp.lte(-38))
+            .and(tenplus.lt(4)); // Minimum temperature below or equal to -38°C and less than 4 months with temperature above 10°C.
 
 // Dwc represents transitional conditions within Dw.
-var Dwc = Dw.and(Dwa.not()).and(Dwb.not()).and(Dwd.not()); // Conditions not meeting Dwa, Dwb, or Dwd criteria.
+var Dwc = Dw.and(Dwa.not())
+            .and(Dwb.not())
+            .and(Dwd.not()); // Conditions not meeting Dwa, Dwb, or Dwd criteria.
 
 // Sub-conditions within Ds:
 
 // Dsa represents conditions for continental climates with significant summer precipitation and high temperatures.
-var Dsa = Ds.and(maxtemp.gt(22)).and(tenplus.gte(4)); // Maximum temperature above 22°C and at least 4 months with temperature above 10°C.
+var Dsa = Ds.and(maxtemp.gt(22))
+            .and(tenplus.gte(4)); // Maximum temperature above 22°C and at least 4 months with temperature above 10°C.
 
 // Dsb represents conditions for continental climates with lower summer precipitation and high temperatures.
-var Dsb = Ds.and(maxtemp.lt(22)).and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
+var Dsb = Ds.and(maxtemp.lt(22))
+            .and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
 
 // Dsd represents conditions for continental climates with low temperatures and minimal summer precipitation.
-var Dsd = Ds.and(mintemp.lte(-38)).and(tenplus.lt(4)); // Minimum temperature below or equal to -38°C and less than 4 months with temperature above 10°C.
+var Dsd = Ds.and(mintemp.lte(-38))
+            .and(tenplus.lt(4)); // Minimum temperature below or equal to -38°C and less than 4 months with temperature above 10°C.
 
 // Dsc represents transitional conditions within Ds.
-var Dsc = Ds.and(Dsa.not()).and(Dsb.not()).and(Dsd.not()); // Conditions not meeting Dsa, Dsb, or Dsd criteria.
+var Dsc = Ds.and(Dsa.not())
+            .and(Dsb.not())
+            .and(Dsd.not()); // Conditions not meeting Dsa, Dsb, or Dsd criteria.
 
                     // Group E - Polar and alpine climates
 
@@ -585,6 +620,30 @@ var classes = Af.multiply(1)                // Af class assigned numeric value 1
               zoneNames: zoneNames          // Sets the 'zoneNames' metadata to the 'zoneNames' object.
     });
   return classes; // The resulting image with climate zone classifications and metadata is returned when the function is called.
+}
+
+
+function classificateImage(startDate, endDate) {
+  // Create an image collection for temperature data between startDate and endDate and uses the key associated with temperature data from 'keyMap'
+  var tempImage = createImageCollection(startDate, endDate, keyMap.temperature);
+
+  // Create an image collection for precipitation data between startDate and endDate and uses the key associated with precipitation data from 'keyMap'
+  var precipImage = createImageCollection(startDate, endDate, keyMap.precipitation);
+
+  // Calculate the mean temperature image from the temperature image collection
+  var tempMeanImage = tempImage.mean();
+
+  // Calculate the mean precipitation image from the precipitation image collection
+  var precipMeanImage = precipImage.mean();
+
+  // Combine the mean temperature and precipitation images into a single image
+  var finalYearlyImage = precipMeanImage.addBands(tempMeanImage);
+
+  // Perform climate zone classification using the Koppen climate classification function
+  var classification = koppenClass(finalYearlyImage);
+
+  // Return the resulting climate zone classification image
+  return classification;
 }
 
 
