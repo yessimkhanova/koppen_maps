@@ -315,9 +315,9 @@ function createImageCollection(startDate, endDate, args){
         return ee.ImageCollection.fromImages(listOfImages); // Create and return an ImageCollection from the list of generated images
   }
 
-// Classification function for Köppen climate classification
 var northernHemisphere=ee.Image.pixelLonLat().select('latitude').gt(0); // Determine which hemisphere the pixel belongs to
 
+// Classification function for Köppen climate classification
 function koppenClass(image) {
   // Extract relevant temperature and precipitation related bands from the input image.
   
@@ -584,15 +584,29 @@ var classes = Af.multiply(1)                // Af class assigned numeric value 1
 }
 
 
-function classificateImage(startDate, endDate){
+function classificateImage(startDate, endDate) {
+  // Create an image collection for temperature data between startDate and endDate
   var tempImage = createImageCollection(startDate, endDate, keyMap.temperature);
+
+  // Create an image collection for precipitation data between startDate and endDate
   var precipImage = createImageCollection(startDate, endDate, keyMap.precipitation);
+
+  // Calculate the mean temperature image from the temperature image collection
   var tempMeanImage = tempImage.mean();
+
+  // Calculate the mean precipitation image from the precipitation image collection
   var precipMeanImage = precipImage.mean();
+
+  // Combine the mean temperature and precipitation images into a single image
   var finalYearlyImage = precipMeanImage.addBands(tempMeanImage);
+
+  // Perform climate zone classification using the Koppen climate classification function
   var classification = koppenClass(finalYearlyImage);
+
+  // Return the resulting climate zone classification image
   return classification;
 }
+
 
 //-------------------------------------------------------//
 // UI Sector
