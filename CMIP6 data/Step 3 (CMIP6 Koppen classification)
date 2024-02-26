@@ -175,79 +175,91 @@ years.getInfo().forEach(function (year) {
             // Select bands corresponding to the current year.
             yearImageP = yearImageP.rename(['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12']);
 
-        // Calculate the total precipitation for each pixel across all months in the year and convert to millimeters
-            var totalP = yearImage.reduce(ee.Reducer.sum())
-              // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
-              .rename('totalprecip'); // Rename the resulting band as 'totalprecip'
-            
-            // Calculate the minimum precipitation for each pixel across all months in the year and convert to millimeters
-            var minP = yearImage.reduce(ee.Reducer.min())
-              .multiply(1000) // // Uncomment this line if your data is in meters for conversion to millimeters
-              .rename('minprecip'); // Rename the resulting band as 'minprecip'
-            
-            // Calculate the maximum precipitation for each pixel across all months in the year and convert to millimeters
-            var maxP = yearImage.reduce(ee.Reducer.max())
-              // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
-              .rename('maxprecip'); // Rename the resulting band as 'maxprecip'
-            
-            // Calculate the summer precipitation (months 4-9) for each pixel in the year and convert to millimeters
-            var summerP = yearImage.select(['p4','p5','p6', 'p7', 'p8', 'p9'])
-              .reduce('sum') // Sum the precipitation for selected months (April to September)
-              // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
-              .rename('nsummerprecip'); // Rename the resulting band as 'nsummerprecip'
-            
-            // Calculate the winter precipitation (months 10-3) for each pixel in the year and convert to millimeters
-            var winterP = yearImage.select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
-              .reduce('sum') // Sum the precipitation for selected months (October to March)
-              // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
-              .rename('winterprecip'); // Rename the resulting band as 'winterprecip'
-            
-            // Calculate the maximum winter precipitation for each pixel in the year and convert to millimeters
-            var maxWinterP = yearImage.select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
-              .reduce('max') // Find the maximum precipitation for selected months (October to March)
-              // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
-              .rename('maxwprecip'); // Rename the resulting band as 'maxwprecip'
-            
-            // Calculate the minimum winter precipitation for each pixel in the year and convert to millimeters
-            var minWinterP = yearImage.select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
-              .reduce('min') // Find the minimum precipitation for selected months (October to March)
-              // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
-              .rename('minwprecip'); // Rename the resulting band as 'minwprecip'
-            
-            // Calculate the maximum summer precipitation for each pixel in the year and convert to millimeters
-            var maxSummerP = yearImage.select(['p4','p5','p6', 'p7', 'p8', 'p9'])
-              .reduce('max') // Find the maximum precipitation for selected months (April to September)
-              // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
-              .rename('maxsprecip'); // Rename the resulting band as 'maxsprecip'
-            
-            // Calculate the minimum summer precipitation for each pixel in the year and convert to millimeters
-            var minSummerP = yearImage.select(['p4','p5','p6', 'p7', 'p8', 'p9'])
-              .reduce('min') // Find the minimum precipitation for selected months (April to September)
-              // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
-              .rename('minsprecip'); // Rename the resulting band as 'minsprecip'
+                // Calculate the total precipitation for each pixel across all months in the year and convert to millimeters
+                var totalP = yearImageP.reduce(ee.Reducer.sum())
+                                        // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
+                                        .rename('totalprecip'); // Rename the resulting band as 'totalprecip'
+                
+                // Calculate the minimum precipitation for each pixel across all months in the year and convert to millimeters
+                var minP = yearImageP.reduce(ee.Reducer.min())
+                                        // .multiply(1000) // // Uncomment this line if your data is in meters for conversion to millimeters
+                                        .rename('minprecip'); // Rename the resulting band as 'minprecip'
+                
+                // Calculate the maximum precipitation for each pixel across all months in the year and convert to millimeters
+                var maxP = yearImageP.reduce(ee.Reducer.max())
+                                    // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
+                                    .rename('maxprecip'); // Rename the resulting band as 'maxprecip'
+                
+                // Calculate the summer precipitation (months 4-9) for each pixel in the year and convert to millimeters
+                var summerP = yearImageP.select(['p4','p5','p6', 'p7', 'p8', 'p9'])
+                                        .reduce('sum') // Sum the precipitation for selected months (April to September)
+                                        // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
+                                        .rename('nsummerprecip'); // Rename the resulting band as 'nsummerprecip'
+                
+                // Calculate the winter precipitation (months 10-3) for each pixel in the year and convert to millimeters
+                var winterP = yearImageP.select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
+                                       .reduce('sum') // Sum the precipitation for selected months (October to March)
+                                       // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
+                                       .rename('winterprecip'); // Rename the resulting band as 'winterprecip'
+                
+                // Calculate the maximum winter precipitation for each pixel in the year and convert to millimeters
+                var maxWinterP = yearImageP.select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
+                                          .reduce('max') // Find the maximum precipitation for selected months (October to March)
+                                          // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
+                                          .rename('maxwprecip'); // Rename the resulting band as 'maxwprecip'
+                
+                // Calculate the minimum winter precipitation for each pixel in the year and convert to millimeters
+                var minWinterP = yearImageP.select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
+                                          .reduce('min') // Find the minimum precipitation for selected months (October to March)
+                                          // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
+                                          .rename('minwprecip'); // Rename the resulting band as 'minwprecip'
+                
+                // Calculate the maximum summer precipitation for each pixel in the year and convert to millimeters
+                var maxSummerP = yearImageP.select(['p4','p5','p6', 'p7', 'p8', 'p9'])
+                                          .reduce('max') // Find the maximum precipitation for selected months (April to September)
+                                          // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
+                                          .rename('maxsprecip'); // Rename the resulting band as 'maxsprecip'
+                
+                // Calculate the minimum summer precipitation for each pixel in the year and convert to millimeters
+                var minSummerP = yearImageP.select(['p4','p5','p6', 'p7', 'p8', 'p9'])
+                                          .reduce('min') // Find the minimum precipitation for selected months (April to September)
+                                          // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
+                                          .rename('minsprecip'); // Rename the resulting band as 'minsprecip'
             
             // Add the calculated precipitation bands to the original image
-            yearImage = yearImage.addBands([totalP, minP, maxP, summerP, winterP, maxWinterP, minWinterP, maxSummerP, minSummerP]);
+            yearImageP = yearImageP.addBands([totalP, minP, maxP, summerP, winterP, maxWinterP, minWinterP, maxSummerP, minSummerP]);
       
-   var yearImageT = multibandImageT.select(ee.List.sequence(startBand, endBand));
-  yearImageT = yearImageT.rename(['t1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12']);
+            
+        // Rename temperature bands from generic names to more meaningful names ('t1' to 't12') for better interpretation
+        var yearImageT = multibandImageT.select(ee.List.sequence(startBand, endBand));
+            
+            // Correspondence: 't1' represents January, 't2' represents February, ..., 't12' represents December
+            yearImageT = yearImageT.rename(['t1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12']);
 
-        var avgTemp = yearImageT.reduce(ee.Reducer.mean())
-          .rename('avgtemp');
-        
-        var minTemp = yearImageT.reduce(ee.Reducer.min())
-          .rename('mintemp');
-       
-        var maxTemp = yearImageT.reduce(ee.Reducer.max())
-          .rename('maxtemp');
-      
-        var monthsGreaterThan10 = yearImageT.gt(10).reduce('sum');
+                // Calculate the average temperature for each pixel across all months in the year
+                var avgT = yearImageT.reduce(ee.Reducer.mean())
+                                      // .subtract(273) // Convert from Kelvin to Celsius
+                                      .rename('avgtemp'); // Rename the resulting band as 'avgtemp'
+                
+                // Calculate the minimum temperature for each pixel across all months in the year
+                var minT = yearImageT.reduce(ee.Reducer.min())
+                                      // .subtract(273) // Convert from Kelvin to Celsius
+                                      .rename('mintemp'); // Rename the resulting band as 'mintemp'
+                
+                // Calculate the maximum temperature for each pixel across all months in the year
+                var maxT = yearImageT.reduce(ee.Reducer.max())
+                                      // .subtract(273) // Convert from Kelvin to Celsius
+                                      .rename('maxtemp'); // Rename the resulting band as 'maxtemp'
+                
+                // Count the number of months where the temperature is greater than 10 degrees Celsius
+                var monthsGreaterThan10 = yearImageT.gt(10)
+                                                    .reduce('sum') // Sum the number of occurrences
+                                                    .rename('tenplusmonths'); // Rename the resulting band as 'tenplusmonths'
+            
+            // Add the calculated temperature bands to the original image
+            yearImageT = yearImageT.addBands([avgT, minT, maxT, monthsGreaterThan10]);
     
-    yearImageT=yearImageT.addBands(avgTemp);
-    yearImageT=yearImageT.addBands(minTemp);
-    yearImageT=yearImageT.addBands(maxTemp);
-    yearImageT=yearImageT.addBands(monthsGreaterThan10.rename('tenplusmonths'));
-
+   
   yearImageP = yearImageP.set('year', year);
   yearImageT = yearImageT.set('year', year);
 
