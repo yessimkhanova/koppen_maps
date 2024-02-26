@@ -26,7 +26,7 @@ for (var year = 1950; year <= 2014; year++) {
         var meanTemperature = monthlyCollection.select(temperatureBand)
                                                .mean().subtract(273)
                                                .rename(['meanTemperature']);
-        
+        print(meanTemperature)
         var mp = ee.ImageCollection.fromImages(models.map(function(m) {
           return monthlyCollection.filter(ee.Filter.eq('model', m))
                                   .select(precipitationBand)
@@ -43,10 +43,10 @@ for (var year = 1950; year <= 2014; year++) {
   var temperatureImage = monthlyMeansCollection.select('meanTemperature').toBands().rename(['t1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12']);
   var precipitationImage = monthlyMeansCollection.select('sumPrecipitation').toBands().rename(['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12']);
   print(temperatureImage)
-  var multiBandImage = temperatureImage.addBands(precipitationImage);
-//print(multiBandImage)
+  //var multiBandImage = temperatureImage.addBands(precipitationImage);
+  //print(multiBandImage)
 
-/*
+
   // Export the image to your Earth Engine Assets
   Export.image.toAsset({
     image: precipitationImage,
@@ -56,4 +56,5 @@ for (var year = 1950; year <= 2014; year++) {
     scale: 27830,
    });
    */
+   
 }
