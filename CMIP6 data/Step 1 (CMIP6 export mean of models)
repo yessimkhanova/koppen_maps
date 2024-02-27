@@ -71,19 +71,19 @@ for (var year = 1950; year <= 2014; year++) {
   multiBandImage = multiBandImage.set('year', year);
 
 /*
- // Export the multiband image for precipitation to Earth Engine Assets
-  Export.image.toAsset({
-    image: precipitationImage,
-    description: 'pr' + year + '-avgmodels',
-    assetId: 'users/yessimkhanovakalamkas/CMIP6_precipitationMeanOfModels/pr' + year + '-avgmodels',
-    scale: 27830 // Resolution of the source dataset is 27830 meters, so it is set by default
-   });
-   
   // Export the multiband image for temperature to Earth Engine Assets
   Export.image.toAsset({
     image: temperatureImage,
     description: 't' + year + '-avgmodels',
-    assetId: 'users/yessimkhanovakalamkas/CMIP6_temperatureMeanOfModels/tas' + year + '-avgmodels',
+    assetId: 'users/yessimkhanovakalamkas/CMIP6_temperatureMeanOfModels/temp' + year + '-avgmodels',
+    scale: 27830 // Resolution of the source dataset is 27830 meters, so it is set by default
+   });
+   
+  // Export the multiband image for precipitation to Earth Engine Assets
+  Export.image.toAsset({
+    image: precipitationImage,
+    description: 'pr' + year + '-avgmodels',
+    assetId: 'users/yessimkhanovakalamkas/CMIP6_precipitationMeanOfModels/pr' + year + '-avgmodels',
     scale: 27830 // Resolution of the source dataset is 27830 meters, so it is set by default
    });
 */
