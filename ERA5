@@ -765,7 +765,7 @@ var generateButton = ui.Button({ // Creates a button widget for generating the m
             max: 31,
             palette: colors
           }, 'Kazakhstan'));
-          customMap.layers().set(1, ui.Map.Layer(selectedMap.clip(globe), {
+          customMap.layers().set(1, ui.Map.Layer(selectedMap, {
             bands: 'zone',
             min: 0,
             max: 31,
