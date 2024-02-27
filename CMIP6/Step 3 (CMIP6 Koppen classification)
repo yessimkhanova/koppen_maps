@@ -58,8 +58,7 @@ var multiBandImageP = ee.Image("users/yessimkhanovakalamkas/CMIP6_precipitationM
       "800080",        // 28: Purple
       "D8BFD8",        // 29: Thistle
       "A9A9A9",        // 30: Dark Gray
-      "696969"//,         // 31: Dim Gray 
-      //"#FFC0C0", // 32: just for debugging
+      "696969"         // 31: Dim Gray 
     ];
 
 // Explanation:
