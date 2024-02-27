@@ -575,6 +575,7 @@ var classes = Af.multiply(1)                // Af class assigned numeric value 1
                 .add(Dwa.multiply(18))      // Dwa class assigned numeric value 18 (color "7B68EE")
                 .add(Dwb.multiply(19))      // Dwb class assigned numeric value 19 (color "6A5ACD")
                 .add(Dwc.multiply(20))      // Dwc class assigned numeric value 20 (color "483D8B")
+                .add(Dwd.multiply(21))
                 .add(Dfa.multiply(22))      // Dfa class assigned numeric value 22 (color "D8BFD8")
                 .add(Dfb.multiply(23))      // Dfb class assigned numeric value 23 (color "A9A9A9")
                 .add(Dfc.multiply(24))      // Dfc class assigned numeric value 24 (color "696969")
