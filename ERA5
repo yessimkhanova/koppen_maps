@@ -153,7 +153,7 @@ var keyMap = {
 // - The corresponding value is the descriptive name of the climate zone.
 
     var zoneNames = {
-      '-': 'No data',                      // 0: No specific climate zone
+      '-': 'Not classified',               // 0: No specific climate zone
     
       // Group A - Tropical climates
       'Af': 'Tropical Rainforest',         // 1: Tropical rainforest climate
