@@ -130,6 +130,8 @@ var image = ee.Image("users/yessimkhanovakalamkas/CMIP6_temperatureMeanOfModels/
     image129 = ee.Image("users/yessimkhanovakalamkas/CMIP6_precipitationMeanOfModels/pr2013-avgmodels"),
     image130 = ee.Image("users/yessimkhanovakalamkas/CMIP6_precipitationMeanOfModels/pr2014-avgmodels");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+
+
 // Combine multiple temperature images into a single multi-band image
 var multiBandImageT = image.addBands([image2, image3, image4, image5, image6, image7, image8, image9, image10, 
                                       image11, image12, image13, image14, image15, image16, image17, image18, 
