@@ -553,7 +553,7 @@ var EF = maxtemp.lt(0); // Maximum temperature at or below 0°C.
 
 // ET represents conditions for transitional polar and alpine climates.
 var ET = maxtemp.gte(0) // Maximum temperature greater than or equal to 0°C
-         .and(maxtemp.lte(10)); // Maximum temperature less than or equal to 10°C.
+                .and(maxtemp.lte(10)); // Maximum temperature less than or equal to 10°C.
  
 // Assigning numeric codes to each climate zone and multiplying by predefined values to determine color index.
 var classes = Af.multiply(1)                // Af class assigned numeric value 1 (color "0000FF")
