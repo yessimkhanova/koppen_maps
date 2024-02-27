@@ -833,7 +833,7 @@ var legendPanel = ui.Panel({
 // Add legendRecord to Legend Panel
 // Iterates through each zone code/name pair and creates a legend record using the 'makeLegendRecord' function.
 // Adds each legend record to the legend panel.
-for (var i=0; i<Object.keys(zoneNames).length-1; i++){
+for (var i=0; i<Object.keys(zoneNames).length; i++){
   var row = makeLegendRecord(colors[i], zoneCodes[i], zoneNames[zoneCodes[i]]);
   legendPanel.add(row);
 }
