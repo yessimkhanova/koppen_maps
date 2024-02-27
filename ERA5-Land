@@ -59,7 +59,7 @@ var keyMap = {
 // - These numeric values are used later in the classification to assign colors to specific climate zones.
    
     var colors = [
-      "000000",        // 0: Black
+    //  "000000",        // 0: Black
       "0000FF",        // 1: Blue
       "4169E1",        // 2: Royal Blue
       "6495ED",        // 3: Cornflower Blue
@@ -99,7 +99,7 @@ var keyMap = {
 // - These numeric values are later used for color representation in the classification.
 
     var zoneCodes = [
-      '-',    // 0: No specific climate zone
+    //  '-',    // 0: No specific climate zone
     
       // Group A - Tropical climates
       'Af',    // 1: Tropical rainforest climate
@@ -150,7 +150,7 @@ var keyMap = {
 // - The corresponding value is the descriptive name of the climate zone.
 
     var zoneNames = {
-      '-': 'No data',                      // 0: No specific climate zone
+    //  '-': 'No data',                      // 0: No specific climate zone
     
       // Group A - Tropical climates
       'Af': 'Tropical Rainforest',         // 1: Tropical rainforest climate
