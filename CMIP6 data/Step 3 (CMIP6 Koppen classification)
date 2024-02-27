@@ -8,12 +8,12 @@ var image = ee.Image("users/yessimkhanovakalamkas/CMIP6_temperatureMeanOfModels/
 var path = "FAO/GAUL_SIMPLIFIED_500m/2015/level0"; var country_code = 132; // Set the country code for Kazakhstan.
 var country = ee.FeatureCollection(path).filter(ee.Filter.eq('ADM0_CODE', country_code)); // Filter the country feature collection for Kazakhstan.
 
-// Load the multi-band temperature image from the specified Earth Engine asset
+// Load the multi-band temperature image from the specified Earth Engine asset generated in Step 2
 // Note: To add your own dataset, replace the asset ID with the proper path to your temperature image
 var multiBandImageT = ee.Image("users/yessimkhanovakalamkas/CMIP6_temperatureMeanOfModels/temp_avgmodels_allyears");
 //print(multiBandImageT); // Print the information about the loaded temperature image to the console
 
-// Load the multi-band precipitation image from the specified Earth Engine asset
+// Load the multi-band precipitation image from the specified Earth Engine asset generated in Step 2
 // Note: To add your own dataset, replace the asset ID with the proper path to your precipitation image
 var multiBandImageP = ee.Image("users/yessimkhanovakalamkas/CMIP6_precipitationMeanOfModels/precip_avgmodels_allyears");
 //print(multiBandImageP); // Print the information about the loaded precipitation image to the console
