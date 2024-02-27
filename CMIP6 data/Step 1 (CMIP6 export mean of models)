@@ -1,6 +1,8 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var imageCollection = ee.ImageCollection("NASA/GDDP-CMIP6");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+                // THIS STEP 1 OF KOPPEN CLIMATE CLASSIFICATION USING CMIP6 DATA
+
 // Specify the Earth Engine Image Collection for CMIP6 data and filter it for the historical scenario
 var collection = ee.ImageCollection('NASA/GDDP-CMIP6').filter(ee.Filter.eq('scenario', 'historical'));
 
@@ -81,7 +83,7 @@ for (var year = 1950; year <= 2014; year++) {
     // Comment: Export temperature image to your Earth Engine Assets.
     // Make sure to change the assetId to your desired location.
     // Example: 'users/your_username/your_asset_folder/temp' + year + '-avgmodels'
-    // Exported images will be stored in your asset and will be used in the next step (Step 3).
+    // Exported images will be stored in your asset and will be used in the next step (Step 2).
     
   // Export the multiband image for precipitation to Earth Engine Assets
   Export.image.toAsset({
@@ -93,6 +95,6 @@ for (var year = 1950; year <= 2014; year++) {
     // Comment: Export precipitation image to your Earth Engine Assets.
     // Make sure to change the assetId to your desired location.
     // Example: 'users/your_username/your_asset_folder/pr' + year + '-avgmodels'
-    // Exported images will be stored in your asset and will be used in the next step (Step 3).
+    // Exported images will be stored in your asset and will be used in the next step (Step 2).
 */
 }
