@@ -118,7 +118,7 @@ var multiBandImageP = ee.Image("users/yessimkhanovakalamkas/CMIP6_precipitationM
 // - The corresponding value is the descriptive name of the climate zone.
 
     var zoneNames = {
-      '-': 'Not classified',                      // 0: No specific climate zone
+      '-': 'Not classified',               // 0: No specific climate zone
     
       // Group A - Tropical climates
       'Af': 'Tropical Rainforest',         // 1: Tropical rainforest climate
