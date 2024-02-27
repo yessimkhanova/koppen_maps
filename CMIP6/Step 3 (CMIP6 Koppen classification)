@@ -58,7 +58,8 @@ var multiBandImageP = ee.Image("users/yessimkhanovakalamkas/CMIP6_precipitationM
       "800080",        // 28: Purple
       "D8BFD8",        // 29: Thistle
       "A9A9A9",        // 30: Dark Gray
-      "696969"         // 31: Dim Gray
+      "696969"//,         // 31: Dim Gray 
+      //"#FFC0C0", // 32: just for debugging
     ];
 
 // Explanation:
@@ -118,7 +119,7 @@ var multiBandImageP = ee.Image("users/yessimkhanovakalamkas/CMIP6_precipitationM
 // - The corresponding value is the descriptive name of the climate zone.
 
     var zoneNames = {
-      '-': 'No data',                      // 0: No specific climate zone
+      '-': 'Not classified',                      // 0: No specific climate zone
     
       // Group A - Tropical climates
       'Af': 'Tropical Rainforest',         // 1: Tropical rainforest climate
@@ -533,7 +534,7 @@ var Dsa = Ds.and(maxtemp.gt(22))
             .and(tenplus.gte(4)); // Maximum temperature above 22°C and at least 4 months with temperature above 10°C.
 
 // Dsb represents conditions for continental climates with lower summer precipitation and high temperatures.
-var Dsb = Ds.and(maxtemp.lt(22))
+var Dsb = Ds.and(maxtemp.lte(22))
             .and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
 
 // Dsd represents conditions for continental climates with low temperatures and minimal summer precipitation.
@@ -793,7 +794,7 @@ var legendPanel = ui.Panel({
 // Add legendRecord to Legend Panel
 // Iterates through each zone code/name pair and creates a legend record using the 'makeLegendRecord' function.
 // Adds each legend record to the legend panel.
-for (var i=0; i<Object.keys(zoneNames).length-1; i++){
+for (var i=0; i<Object.keys(zoneNames).length; i++){
   var row = makeLegendRecord(colors[i], zoneCodes[i], zoneNames[zoneCodes[i]]);
   legendPanel.add(row);
 }
