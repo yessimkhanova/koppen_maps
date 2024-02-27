@@ -445,17 +445,17 @@ var Aw = A.and(minprecip.lt(60))
 
 // C represents the general conditions for temperate climates.
 var C = B.not() // Not part of Group B (Arid climates)
-    .and(mintemp.gte(0)) // Minimum temperature greater than or equal to 0°C
-    .and(mintemp.lte(18)) // Minimum temperature less than or equal to 18°C
-    .and(maxtemp.gte(10)); // Maximum temperature greater than or equal to 10°C
+         .and(mintemp.gte(0)) // Minimum temperature greater than or equal to 0°C
+         .and(mintemp.lte(18)) // Minimum temperature less than or equal to 18°C
+         .and(maxtemp.gte(10)); // Maximum temperature greater than or equal to 10°C
 
 // Cw represents conditions for winter precipitation in temperate climates.
 var Cw = C.and(maxsprecip.gte(minwprecip.multiply(10))); // Winter precipitation greater than or equal to 10 times the minimum summer precipitation.
 
 // Cs represents conditions for summer precipitation in temperate climates.
 var Cs = C.and(Cw.not()) // Not part of the winter precipitation conditions
-         .and(maxwprecip.gte(minsprecip.multiply(3))) // Maximum winter precipitation greater than or equal to 3 times the minimum summer precipitation
-         .and(minsprecip.lt(40)); // Minimum summer precipitation less than 40mm.
+          .and(maxwprecip.gte(minsprecip.multiply(3))) // Maximum winter precipitation greater than or equal to 3 times the minimum summer precipitation
+          .and(minsprecip.lt(40)); // Minimum summer precipitation less than 40mm.
 
 // Cf represents conditions for other cases within temperate climates.
 var Cf = C.and(Cw.not()).and(Cs.not()); // Conditions not meeting winter or summer precipitation criteria.
@@ -463,7 +463,7 @@ var Cf = C.and(Cw.not()).and(Cs.not()); // Conditions not meeting winter or summ
 // Sub-conditions based on temperature and months with temperature above 10°C (tenplus).
 
 // Cwa represents conditions for warm temperate climates with high precipitation.
-var Cwa = Cw.and(maxtemp.gt(22))
+var Cwa = Cw.and(maxtemp.gte(22))
             .and(tenplus.gte(4)); // Maximum temperature above 22°C and at least 4 months with temperature above 10°C.
 
 // Cwb represents conditions for warm temperate climates with lower precipitation.
@@ -475,7 +475,7 @@ var Cwc = Cw.and(tenplus.gte(1))
             .and(tenplus.lt(4)); // Between 1 and 3 months with temperature above 10°C.
 
 // Csa represents conditions for cold temperate climates with high precipitation.
-var Csa = Cs.and(maxtemp.gt(22))
+var Csa = Cs.and(maxtemp.gte(22))
             .and(tenplus.gte(4)); // Maximum temperature above 22°C and at least 4 months with temperature above 10°C.
 
 // Csb represents conditions for cold temperate climates with lower precipitation.
@@ -487,7 +487,7 @@ var Csc = Cs.and(tenplus.gte(1))
             .and(tenplus.lt(4)); // Between 1 and 3 months with temperature above 10°C.
 
 // Cfa represents conditions for temperate climates with significant summer precipitation.
-var Cfa = Cf.and(maxtemp.gt(22))
+var Cfa = Cf.and(maxtemp.gte(22))
             .and(tenplus.gte(4))
             .and(summerprecip.gt(0)); // Maximum temperature above 22°C, at least 4 months with temperature above 10°C, and summer precipitation greater than 0.
 
@@ -562,7 +562,7 @@ var Dwc = Dw.and(Dwa.not())
 // Sub-conditions within Ds:
 
 // Dsa represents conditions for continental climates with significant summer precipitation and high temperatures.
-var Dsa = Ds.and(maxtemp.gt(22))
+var Dsa = Ds.and(maxtemp.gte(22))
             .and(tenplus.gte(4)); // Maximum temperature above 22°C and at least 4 months with temperature above 10°C.
 
 // Dsb represents conditions for continental climates with lower summer precipitation and high temperatures.
@@ -583,11 +583,11 @@ var Dsc = Ds.and(Dsa.not())
 // Conditions for identifying polar and alpine climates based on various parameters.
 
 // EF represents conditions for extremely cold polar and alpine climates.
-var EF = maxtemp.lte(0); // Maximum temperature at or below 0°C.
+var EF = maxtemp.lt(0); // Maximum temperature at or below 0°C.
 
 // ET represents conditions for transitional polar and alpine climates.
 var ET = maxtemp.gte(0) // Maximum temperature greater than or equal to 0°C
-         .and(maxtemp.lte(10)); // Maximum temperature less than or equal to 10°C.
+                .and(maxtemp.lte(10)); // Maximum temperature less than or equal to 10°C.
  
 // Assigning numeric codes to each climate zone and multiplying by predefined values to determine color index.
 var classes = Af.multiply(1)                // Af class assigned numeric value 1 (color "0000FF")
@@ -609,6 +609,7 @@ var classes = Af.multiply(1)                // Af class assigned numeric value 1
                 .add(Dwa.multiply(18))      // Dwa class assigned numeric value 18 (color "7B68EE")
                 .add(Dwb.multiply(19))      // Dwb class assigned numeric value 19 (color "6A5ACD")
                 .add(Dwc.multiply(20))      // Dwc class assigned numeric value 20 (color "483D8B")
+                .add(Dwd.multiply(21))      // Dwd class assigned numeric value 21 (color "191970")
                 .add(Dfa.multiply(22))      // Dfa class assigned numeric value 22 (color "D8BFD8")
                 .add(Dfb.multiply(23))      // Dfb class assigned numeric value 23 (color "A9A9A9")
                 .add(Dfc.multiply(24))      // Dfc class assigned numeric value 24 (color "696969")
@@ -626,7 +627,6 @@ var classes = Af.multiply(1)                // Af class assigned numeric value 1
     });
   return classes; // The resulting image with climate zone classifications and metadata is returned when the function is called.
 }
-
 
 function classificateImage(startDate, endDate) {
   // Create an image collection for temperature data between startDate and endDate and uses the key associated with temperature data from 'keyMap'
