@@ -15,7 +15,7 @@ var multiBandImageT = ee.Image("users/yessimkhanovakalamkas/CMIP6_temperatureMea
 
 // Load the multi-band precipitation image from the specified Earth Engine asset
 // Note: To add your own dataset, replace the asset ID with the proper path to your precipitation image
-var multiBandImageP = ee.Image("users/yessimkhanovakalamkas/CMIP6_temperatureMeanOfModels/precip_avgmodels_allyears");
+var multiBandImageP = ee.Image("users/yessimkhanovakalamkas/CMIP6_precipitationMeanOfModels/precip_avgmodels_allyears");
 //print(multiBandImageP); // Print the information about the loaded precipitation image to the console
 
 // Initialize arrays and dictionaries for colors, zone codes, and zone names
