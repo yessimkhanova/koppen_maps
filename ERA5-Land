@@ -1,6 +1,6 @@
 // Export GEOBoarders
 var path = "FAO/GAUL_SIMPLIFIED_500m/2015/level0"; // Set the path to the GAUL dataset, which contains simplified country borders at 500m resolution in 2015.
-var country_code = 132; //// Set the country code for Kazakhstan.
+var country_code = 132; // Set the country code for Kazakhstan.
 var country = ee.FeatureCollection(path).filter(ee.Filter.eq('ADM0_CODE', country_code)); // Filter the country feature collection for Kazakhstan.
 
 // Export collection
@@ -647,31 +647,6 @@ function classificateImage(startDate, endDate) {
   // Return the resulting climate zone classification image
   return classification;
 }
-
-
-function classificateImage(startDate, endDate) {
-  // Create an image collection for temperature data between startDate and endDate and uses the key associated with temperature data from 'keyMap'
-  var tempImage = createImageCollection(startDate, endDate, keyMap.temperature);
-
-  // Create an image collection for precipitation data between startDate and endDate and uses the key associated with precipitation data from 'keyMap'
-  var precipImage = createImageCollection(startDate, endDate, keyMap.precipitation);
-
-  // Calculate the mean temperature image from the temperature image collection
-  var tempMeanImage = tempImage.mean();
-
-  // Calculate the mean precipitation image from the precipitation image collection
-  var precipMeanImage = precipImage.mean();
-
-  // Combine the mean temperature and precipitation images into a single image
-  var finalYearlyImage = precipMeanImage.addBands(tempMeanImage);
-
-  // Perform climate zone classification using the Koppen climate classification function
-  var classification = koppenClass(finalYearlyImage);
-
-  // Return the resulting climate zone classification image
-  return classification;
-}
-
 
 //-------------------------------------------------------//
                     // UI Sector
