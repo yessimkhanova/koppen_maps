@@ -411,17 +411,17 @@ var Aw = A.and(minprecip.lt(60))
 
 // C represents the general conditions for temperate climates.
 var C = B.not() // Not part of Group B (Arid climates)
-    .and(mintemp.gte(0)) // Minimum temperature greater than or equal to 0°C
-    .and(mintemp.lte(18)) // Minimum temperature less than or equal to 18°C
-    .and(maxtemp.gte(10)); // Maximum temperature greater than or equal to 10°C
+         .and(mintemp.gte(0)) // Minimum temperature greater than or equal to 0°C
+         .and(mintemp.lte(18)) // Minimum temperature less than or equal to 18°C
+         .and(maxtemp.gte(10)); // Maximum temperature greater than or equal to 10°C
 
 // Cw represents conditions for winter precipitation in temperate climates.
 var Cw = C.and(maxsprecip.gte(minwprecip.multiply(10))); // Winter precipitation greater than or equal to 10 times the minimum summer precipitation.
 
 // Cs represents conditions for summer precipitation in temperate climates.
 var Cs = C.and(Cw.not()) // Not part of the winter precipitation conditions
-         .and(maxwprecip.gte(minsprecip.multiply(3))) // Maximum winter precipitation greater than or equal to 3 times the minimum summer precipitation
-         .and(minsprecip.lt(40)); // Minimum summer precipitation less than 40mm.
+          .and(maxwprecip.gte(minsprecip.multiply(3))) // Maximum winter precipitation greater than or equal to 3 times the minimum summer precipitation
+          .and(minsprecip.lt(40)); // Minimum summer precipitation less than 40mm.
 
 // Cf represents conditions for other cases within temperate climates.
 var Cf = C.and(Cw.not()).and(Cs.not()); // Conditions not meeting winter or summer precipitation criteria.
@@ -553,7 +553,7 @@ var EF = maxtemp.lt(0); // Maximum temperature at or below 0°C.
 
 // ET represents conditions for transitional polar and alpine climates.
 var ET = maxtemp.gte(0) // Maximum temperature greater than or equal to 0°C
-         .and(maxtemp.lte(10)); // Maximum temperature less than or equal to 10°C.
+                .and(maxtemp.lte(10)); // Maximum temperature less than or equal to 10°C.
  
 // Assigning numeric codes to each climate zone and multiplying by predefined values to determine color index.
 var classes = Af.multiply(1)                // Af class assigned numeric value 1 (color "0000FF")
