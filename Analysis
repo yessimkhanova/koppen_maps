@@ -58,7 +58,7 @@ function createImageCollection(startDate, endDate, args){
   var filteredCollection = collection.filter(ee.Filter.calendarRange(startDate, endDate, 'year')); // Filter the collection based on the specified date range.
   var selectedImage = filteredCollection.select(args.band).toBands(); // Select the specified band(s) from the keyMap configuration and convert them to bands.
  
-   var years = ee.List.sequence(startDate.get('year').getInfo(), endDate.get('year').getInfo()); // Generate a list of band names for each month.
+  var years = ee.List.sequence(startDate, endDate); // Generate a list of band names for each month.
   
   var listOfDim = []; // Initialize an empty array to store band names.
     for (var i = 1; i <= 12; i++) { // Loop from 1 to 12 (representing months) and push new band names to the array.
@@ -67,11 +67,9 @@ function createImageCollection(startDate, endDate, args){
     }
   
   // Loop through each year in the specified date range
-
-
-years.getInfo().forEach(function (year) {
-  var startBand = (year - startDate.get('year').getInfo()) * 12;
-  var endBand = startBand + 11;
+  years.getInfo().forEach(function(year){
+    var startBand = (year - startDate) * 12; // Calculate the start and end bands for the current year.
+    var endBand = startBand + 11;
     
     var yearImage = selectedImage.select(ee.List.sequence(startBand, endBand)); // Select bands corresponding to the current year.
         yearImage = yearImage.rename(listOfDim); // Rename bands with the generated list of dimension names.
@@ -178,31 +176,228 @@ years.getInfo().forEach(function (year) {
         
         return ee.ImageCollection.fromImages(listOfImages); // Create and return an ImageCollection from the list of generated images
   }
-  
-// Call the createImageCollection function
-var resultTemperatureCollection = createImageCollection(startDate, endDate, keyMap.temperature);
-print(resultTemperatureCollection)
 
-// Call the createImageCollection function
-var resultPrecipitationCollection = createImageCollection(startDate, endDate, keyMap.precipitation);
-print(resultPrecipitationCollection)
 
-  
-/*
-// Select bands for subtraction
-var bandToSubtract1 = 'avgT';
-var bandToSubtract2 = 'totalP';
+// Create a function to calculate temperature change between two time frames
+function calculateTemperatureChange(startDate1, endDate1, startDate2, endDate2) {
+  // Generate ImageCollections for each time frame
+  var collection1ForTempChange = createImageCollection(startDate1, endDate1, keyMap.temperature);
+  var collection2ForTempChange = createImageCollection(startDate2, endDate2, keyMap.temperature);
 
-// Define a function to subtract specific bands of images
-var subtractBands = function(image) {
-  var subtractedImage = image.select(bandToSubtract1).subtract(image.select(bandToSubtract2));
-  return subtractedImage.rename(['change']); // Rename the resulting band if needed
+  // Select the relevant bands for each time frame
+  var avgT1 = collection1ForTempChange.select('avgtemp');
+  var avgT2 = collection1ForTempChange.select('avgtemp');
+
+  // Calculate temperature change by subtracting the average temperature of the first time frame from the second time frame
+  var temperatureChange = avgT2.subtract(avgT1).rename('temperature_change');
+
+  // Set the properties for the resulting image
+  temperatureChange = temperatureChange.set('startDate1', startDate1.format('YYYY-MM-dd'));
+  temperatureChange = temperatureChange.set('endDate1', endDate1.format('YYYY-MM-dd'));
+  temperatureChange = temperatureChange.set('startDate2', startDate2.format('YYYY-MM-dd'));
+  temperatureChange = temperatureChange.set('endDate2', endDate2.format('YYYY-MM-dd'));
+
+  return temperatureChange;
+}
+
+//-------------------------------------------------------//
+                    // UI Sector
+//  Map Settings
+var customMap = ui.Map(); // Creates a new map object using the Earth Engine UI library.
+    customMap.setControlVisibility({ // Configures map control visibility settings.
+  zoomControl: false,
+  drawingToolsControl: false,
+  fullscreenControl: false,
+  mapTypeControl: false
+});
+    customMap.centerObject(country); // Centers the map view on the 'country' object.
+
+
+// Project Title 
+var projectTitleLabel = ui.Label({ // Creates a label widget for the project title.
+  value: 'Köppen Climate Map based on ERA5-Land Monthly Aggregated data',
+  style: {
+    fontWeight: 'bold',
+    fontSize: '24px',
+    margin: '0px 0 0 0',
+    textAlign: 'center',
+    width: '100%'
+  }
+});
+    customMap.add(projectTitleLabel); // Adds the project title label to the map.
+
+// Info Text
+var infoPanel = ui.Panel({ // Creates a panel to display information about the project.
+  widgets: [ // Contains multiple label widgets with project information.
+   ui.Label('This Köppen Climate Classification map is generated using Google Earth Engine and ERA5-Land Monthly Aggregated climate reanalysis data.', { fontSize: '14px' }),
+    ui.Label('The map classifies climate of Kazakhstan based on monthly mean temperature and precipitation amount parameters. ', { fontSize: '14px' }),
+    ui.Label('More information about methodology DOI [place here]. ', { fontSize: '14px' }),
+    ui.Label('Access the script DOI [place here]. ', { fontSize: '14px' }),ui.Label('This work is part of a doctoral research project conducted by Kalamkas Yessimkhanova, supervised by Dr. Matyas Gede at Eötvös Loránd University, Budapest.', { fontSize: '14px' }),
+    ui.Label('Credit is given to Google Earth Engine for its powerful geospatial analysis capabilities and Copernicus Climate Data Store for providing valuable climate data.', { fontSize: '14px' }),
+    ui.Label('Please contact Kalamkas Yessimkhanova for questions, comments, and feedback.', { fontSize: '12px' }),
+    ui.Label('Email: kalamkasyessimkhanova@gmail.com', { fontSize: '12px', fontWeight: 'bold'}),
+    ui.Label('Use the slider to select the time period for visualizing Köppen climate maps.', { fontSize: '17px', fontWeight: 'bold'}),
+   ],
+  style: {
+    width: '300px'
+  }
+});
+//print(typeof(newStartDate.get('year').getInfo()))
+
+// Start Year Slider Widget
+// Creates a slider widget to select the start year.
+// Initial values are obtained from 'newStartDate' and 'newEndDate' variables.
+// 'onChange' functions update the selected year values.
+// Additional widgets for end year selection follow a similar structure.
+
+// Start Year Slider Widget
+var min_slider = newStartDate.get('year').getInfo();
+var max_slider = newEndDate.get('year').getInfo();
+
+var startYearLabel = ui.Label('Select Start Year:');
+  var startYearSlider = ui.Slider({
+    min: min_slider,
+    max: max_slider,
+    value: min_slider,
+    step: 1,
+    style: {width: '270px'},
+    
+    onChange: function (value) {
+      min_slider = value;
+    }
+  });
+
+// End Year Slider Widget
+var endYearLabel = ui.Label('Select End Year:');
+  var endYearSlider = ui.Slider({
+    min: min_slider,
+    max: max_slider,
+    value: max_slider,
+    step: 1,
+    style: {width: '270px'},
+    
+    onChange: function (value) {
+      max_slider = value;
+    }
+  });
+
+// Note Label
+var noteLabel = ui.Label({ // Creates a label for displaying a note to the user.
+  value: 'Please note that map generation may take some time',
+  style: {
+    fontSize: '12px',
+    color: 'gray',
+    margin: '5px 0',
+  }
+});
+
+var generateButton = ui.Button({
+  label: 'Generate',
+  onClick: function () {
+    var startDate1 = ee.Date('1960-01-01');
+    var endDate1 = ee.Date('1990-12-31');
+    var startDate2 = ee.Date('1991-01-01');
+    var endDate2 = ee.Date('2014-12-31');
+
+    var temperatureChange = calculateTemperatureChange(startDate1, endDate1, startDate2, endDate2);
+
+    customMap.layers().set(0, ui.Map.Layer(temperatureChange.clip(country), {
+      bands: 'temperature_change',
+      min: -10,
+      max: 10,
+      palette: ['blue', 'white', 'red']
+    }, 'Temperature Change'));
+  }
+});
+
+// Year Slider Panel
+// Creates a panel to contain start and end year sliders, along with other controls.
+// Includes labels, sliders, a note label, and a generate button.
+var yearFilterSlider = (ui.Panel({
+  style:{
+    position: 'top-left'
+  }
+})
+    .add(startYearLabel)
+    .add(startYearSlider)
+    .add(endYearLabel)
+    .add(endYearSlider)
+    .add(noteLabel)
+    .add(generateButton));
+
+// Info and Control Panel
+// Creates a panel to contain information and control elements.
+// Adds 'infoPanel' and 'yearFilterSlider' to this panel.
+var infoAndControlPanel = ui.Panel().add(infoPanel).add(yearFilterSlider);
+
+// Legend Title
+// Creates a label widget for the legend title.
+var legendTitle = ui.Label({
+  value: 'Legend',
+  style: {
+    fontWeight: 'bold',
+    fontSize: '18px',
+    margin: '0 0 4px 0',
+    padding: '10px'
+  }
+});
+
+// Widget Legend Record
+// Defines a function 'makeLegendRecord' to create a legend record containing a color box and zone code/name.
+var makeLegendRecord = function (color, zoneCode, zoneName){
+  var colorBox = ui.Label({
+    style: {
+      backgroundColor: color,
+      padding: '8px',
+      margin: '0 0 8px 8px'
+    }});
+  var zoneCodeAndName = ui.Label({
+    value: zoneCode + ': ' + zoneName,
+    style: {
+      margin: '0 0 3px 6px'
+    }});
+  return ui.Panel({
+    widgets: [colorBox, zoneCodeAndName],
+    layout: ui.Panel.Layout.Flow('horizontal')
+  });
 };
 
-// Apply the subtraction function to the image collection
-var subtractedCollection = listOfImages.map(subtractBands);
-*/
-// Display the result on the map
-Map.centerObject(subtractedCollection, 10);
-Map.addLayer(subtractedCollection, {min: minValue, max: maxValue, palette: 'your_palette'}, 'Subtracted Bands');
+// Panel: Legend
+// Creates a panel to contain legend items.
+var legendPanel = ui.Panel({
+  // TODO: add style
+  style: {}
+}).add(legendTitle);
 
+// Add legendRecord to Legend Panel
+// Iterates through each zone code/name pair and creates a legend record using the 'makeLegendRecord' function.
+// Adds each legend record to the legend panel.
+for (var i=0; i<Object.keys(zoneNames).length; i++){
+  var row = makeLegendRecord(colors[i], zoneCodes[i], zoneNames[zoneCodes[i]]);
+  legendPanel.add(row);
+}
+
+// Panel Settings
+// Creates left and right main panels for layout purposes.
+var leftMainPanel = ui.Panel({
+  style:{
+    width: '325px',
+    position: 'middle-left'
+  }
+});
+
+var rightMainPanel = ui.Panel(
+  {
+    style: {
+      width: '300px',
+      position: 'middle-right'}
+  });
+
+// // Adds 'infoAndControlPanel' to the left panel and 'legendPanel' to the right panel.
+rightMainPanel.add(legendPanel);
+leftMainPanel.add(infoAndControlPanel);
+
+// Panel init
+// Clears the UI root and adds the left main panel, custom map, and right main panel to the UI root.
+ui.root.clear();
+ui.root.add(leftMainPanel).add(customMap).add(rightMainPanel);
