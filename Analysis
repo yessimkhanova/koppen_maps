@@ -50,3 +50,275 @@ var keyMap = {
   }
 };
 
+// Initialize arrays and dictionaries for colors, zone codes, and zone names
+//Init directory: Köppen climate classification system colors, zoneNames, zoneCodes
+
+// Explanation:
+// - Each color is represented by a hexadecimal code.
+// - The numeric value next to each color corresponds to its index in the 'colors' array.
+// - These numeric values are used later in the classification to assign colors to specific climate zones.
+   
+    var colors = [
+      "000000",        // 0: Black
+      "0000FF",        // 1: Blue
+      "4169E1",        // 2: Royal Blue
+      "6495ED",        // 3: Cornflower Blue
+      "00BFFF",        // 4: Deep Sky Blue
+      "FF0000",        // 5: Red
+      "F08080",        // 6: Light Coral
+      "FF8C00",        // 7: Dark Orange
+      "FFD700",        // 8: Gold
+      "98FB98",        // 9: Pale Green
+      "3CB371",        // 10: Medium Sea Green
+      "2E8B57",        // 11: Sea Green
+      "ADFF2F",        // 12: Green Yellow
+      "00FF00",        // 13: Lime
+      "32CD32",        // 14: Lime Green
+      "FFFF00",        // 15: Yellow
+      "BDB76B",        // 16: Dark Khaki
+      "808000",        // 17: Olive
+      "7B68EE",        // 18: Medium Slate Blue
+      "6A5ACD",        // 19: Slate Blue
+      "483D8B",        // 20: Dark Slate Blue
+      "191970",        // 21: Midnight Blue
+      "00FFFF",        // 22: Aqua / Cyan
+      "87CEFF",        // 23: Light Sky Blue
+      "008080",        // 24: Teal
+      "2F4F4F",        // 25: Dark Slate Gray
+      "FF00FF",        // 26: Magenta / Fuchsia
+      "9400D3",        // 27: Dark Violet
+      "800080",        // 28: Purple
+      "D8BFD8",        // 29: Thistle
+      "A9A9A9",        // 30: Dark Gray
+      "696969"         // 31: Dim Gray
+    ];
+
+// Explanation:
+// - Each code represents a specific climate zone or category.
+// - The numeric value next to each code corresponds to its index in the 'zoneCodes' array.
+// - These numeric values are later used for color representation in the classification.
+
+    var zoneCodes = [
+      '-',    // 0: No specific climate zone
+    
+      // Group A - Tropical climates
+      'Af',    // 1: Tropical rainforest climate
+      'Am',    // 2: Monsoon climate
+      'Aw',    // 3: Tropical savanna climate
+      'As',    // 4: Tropical wet and dry or savanna climate
+    
+      // Group B - Arid climates
+      'BWh',   // 5: Hot desert climate
+      'BWk',   // 6: Cold desert climate
+      'BSh',   // 7: Hot semi-arid climate
+      'BSk',   // 8: Cold semi-arid climate
+    
+      // Group C - Temperate climates
+      'Cwa',   // 9: Humid subtropical climate with dry winters
+      'Cwb',   // 10: Humid subtropical climate with dry winters and hot summers
+      'Cwc',   // 11: Humid subtropical climate with dry winters and cool summers
+      'Cfa',   // 12: Humid subtropical climate with no dry season and hot summers
+      'Cfb',   // 13: Humid subtropical climate with no dry season and warm summers
+      'Cfc',   // 14: Humid subtropical climate with no dry season and cool summers
+      'Csa',   // 15: Mediterranean climate with hot, dry summers
+      'Csb',   // 16: Mediterranean climate with warm, dry summers
+      'Csc',   // 17: Mediterranean climate with cool, dry summers
+    
+      // Group D - Continental climates
+      'Dwa',   // 18: Humid continental climate with hot summers
+      'Dwb',   // 19: Humid continental climate with warm summers
+      'Dwc',   // 20: Humid continental climate with cool summers
+      'Dwd',   // 21: Humid continental climate with very cold winters
+      'Dfa',   // 22: Humid continental climate with hot summers and severe winters
+      'Dfb',   // 23: Humid continental climate with warm summers and severe winters
+      'Dfc',   // 24: Humid continental climate with cool summers and severe winters
+      'Dfd',   // 25: Humid continental climate with very cold winters and severe winters
+    
+      // Group E - Polar and alpine climates
+      'Dsa',   // 26: Subarctic climate with short, mild summers
+      'Dsb',   // 27: Subarctic climate with short, warm summers
+      'Dsc',   // 28: Subarctic climate with short, cool summers
+      'Dsd',   // 29: Subarctic climate with very cold winters
+    
+      // Group E - Polar and alpine climates continued
+      'ET',    // 30: Tundra climate
+      'EF'     // 31: Ice cap climate
+    ];
+
+// Explanation:
+// - Each code represents a specific climate zone or category.
+// - The corresponding value is the descriptive name of the climate zone.
+
+    var zoneNames = {
+      '-': 'Not classified',               // 0: No specific climate zone
+    
+      // Group A - Tropical climates
+      'Af': 'Tropical Rainforest',         // 1: Tropical rainforest climate
+      'Am': 'Tropical Monsoon',            // 2: Monsoon climate
+      'Aw': 'Tropical Wet & Dry',          // 3: Tropical savanna climate
+      'As': 'Tropical Savanna',            // 4: Tropical wet and dry or savanna climate
+    
+      // Group B - Arid climates
+      'BWh': 'Hot Desert',                 // 5: Hot desert climate
+      'BWk': 'Cold Desert',                // 6: Cold desert climate
+      'BSh': 'Hot Semi-Arid',              // 7: Hot semi-arid climate
+      'BSk': 'Cold Semi-Arid',             // 8: Cold semi-arid climate
+    
+      // Group C - Temperate climates
+      'Cwa': 'Humid Subtropical',          // 9: Humid subtropical climate with dry winters
+      'Cwb': 'Subtropical Highland',      // 10: Humid subtropical climate with dry winters and hot summers
+      'Cwc': 'Cold Subtropical Highland',  // 11: Humid subtropical climate with dry winters and cool summers
+      'Cfa': 'Humid Continental',          // 12: Humid subtropical climate with no dry season and hot summers
+      'Cfb': 'Oceanic Climate',            // 13: Humid subtropical climate with no dry season and warm summers
+      'Cfc': 'Subpolar Oceanic Climate',   // 14: Humid subtropical climate with no dry season and cool summers
+      'Csa': 'Mediterranean',              // 15: Mediterranean climate with hot, dry summers
+      'Csb': 'Warm Summer Mediterranean',  // 16: Mediterranean climate with warm, dry summers
+      'Csc': 'Cold Summer Mediterranean',  // 17: Mediterranean climate with cool, dry summers
+    
+      // Group D - Continental climates
+      'Dwa': 'Humid Continental Hot Summer',  // 18: Humid continental climate with hot summers
+      'Dwb': 'Humid Continental Mild Summer', // 19: Humid continental climate with warm summers
+      'Dwc': 'Subarctic Hot Summer',          // 20: Humid continental climate with cool summers
+      'Dwd': 'Subarctic Mild Summer',         // 21: Humid continental climate with very cold winters
+      'Dfa': 'Humid Continental Hot Summer',  // 22: Humid continental climate with hot summers and severe winters
+      'Dfb': 'Humid Continental Mild Summer', // 23: Humid continental climate with warm summers and severe winters
+      'Dfc': 'Subarctic',                     // 24: Humid continental climate with cool summers and severe winters
+      'Dfd': 'Subarctic Extreme Winter',      // 25: Humid continental climate with very cold winters and severe winters
+    
+      // Group E - Polar and alpine climates
+      'Dsa': 'Dry Hot Summer',      // 26: Subarctic climate with short, mild summers
+      'Dsb': 'Dry Mild Summer',     // 27: Subarctic climate with short, warm summers
+      'Dsc': 'Dry Cold Summer',     // 28: Subarctic climate with short, cool summers
+      'Dsd': 'Dry Extreme Winter',  // 29: Subarctic climate with very cold winters
+    
+      // Group E - Polar and alpine climates continued
+      'ET': 'Tundra',               // 30: Tundra climate
+      'EF': 'Ice Cap'               // 31: Ice cap climate
+    };
+
+// Create a function to generate an ImageCollection with calculations
+function createImageCollection(startDate, endDate, args){
+  
+  var listOfImages = []; // Initialize an empty array to store individual images.
+  
+  var filteredCollection = collection.filter(ee.Filter.calendarRange(startDate, endDate, 'year')); // Filter the collection based on the specified date range.
+  var selectedImage = filteredCollection.select(args.band).toBands(); // Select the specified band(s) from the keyMap configuration and convert them to bands.
+ 
+  var years = ee.List.sequence(startDate, endDate); // Generate a list of band names for each month.
+  
+  var listOfDim = []; // Initialize an empty array to store band names.
+    for (var i = 1; i <= 12; i++) { // Loop from 1 to 12 (representing months) and push new band names to the array.
+          listOfDim.push(args.symbol + i); // Each band name is formed by concatenating the symbol from args
+                                          // (which is derived from the keyMap configuration) and the current value of i.
+    }
+  
+  // Loop through each year in the specified date range
+  years.getInfo().forEach(function(year){
+    var startBand = (year - startDate) * 12; // Calculate the start and end bands for the current year.
+    var endBand = startBand + 11;
+    
+    var yearImage = selectedImage.select(ee.List.sequence(startBand, endBand)); // Select bands corresponding to the current year.
+        yearImage = yearImage.rename(listOfDim); // Rename bands with the generated list of dimension names.
+          
+          // Additional calculations for temperature ('t') and precipitation ('p')
+          if (args.symbol == 't') { // Check if the symbol from the arguments (args.symbol) is equal to 't'
+                                    // The argument symbol is derived from the keyMap configuration.
+                                    // This condition is checking whether the data being processed is related to temperature ('t').
+                                    // If true, additional calculations for temperature will be performed.
+                                    // Rename temperature bands from generic names to more meaningful names ('t1' to 't12') for better interpretation
+                                    // Correspondence: 't1' represents January, 't2' represents February, ..., 't12' represents December
+            
+            // Calculate the average temperature for each pixel across all months in the year
+            var avgT = yearImage.reduce(ee.Reducer.mean())
+                                .subtract(273) // Convert from Kelvin to Celsius
+                                .rename('avgtemp'); // Rename the resulting band as 'avgtemp'
+            
+            // Calculate the minimum temperature for each pixel across all months in the year
+            var minT = yearImage.reduce(ee.Reducer.min())
+                                .subtract(273) // Convert from Kelvin to Celsius
+                                .rename('mintemp'); // Rename the resulting band as 'mintemp'
+            
+            // Calculate the maximum temperature for each pixel across all months in the year
+            var maxT = yearImage.reduce(ee.Reducer.max())
+                                .subtract(273) // Convert from Kelvin to Celsius
+                                .rename('maxtemp'); // Rename the resulting band as 'maxtemp'
+            
+            // Count the number of months where the temperature is greater than 10 degrees Celsius
+            var monthsGreaterThan10 = yearImage.gt(10)
+                                                .reduce('sum') // Sum the number of occurrences
+                                                .rename('tenplusmonths'); // Rename the resulting band as 'tenplusmonths'
+            
+            // Add the calculated temperature bands to the original image
+            yearImage = yearImage.addBands([avgT, minT, maxT, monthsGreaterThan10]);
+          }
+          
+          // Additional calculations precipitation ('p')
+          if (args.symbol == 'p') { // Check if the symbol from the arguments (args.symbol) is equal to 'p'
+                                    // The argument symbol is derived from the keyMap configuration.
+                                    // This condition is checking whether the data being processed is related to precipitation ('p').
+                                    // If true, additional calculations for precipitation will be performed.
+                                    // Rename precipitation bands from generic names to more meaningful names ('p1' to 'p12') for better interpretation
+                                    // Correspondence: 'p1' represents January, 'p2' represents February, ..., 'p12' represents December
+            
+            // Calculate the total precipitation for each pixel across all months in the year and convert to millimeters
+            var totalP = yearImage.reduce(ee.Reducer.sum())
+                                  .multiply(1000) // Convert from meters to millimeters
+                                  .rename('totalprecip'); // Rename the resulting band as 'totalprecip'
+            
+            // Calculate the minimum precipitation for each pixel across all months in the year and convert to millimeters
+            var minP = yearImage.reduce(ee.Reducer.min())
+                                .multiply(1000) // Convert from meters to millimeters
+                                .rename('minprecip'); // Rename the resulting band as 'minprecip'
+            
+            // Calculate the maximum precipitation for each pixel across all months in the year and convert to millimeters
+            var maxP = yearImage.reduce(ee.Reducer.max())
+                                .multiply(1000) // Convert from meters to millimeters
+                                .rename('maxprecip'); // Rename the resulting band as 'maxprecip'
+            
+            // Calculate the summer precipitation (months 4-9) for each pixel in the year and convert to millimeters
+            var summerP = yearImage.select(['p4','p5','p6', 'p7', 'p8', 'p9'])
+                                   .reduce('sum') // Sum the precipitation for selected months (April to September)
+                                   .multiply(1000) // Convert from meters to millimeters
+                                   .rename('nsummerprecip'); // Rename the resulting band as 'nsummerprecip'
+            
+            // Calculate the winter precipitation (months 10-3) for each pixel in the year and convert to millimeters
+            var winterP = yearImage.select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
+                                   .reduce('sum') // Sum the precipitation for selected months (October to March)
+                                   .multiply(1000) // Convert from meters to millimeters
+                                   .rename('winterprecip'); // Rename the resulting band as 'winterprecip'
+                                
+            // Calculate the maximum winter precipitation for each pixel in the year and convert to millimeters
+            var maxWinterP = yearImage.select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
+                                      .reduce('max') // Find the maximum precipitation for selected months (October to March)
+                                      .multiply(1000) // Convert from meters to millimeters
+                                      .rename('maxwprecip'); // Rename the resulting band as 'maxwprecip'
+            
+            // Calculate the minimum winter precipitation for each pixel in the year and convert to millimeters
+            var minWinterP = yearImage.select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
+                                      .reduce('min') // Find the minimum precipitation for selected months (October to March)
+                                      .multiply(1000) // Convert from meters to millimeters
+                                      .rename('minwprecip'); // Rename the resulting band as 'minwprecip'
+            
+            // Calculate the maximum summer precipitation for each pixel in the year and convert to millimeters
+            var maxSummerP = yearImage.select(['p4','p5','p6', 'p7', 'p8', 'p9'])
+                                      .reduce('max') // Find the maximum precipitation for selected months (April to September)
+                                      .multiply(1000) // Convert from meters to millimeters
+                                      .rename('maxsprecip'); // Rename the resulting band as 'maxsprecip'
+            
+            // Calculate the minimum summer precipitation for each pixel in the year and convert to millimeters
+            var minSummerP = yearImage.select(['p4','p5','p6', 'p7', 'p8', 'p9'])
+                                      .reduce('min') // Find the minimum precipitation for selected months (April to September)
+                                      .multiply(1000) // Convert from meters to millimeters
+                                      .rename('minsprecip'); // Rename the resulting band as 'minsprecip'
+            
+            // Add the calculated precipitation bands to the original image
+            yearImage = yearImage.addBands([totalP, minP, maxP, summerP, winterP, maxWinterP, minWinterP, maxSummerP, minSummerP]);
+
+          }
+          
+          yearImage = yearImage.set('year', year); // Set the 'year' property and add the current year image to the list.
+          listOfImages.push(yearImage); // Add the current yearImage to the listOfImages array.
+      });
+        
+        return ee.ImageCollection.fromImages(listOfImages); // Create and return an ImageCollection from the list of generated images
+  }
