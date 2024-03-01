@@ -1,0 +1,52 @@
+// Export GEOBoarders
+var path = "FAO/GAUL_SIMPLIFIED_500m/2015/level0"; // Set the path to the GAUL dataset, which contains simplified country borders at 500m resolution in 2015.
+var country_code = 132; // Set the country code for Kazakhstan.
+var country = ee.FeatureCollection(path).filter(ee.Filter.eq('ADM0_CODE', country_code)); // Filter the country feature collection for Kazakhstan.
+
+// Export collection
+var collection_path = "ECMWF/ERA5_LAND/MONTHLY_AGGR"; // Set the path to the ERA5-Land monthly aggregated dataset.
+var collection = ee.ImageCollection(collection_path); // Create an ImageCollection from the specified path.
+//print(collection)
+
+var dateRange = collection.reduceColumns(ee.Reducer.minMax(), ['system:time_start']); // Calculate the minimum and maximum time start values in the collection.
+var startDate = ee.Date(dateRange.get('min')); // Extract the minimum date from the date range.
+var endDate = ee.Date(dateRange.get('max')); // Extract the maximum date from the date range.
+//print(startDate)
+//print(endDate)
+
+// The block of code is designed to ensure that the start date aligns with January.
+  if (startDate.getMonth != 12) {
+    var newStartDate = startDate.advance(1, 'year').update({
+      month:1
+    });
+  } else {
+    var newStartDate = startDate;
+  }
+  //print(newStartDate)
+  // If the month of the start date is not December, advance it by one year and set the month to January.
+  // Otherwise, keep the start date as it is.
+  
+  if (endDate.getMonth != 12){
+    var newEndDate = endDate.advance(-1, 'year').update({
+      month: 12,
+      day:31
+    });
+  } else {
+    var newEndDate = endDate;
+  }
+  //print(newEndDate)
+  // If the month of the end date is not December, advance it by one year and set the month to December.
+  // Otherwise, keep the end date as it is.
+
+// Define a mapping for different environmental variables, such as temperature and precipitation
+var keyMap = {
+  "temperature": {
+    "symbol": "t",
+    "band": "temperature_2m"
+  },
+  "precipitation": {
+    "symbol": "p",
+    "band": "total_precipitation_sum"
+  }
+};
+
