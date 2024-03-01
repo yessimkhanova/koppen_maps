@@ -1,3 +1,6 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var imageCollection = ee.ImageCollection("ECMWF/ERA5_LAND/MONTHLY_AGGR");
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
 // Export GEOBoarders
 var path = "FAO/GAUL_SIMPLIFIED_500m/2015/level0"; // Set the path to the GAUL dataset, which contains simplified country borders at 500m resolution in 2015.
 var country_code = 132; // Set the country code for Kazakhstan.
@@ -58,7 +61,8 @@ function createImageCollection(startDate, endDate, args){
   var filteredCollection = collection.filter(ee.Filter.calendarRange(startDate, endDate, 'year')); // Filter the collection based on the specified date range.
   var selectedImage = filteredCollection.select(args.band).toBands(); // Select the specified band(s) from the keyMap configuration and convert them to bands.
  
-  var years = ee.List.sequence(startDate, endDate); // Generate a list of band names for each month.
+  // Loop through each year in the specified date range
+var years = ee.List.sequence(startDate.get('year').getInfo(), endDate.get('year').getInfo()); // Generate a list of band names for each month.
   
   var listOfDim = []; // Initialize an empty array to store band names.
     for (var i = 1; i <= 12; i++) { // Loop from 1 to 12 (representing months) and push new band names to the array.
@@ -66,10 +70,13 @@ function createImageCollection(startDate, endDate, args){
                                           // (which is derived from the keyMap configuration) and the current value of i.
     }
   
-  // Loop through each year in the specified date range
-  years.getInfo().forEach(function(year){
-    var startBand = (year - startDate) * 12; // Calculate the start and end bands for the current year.
-    var endBand = startBand + 11;
+
+
+
+years.getInfo().forEach(function (year) {
+  var startBand = (year - startDate.get('year').getInfo()) * 12;
+  var endBand = startBand + 11;
+    
     
     var yearImage = selectedImage.select(ee.List.sequence(startBand, endBand)); // Select bands corresponding to the current year.
         yearImage = yearImage.rename(listOfDim); // Rename bands with the generated list of dimension names.
@@ -199,8 +206,9 @@ var subtractBands = function(image) {
 
 // Apply the subtraction function to the image collection
 var subtractedCollection = listOfImages.map(subtractBands);
-*/
+
 // Display the result on the map
 Map.centerObject(subtractedCollection, 10);
 Map.addLayer(subtractedCollection, {min: minValue, max: maxValue, palette: 'your_palette'}, 'Subtracted Bands');
 
+*/
