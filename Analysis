@@ -1,20 +1,15 @@
 // Export GEOBoarders
-var path = "FAO/GAUL_SIMPLIFIED_500m/2015/level0"; var country_code = 132; // Set the country code for Kazakhstan.
-var country = ee.FeatureCollection(path).filter(ee.Filter.eq('ADM0_CODE', country_code)); // Filter the country feature collection for Kazakhstan.
+var path = "FAO/GAUL_SIMPLIFIED_500m/2015/level0"; 
+var country_code = 132; // Set the country code for Kazakhstan.
+var country = ee.FeatureCollection(path).filter(ee.Filter.eq('ADM0_CODE', country_code)); 
 
 // Load the multi-band temperature image from the specified Earth Engine asset
 // Note: To add your own dataset, replace the asset ID with the proper path to your temperature image
 var multiBandImageT = ee.Image("users/yessimkhanovakalamkas/tmean_monthly_CRU");
 
-// Print the information about the loaded temperature image to the console
-//print(multiBandImageT);
-
 // Load the multi-band precipitation image from the specified Earth Engine asset
 // Note: To add your own dataset, replace the asset ID with the proper path to your precipitation image
 var multiBandImageP = ee.Image("users/yessimkhanovakalamkas/pr_monthly_CRU");
-
-// Print the information about the loaded precipitation image to the console
-//print(multiBandImageP);
 
 // Set the start and end years for the analysis based on the available date range of the source data
       var startDate = 1901;
@@ -139,9 +134,10 @@ var finalYearlyImages = yearlyImages.mean();
 print(finalYearlyImages);
 
 // Filter the ImageCollection for the specified time periods
-var period1Images = yearlyImages.select('avgtemp').filter(ee.Filter.inList('year', ee.List.sequence(1960, 1990)));
-var period2Images = yearlyImages.select('avgtemp').filter(ee.Filter.inList('year', ee.List.sequence(1991, 2014)));
-print(period1Images)
+var period1Images = yearlyImages.filter(ee.Filter.inList('year', ee.List.sequence(1960, 1990)));
+var period2Images = yearlyImages.filter(ee.Filter.inList('year', ee.List.sequence(1991, 2014)));
+print(period1Images);
+
 // Calculate the mean temperature for each pixel over the specified time periods
 var meanTempPeriod1 = period1Images.reduce(ee.Reducer.mean());
 var meanTempPeriod2 = period2Images.reduce(ee.Reducer.mean());
@@ -156,8 +152,99 @@ var tempChangeVis = {
   palette: ['blue', 'white', 'red'],
 };
 
-// Add the layers to the map
-Map.addLayer(meanTempPeriod1, {min: -30, max: 30, palette: ['blue', 'purple', 'cyan', 'green', 'yellow', 'red']}, 'Mean Temp (1960-1990)');
-Map.addLayer(meanTempPeriod2, {min: -30, max: 30, palette: ['blue', 'purple', 'cyan', 'green', 'yellow', 'red']}, 'Mean Temp (1991-2014)');
-Map.addLayer(tempChange, tempChangeVis, 'Temperature Change');
+// UI Sector
+// Map Settings
+var customMap = ui.Map();
+customMap.setControlVisibility({
+  zoomControl: false,
+  drawingToolsControl: false,
+  fullscreenControl: false,
+  mapTypeControl: false
+});
+customMap.centerObject(country);
 
+// Project Title
+var projectTitleLabel = ui.Label({
+  value: 'Köppen Climate Map based on ERA5-Land Monthly Aggregated data',
+  style: {
+    fontWeight: 'bold',
+    fontSize: '24px',
+    margin: '0px 0 0 0',
+    textAlign: 'center',
+    width: '100%'
+  }
+});
+customMap.add(projectTitleLabel);
+
+// Info Text
+var infoPanel = ui.Panel({
+  widgets: [
+    ui.Label('This Köppen Climate Classification map is generated using Google Earth Engine and ERA5-Land Monthly Aggregated climate reanalysis data.', { fontSize: '14px' }),
+    // ... (other info labels)
+  ],
+  style: {
+    width: '300px'
+  }
+});
+
+// ... (slider and button code)
+
+// Year Slider Panel
+var yearFilterSlider = ui.Panel({
+  style:{
+    position: 'top-left'
+  }
+}).add(startYearLabel)
+  .add(startYearSlider)
+  .add(endYearLabel)
+  .add(endYearSlider);
+
+// Info and Control Panel
+var infoAndControlPanel = ui.Panel().add(infoPanel).add(yearFilterSlider);
+
+// Legend Title
+var legendTitle = ui.Label({
+  value: 'Legend',
+  style: {
+    fontWeight: 'bold',
+    fontSize: '18px',
+    margin: '0 0 4px 0',
+    padding: '10px'
+  }
+});
+
+// Widget Legend Record
+var makeLegendRecord = function (color, zoneCode, zoneName){
+  // ... (legend record creation code)
+};
+
+// Panel: Legend
+var legendPanel = ui.Panel({}).add(legendTitle);
+
+// Add legendRecord to Legend Panel
+for (var i=0; i<Object.keys(zoneNames).length; i++){
+  var row = makeLegendRecord(colors[i], zoneCodes[i], zoneNames[zoneCodes[i]]);
+  legendPanel.add(row);
+}
+
+// Panel Settings
+var leftMainPanel = ui.Panel({
+  style:{
+    width: '325px',
+    position: 'middle-left'
+  }
+});
+
+var rightMainPanel = ui.Panel({
+  style: {
+    width: '300px',
+    position: 'middle-right'}
+});
+
+// Adds 'infoAndControlPanel' to the left panel and 'legendPanel' to the right panel.
+rightMainPanel.add(legendPanel);
+leftMainPanel.add(infoAndControlPanel);
+
+// Panel init
+ui.root.clear();
+ui.root.add(leftMainPanel).add(customMap).add(rightMainPanel);
