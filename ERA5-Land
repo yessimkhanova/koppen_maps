@@ -845,7 +845,7 @@ for (var i=0; i<Object.keys(zoneNames).length; i++){
 // Creates left and right main panels for layout purposes.
 var leftMainPanel = ui.Panel({
   style:{
-    width: '325px',
+    width: '350px',
     position: 'middle-left'
   }
 });
@@ -853,7 +853,7 @@ var leftMainPanel = ui.Panel({
 var rightMainPanel = ui.Panel(
   {
     style: {
-      width: '350px',
+      width: '300px',
       position: 'middle-right'}
   });
 
