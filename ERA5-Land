@@ -690,7 +690,7 @@ var infoPanel = ui.Panel({ // Creates a panel to display information about the p
     ui.Label('Use the slider to select the time period for visualizing Köppen climate maps.', { fontSize: '17px', fontWeight: 'bold'}),
    ],
   style: {
-    width: '350px'
+    width: '450px'
   }
 });
 //print(typeof(newStartDate.get('year').getInfo()))
