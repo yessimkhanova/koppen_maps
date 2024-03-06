@@ -853,7 +853,7 @@ var leftMainPanel = ui.Panel({
 var rightMainPanel = ui.Panel(
   {
     style: {
-      width: '300px',
+      width: '350px',
       position: 'middle-right'}
   });
 
