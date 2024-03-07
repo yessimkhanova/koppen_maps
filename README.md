@@ -66,4 +66,4 @@ Credit is given to the tools and datasets used in this work:
 - NEX-GDDP-CMIP6 dataset (Thrasher, B., et al., 2012)
 - ERA5-Land dataset (Muñoz Sabater, J., 2019)
 - ERA5 dataset (Copernicus Climate Change Service, 2017)
-- CRU dataset (World Bank Group, 2024)
+- CRU dataset (World Bank Group, Climate Change Knowledge Portal, 2024)
