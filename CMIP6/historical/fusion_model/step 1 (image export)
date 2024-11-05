@@ -80,7 +80,7 @@ for (var year = 1950; year <= 2014; year++) {
   Export.image.toAsset({
     image: temperatureImage,
     description: 't_' + year + '-mean_best_two_fit',
-    assetId: 'users/yessimkhanovakalamkas/fusion_temp/' + 't_' + year + '-GISS-E2-1-G',
+    assetId: 'users/kalamkas/fusion_temp/' + 't_' + year + '-GISS-E2-1-G',
     scale: 27830 // Resolution of the source dataset is 27830 meters, so it is set by default
    });
     // Comment: Export temperature image to your Earth Engine Assets.
@@ -92,7 +92,7 @@ for (var year = 1950; year <= 2014; year++) {
   Export.image.toAsset({
     image: precipitationImage,
     description: 'pr_' + year + '-mean_best_two_fit',
-    assetId: 'users/yessimkhanovakalamkas/fusion_precip/' + 'pr_' + year + '-MIROC-ES2L',
+    assetId: 'users/kalamkas/fusion_precip/' + 'pr_' + year + '-MIROC-ES2L',
     scale: 27830 // Resolution of the source dataset is 27830 meters, so it is set by default
    });
     // Comment: Export precipitation image to your Earth Engine Assets.
