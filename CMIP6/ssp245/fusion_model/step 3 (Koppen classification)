@@ -1,0 +1,911 @@
+                        // THIS STEP 3 OF KOPPEN CLIMATE CLASSIFICATION USING FUSION OF CMIP6 DATA
+
+// Export GEOBoarders
+var path = "FAO/GAUL_SIMPLIFIED_500m/2015/level0"; var country_code = 132; // Set the country code for Kazakhstan.
+var country = ee.FeatureCollection(path).filter(ee.Filter.eq('ADM0_CODE', country_code)); // Filter the country feature collection for Kazakhstan.
+
+// Load the multi-band temperature image from the specified Earth Engine asset generated in Step 2
+// Note: To add your own dataset, replace the asset ID with the proper path to your temperature image
+var multiBandImageT = ee.Image("users/kalamkas/fusion/temp_ssp245_fusion_all_years");
+//print(multiBandImageT); // Print the information about the loaded temperature image to the console
+
+// Load the multi-band precipitation image from the specified Earth Engine asset generated in Step 2
+// Note: To add your own dataset, replace the asset ID with the proper path to your precipitation image
+var multiBandImageP = ee.Image("users/kalamkas/fusion/precip_ssp245_fusion_all_years");
+//print(multiBandImageP); // Print the information about the loaded precipitation image to the console
+
+// Initialize arrays and dictionaries for colors, zone codes, and zone names
+//Init directory: Köppen climate classification system colors, zoneNames, zoneCodes
+
+// Explanation:
+// - Each color is represented by a hexadecimal code.
+// - The numeric value next to each color corresponds to its index in the 'colors' array.
+// - These numeric values are used later in the classification to assign colors to specific climate zones.
+   
+    var colors = [
+      "000000",        // 0: Black
+      "0000FF",        // 1: Blue
+      "4169E1",        // 2: Royal Blue
+      "6495ED",        // 3: Cornflower Blue
+      "00BFFF",        // 4: Deep Sky Blue
+      "FF0000",        // 5: Red
+      "F08080",        // 6: Light Coral
+      "FF8C00",        // 7: Dark Orange
+      "FFD700",        // 8: Gold
+      "98FB98",        // 9: Pale Green
+      "3CB371",        // 10: Medium Sea Green
+      "2E8B57",        // 11: Sea Green
+      "ADFF2F",        // 12: Green Yellow
+      "00FF00",        // 13: Lime
+      "32CD32",        // 14: Lime Green
+      "FFFF00",        // 15: Yellow
+      "BDB76B",        // 16: Dark Khaki
+      "808000",        // 17: Olive
+      "7B68EE",        // 18: Medium Slate Blue
+      "6A5ACD",        // 19: Slate Blue
+      "483D8B",        // 20: Dark Slate Blue
+      "191970",        // 21: Midnight Blue
+      "00FFFF",        // 22: Aqua / Cyan
+      "87CEFF",        // 23: Light Sky Blue
+      "008080",        // 24: Teal
+      "2F4F4F",        // 25: Dark Slate Gray
+      "FF00FF",        // 26: Magenta / Fuchsia
+      "9400D3",        // 27: Dark Violet
+      "800080",        // 28: Purple
+      "D8BFD8",        // 29: Thistle
+      "A9A9A9",        // 30: Dark Gray
+      "696969"         // 31: Dim Gray 
+    ];
+
+// Explanation:
+// - Each code represents a specific climate zone or category.
+// - The numeric value next to each code corresponds to its index in the 'zoneCodes' array.
+// - These numeric values are later used for color representation in the classification.
+
+    var zoneCodes = [
+      '-',    // 0: No specific climate zone
+    
+      // Group A - Tropical climates
+      'Zone 1. Af',    // 1: Tropical rainforest climate
+      'Zone 2. Am',    // 2: Monsoon climate
+      'Zone 3. Aw',    // 3: Tropical savanna climate
+      'Zone 4. As',    // 4: Tropical wet and dry or savanna climate
+    
+      // Group B - Arid climates
+      'Zone 5. BWh',   // 5: Hot desert climate
+      'Zone 6. BWk',   // 6: Cold desert climate
+      'Zone 7. BSh',   // 7: Hot semi-arid climate
+      'Zone 8. BSk',   // 8: Cold semi-arid climate
+    
+      // Group C - Temperate climates
+      'Zone 9. Cwa',   // 9: Humid subtropical climate with dry winters
+      'Zone 10. Cwb',   // 10: Humid subtropical climate with dry winters and hot summers
+      'Zone 11. Cwc',   // 11: Humid subtropical climate with dry winters and cool summers
+      'Zone 12. Cfa',   // 12: Humid subtropical climate with no dry season and hot summers
+      'Zone 13. Cfb',   // 13: Humid subtropical climate with no dry season and warm summers
+      'Zone 14. Cfc',   // 14: Humid subtropical climate with no dry season and cool summers
+      'Zone 15. Csa',   // 15: Mediterranean climate with hot, dry summers
+      'Zone 16. Csb',   // 16: Mediterranean climate with warm, dry summers
+      'Zone 17. Csc',   // 17: Mediterranean climate with cool, dry summers
+    
+      // Group D - Continental climates
+      'Zone 18. Dwa',   // 18: Humid continental climate with hot summers
+      'Zone 19. Dwb',   // 19: Humid continental climate with warm summers
+      'Zone 20. Dwc',   // 20: Humid continental climate with cool summers
+      'Zone 21. Dwd',   // 21: Humid continental climate with very cold winters
+      'Zone 22. Dfa',   // 22: Humid continental climate with hot summers and severe winters
+      'Zone 23. Dfb',   // 23: Humid continental climate with warm summers and severe winters
+      'Zone 24. Dfc',   // 24: Humid continental climate with cool summers and severe winters
+      'Zone 25. Dfd',   // 25: Humid continental climate with very cold winters and severe winters
+    
+      // Group E - Polar and alpine climates
+      'Zone 26. Dsa',   // 26: Subarctic climate with short, mild summers
+      'Zone 27. Dsb',   // 27: Subarctic climate with short, warm summers
+      'Zone 28. Dsc',   // 28: Subarctic climate with short, cool summers
+      'Zone 29. Dsd',   // 29: Subarctic climate with very cold winters
+    
+      // Group E - Polar and alpine climates continued
+      'Zone 30. ET',    // 30: Tundra climate
+      'Zone 31. EF'     // 31: Ice cap climate
+    ];
+
+// Explanation:
+// - Each code represents a specific climate zone or category.
+// - The corresponding value is the descriptive name of the climate zone.
+
+    var zoneNames = {
+      '-': 'Not classified',               // 0: No specific climate zone
+    
+      // Group A - Tropical climates
+      'Zone 1. Af': 'Tropical Rainforest',         // 1: Tropical rainforest climate
+      'Zone 2. Am': 'Tropical Monsoon',            // 2: Monsoon climate
+      'Zone 3. Aw': 'Tropical Wet & Dry',          // 3: Tropical savanna climate
+      'Zone 4. As': 'Tropical Savanna',            // 4: Tropical wet and dry or savanna climate
+    
+      // Group B - Arid climates
+      'Zone 5. BWh': 'Hot Desert',                 // 5: Hot desert climate
+      'Zone 6. BWk': 'Cold Desert',                // 6: Cold desert climate
+      'Zone 7. BSh': 'Hot Semi-Arid',              // 7: Hot semi-arid climate
+      'Zone 8. BSk': 'Cold Semi-Arid',             // 8: Cold semi-arid climate
+    
+      // Group C - Temperate climates
+      'Zone 9. Cwa': 'Humid Subtropical',          // 9: Humid subtropical climate with dry winters
+      'Zone 10. Cwb': 'Subtropical Highland',      // 10: Humid subtropical climate with dry winters and hot summers
+      'Zone 11. Cwc': 'Cold Subtropical Highland',  // 11: Humid subtropical climate with dry winters and cool summers
+      'Zone 12. Cfa': 'Humid Continental',          // 12: Humid subtropical climate with no dry season and hot summers
+      'Zone 13. Cfb': 'Oceanic Climate',            // 13: Humid subtropical climate with no dry season and warm summers
+      'Zone 14. Cfc': 'Subpolar Oceanic Climate',   // 14: Humid subtropical climate with no dry season and cool summers
+      'Zone 15. Csa': 'Mediterranean',              // 15: Mediterranean climate with hot, dry summers
+      'Zone 16. Csb': 'Warm Summer Mediterranean',  // 16: Mediterranean climate with warm, dry summers
+      'Zone 17. Csc': 'Cold Summer Mediterranean',  // 17: Mediterranean climate with cool, dry summers
+    
+      // Group D - Continental climates
+      'Zone 18. Dwa': 'Humid Continental Hot Summer',  // 18: Humid continental climate with hot summers
+      'Zone 19. Dwb': 'Humid Continental Mild Summer', // 19: Humid continental climate with warm summers
+      'Zone 20. Dwc': 'Subarctic Hot Summer',          // 20: Humid continental climate with cool summers
+      'Zone 21. Dwd': 'Subarctic Mild Summer',         // 21: Humid continental climate with very cold winters
+      'Zone 22. Dfa': 'Humid Continental Hot Summer',  // 22: Humid continental climate with hot summers and severe winters
+      'Zone 23. Dfb': 'Humid Continental Mild Summer', // 23: Humid continental climate with warm summers and severe winters
+      'Zone 24. Dfc': 'Subarctic',                     // 24: Humid continental climate with cool summers and severe winters
+      'Zone 25. Dfd': 'Subarctic Extreme Winter',      // 25: Humid continental climate with very cold winters and severe winters
+    
+      // Group E - Polar and alpine climates
+      'Zone 26. Dsa': 'Dry Hot Summer',      // 26: Subarctic climate with short, mild summers
+      'Zone 27. Dsb': 'Dry Mild Summer',     // 27: Subarctic climate with short, warm summers
+      'Zone 28. Dsc': 'Dry Cold Summer',     // 28: Subarctic climate with short, cool summers
+      'Zone 29. Dsd': 'Dry Extreme Winter',  // 29: Subarctic climate with very cold winters
+    
+      // Group E - Polar and alpine climates continued
+      'Zone 30. ET': 'Tundra',               // 30: Tundra climate
+      'Zone 31. EF': 'Ice Cap'               // 31: Ice cap climate
+    };
+
+// Explanation:
+// - The 'startDate' and 'endDate' variables define the temporal range for the analysis,
+//   considering the available date range of the source data.
+// - The 'years' list is generated to represent each year within the specified range.
+// - Three empty ImageCollections ('yearlyImagesP', 'yearlyImagesT', and 'yearlyImages') are created to store cumulative yearly images.
+// - These ImageCollections will be used to accumulate precipitation, temperature, and combined images over multiple years.
+
+      // Set the start and end years for the analysis based on the available date range of the source data
+      var startDate = 1950;
+      var endDate = 2014;
+      
+      // Generate a list of years from the start to the end year
+      var years = ee.List.sequence(startDate, endDate);
+      
+      // Initialize empty Earth Engine ImageCollections to store cumulative yearly precipitation, temperature, and combined images
+      var yearlyImagesT = ee.ImageCollection([]);
+      var yearlyImagesP = ee.ImageCollection([]);
+      var yearlyImages = ee.ImageCollection([]);
+
+// Loop through each year in the specified date range
+years.getInfo().forEach(function (year) {
+  var startBand = (year - 1950) * 12; // Calculate the start and end bands for the current year.
+  var endBand = startBand + 11;
+        
+        // Rename temperature bands from generic names to more meaningful names ('t1' to 't12') for better interpretation
+        var yearImageT = multiBandImageT.select(ee.List.sequence(startBand, endBand));
+            
+            // Correspondence: 't1' represents January, 't2' represents February, ..., 't12' represents December
+            yearImageT = yearImageT.rename(['t1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12']);
+
+                // Calculate the average temperature for each pixel across all months in the year
+                var avgT = yearImageT.reduce(ee.Reducer.mean())
+                                      // .subtract(273) // Convert from Kelvin to Celsius
+                                      .rename('avgtemp'); // Rename the resulting band as 'avgtemp'
+                
+                // Calculate the minimum temperature for each pixel across all months in the year
+                var minT = yearImageT.reduce(ee.Reducer.min())
+                                      // .subtract(273) // Convert from Kelvin to Celsius
+                                      .rename('mintemp'); // Rename the resulting band as 'mintemp'
+                
+                // Calculate the maximum temperature for each pixel across all months in the year
+                var maxT = yearImageT.reduce(ee.Reducer.max())
+                                      // .subtract(273) // Convert from Kelvin to Celsius
+                                      .rename('maxtemp'); // Rename the resulting band as 'maxtemp'
+                
+                // Count the number of months where the temperature is greater than 10 degrees Celsius
+                var monthsGreaterThan10 = yearImageT.gt(10)
+                                                    .reduce('sum') // Sum the number of occurrences
+                                                    .rename('tenplusmonths'); // Rename the resulting band as 'tenplusmonths'
+            
+            // Add the calculated temperature bands to the original image
+            yearImageT = yearImageT.addBands([avgT, minT, maxT, monthsGreaterThan10]);
+    
+        // Rename precipitation bands from generic names to more meaningful names ('p1' to 'p12') for better interpretation
+        var yearImageP = multiBandImageP.select(ee.List.sequence(startBand, endBand)); 
+            // Correspondence: 'p1' represents January, 'p2' represents February, ..., 'p12' represents December
+            yearImageP = yearImageP.rename(['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12']);
+
+                // Calculate the total precipitation for each pixel across all months in the year and convert to millimeters
+                var totalP = yearImageP.reduce(ee.Reducer.sum())
+                                        // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
+                                        .rename('totalprecip'); // Rename the resulting band as 'totalprecip'
+                
+                // Calculate the minimum precipitation for each pixel across all months in the year and convert to millimeters
+                var minP = yearImageP.reduce(ee.Reducer.min())
+                                        // .multiply(1000) // // Uncomment this line if your data is in meters for conversion to millimeters
+                                        .rename('minprecip'); // Rename the resulting band as 'minprecip'
+                
+                // Calculate the maximum precipitation for each pixel across all months in the year and convert to millimeters
+                var maxP = yearImageP.reduce(ee.Reducer.max())
+                                    // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
+                                    .rename('maxprecip'); // Rename the resulting band as 'maxprecip'
+                
+                // Calculate the summer precipitation (months 4-9) for each pixel in the year and convert to millimeters
+                var summerP = yearImageP.select(['p4','p5','p6', 'p7', 'p8', 'p9'])
+                                        .reduce('sum') // Sum the precipitation for selected months (April to September)
+                                        // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
+                                        .rename('nsummerprecip'); // Rename the resulting band as 'nsummerprecip'
+                
+                // Calculate the winter precipitation (months 10-3) for each pixel in the year and convert to millimeters
+                var winterP = yearImageP.select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
+                                       .reduce('sum') // Sum the precipitation for selected months (October to March)
+                                       // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
+                                       .rename('winterprecip'); // Rename the resulting band as 'winterprecip'
+                
+                // Calculate the maximum winter precipitation for each pixel in the year and convert to millimeters
+                var maxWinterP = yearImageP.select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
+                                          .reduce('max') // Find the maximum precipitation for selected months (October to March)
+                                          // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
+                                          .rename('maxwprecip'); // Rename the resulting band as 'maxwprecip'
+                
+                // Calculate the minimum winter precipitation for each pixel in the year and convert to millimeters
+                var minWinterP = yearImageP.select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
+                                          .reduce('min') // Find the minimum precipitation for selected months (October to March)
+                                          // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
+                                          .rename('minwprecip'); // Rename the resulting band as 'minwprecip'
+                
+                // Calculate the maximum summer precipitation for each pixel in the year and convert to millimeters
+                var maxSummerP = yearImageP.select(['p4','p5','p6', 'p7', 'p8', 'p9'])
+                                          .reduce('max') // Find the maximum precipitation for selected months (April to September)
+                                          // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
+                                          .rename('maxsprecip'); // Rename the resulting band as 'maxsprecip'
+                
+                // Calculate the minimum summer precipitation for each pixel in the year and convert to millimeters
+                var minSummerP = yearImageP.select(['p4','p5','p6', 'p7', 'p8', 'p9'])
+                                          .reduce('min') // Find the minimum precipitation for selected months (April to September)
+                                          // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
+                                          .rename('minsprecip'); // Rename the resulting band as 'minsprecip'
+            
+            // Add the calculated precipitation bands to the original image
+            yearImageP = yearImageP.addBands([totalP, minP, maxP, summerP, winterP, maxWinterP, minWinterP, maxSummerP, minSummerP]);
+   
+  yearImageT = yearImageT.set('year', year);
+  yearImageP = yearImageP.set('year', year);
+  
+  yearlyImagesT = yearlyImagesT.merge(yearImageT);
+  yearlyImagesP = yearlyImagesP.merge(yearImageP);
+  
+  var yearTogether = yearImageP.addBands(yearImageT);
+  yearlyImages = yearlyImages.merge(yearTogether);
+});
+
+// print('Yearly Images Collection:Temp', yearlyImagesT);
+// print('Yearly Images Collection:Precip', yearlyImagesP);
+// print('Yearly Images Collection together', yearlyImages);
+
+var finalYearlyImages = yearlyImages.mean();
+// print(finalYearlyImages);
+
+// Determine which hemisphere the pixel belongs to
+var northernHemisphere=ee.Image.pixelLonLat().select('latitude').gt(0); 
+
+// Classification function for Köppen climate classification
+function koppenClass(image) {
+  // Extract relevant temperature and precipitation related bands from the input image.
+  
+  // Select the band 'mintemp' from the input image and assign it to the variable 'mintemp'
+  var mintemp = image.select('mintemp'); // Represents the minimum temperature for each pixel across all months in the year.
+  
+  // Select the band 'maxtemp' from the input image and assign it to the variable 'maxtemp'
+  var maxtemp = image.select('maxtemp'); // Represents the maximum temperature for each pixel across all months in the year.
+  
+  // Select the band 'avgtemp' from the input image and assign it to the variable 'avgtemp'
+  var avgtemp = image.select('avgtemp'); // Represents the average temperature for each pixel across all months in the year.
+  
+  // Select the band 'tenplusmonths' from the input image and assign it to the variable 'tenplus'
+  var tenplus = image.select('tenplusmonths'); // Represents the number of months where the temperature is greater than 10 degrees Celsius.
+  
+  // Select the band 'minprecip' from the input image and assign it to the variable 'minprecip'
+  var minprecip = image.select('minprecip'); // Represents the minimum precipitation for each pixel across all months in the year.
+  
+  // Select the band 'maxprecip' from the input image and assign it to the variable 'maxprecip'
+  var maxprecip = image.select('maxprecip'); // Represents the maximum precipitation for each pixel across all months in the year.
+  
+  // Select the band 'minsprecip' from the input image, multiply it by the northern hemisphere condition,
+  // and assign the result to the variable 'minsprecip'
+  var minsprecip = image.select('minsprecip').multiply(northernHemisphere)
+                        .add(image.select('minwprecip')
+                        .multiply(northernHemisphere.not())); // Represents the minimum summer precipitation adjusted for the northern hemisphere.
+  
+  // Select the band 'maxsprecip' from the input image, multiply it by the northern hemisphere condition,
+  // and assign the result to the variable 'maxsprecip'
+  var maxsprecip = image.select('maxsprecip').multiply(northernHemisphere)
+                        .add(image.select('maxwprecip').multiply(northernHemisphere.not())); // Represents the maximum summer precipitation adjusted for the northern hemisphere.
+  
+  // Select the band 'minwprecip' from the input image, multiply it by the northern hemisphere condition,
+  // and assign the result to the variable 'minwprecip'
+  var minwprecip = image.select('minwprecip').multiply(northernHemisphere)
+                        .add(image.select('minsprecip')
+                        .multiply(northernHemisphere.not())); // Represents the minimum winter precipitation adjusted for the northern hemisphere.
+  
+  // Select the band 'maxwprecip' from the input image, multiply it by the northern hemisphere condition,
+  // and assign the result to the variable 'maxwprecip'
+  var maxwprecip = image.select('maxwprecip').multiply(northernHemisphere)
+                        .add(image.select('maxsprecip')
+                        .multiply(northernHemisphere.not())); // Represents the maximum winter precipitation adjusted for the northern hemisphere.
+  
+  // Select the band 'totalprecip' from the input image and assign it to the variable 'precip'
+  var precip = image.select('totalprecip'); // Represents the total precipitation for each pixel across all months in the year.
+
+  // Calculate monsoon minimum threshold based on precipitation.
+  var monsoonminimum=precip.divide(-25).add(100); // The formula is: 100 - (totalprecip / 25)
+                                                  // Divide total precipitation (totalprecip) by -25, then add 100 to get the monsoon minimum threshold.
+  
+  // Select the band 'nsummerprecip' from the input image and assign it to the variable 'sprecip'
+  var sprecip = image.select('nsummerprecip'); // Represents the summer precipitation for each pixel in the year.
+  
+  // Determine which season is considered as summer and select that half year's precipitation.
+  // Multiply 'sprecip' by the northern hemisphere condition and add the precipitation for the other half of the year.
+  var summerprecip = sprecip.multiply(northernHemisphere)
+                            .add(precip.subtract(sprecip).multiply(northernHemisphere.not())); // 'summerprecip' now represents the adjusted summer precipitation based on the northern hemisphere.
+  
+  // Calculate the ratio of 'summerprecip' to 'precip' and assign it to the variable 'summerratio'
+  var summerratio = summerprecip.divide(precip); // Represents the ratio of summer precipitation to total precipitation.
+  
+  // Calculate an aridity threshold based on average temperature and the 'summerratio'.
+  // The formula is: aridthreshold = avgtemp * 20 + (summerratio between 0.3 and 0.7) * 140
+  var aridthreshold = avgtemp.multiply(20).add(summerratio.gt(0.3).and(summerratio.lt(0.7)).multiply(140)); // 'aridthreshold' now represents the calculated aridity threshold based on temperature and summer precipitation ratio.
+
+                    // Group B - Arid climates
+
+// Condition to identify arid climates (B): Maximum temperature greater than 10°C and aridity threshold greater than total precipitation.
+var B = maxtemp.gt(10).and(aridthreshold.gt(precip));
+
+// Condition to identify dry winters (W): Total precipitation less than half of the aridity threshold.
+var W = precip.lt(aridthreshold.multiply(0.5));
+
+// Condition to identify hot climates (h): Average temperature greater than 18°C.
+var h = avgtemp.gt(18);
+
+// Combination of conditions for B and W to identify arid climates with dry winters (BW)
+var BW = B.and(W);
+
+// Further conditions based on temperature and h for subcategories of BW
+var BWh = BW.and(h); // Arid climates with dry winters and hot conditions
+var BWk = BW.and(h.not()); // Arid climates with dry winters and not hot conditions
+
+// Conditions for B excluding W to identify arid climates with sufficient precipitation during winters (BS)
+var BS = B.and(W.not());
+
+// Further conditions based on temperature and h for subcategories of BS
+var BSh = BS.and(h); // Arid climates with sufficient precipitation during winters and hot conditions
+var BSk = BS.and(h.not()); // Arid climates with sufficient precipitation during winters and not hot conditions
+
+                      // Group A - Tropical climates  
+ 
+// Condition to identify tropical climates (A): Not in Group B (Arid climates) and minimum temperature greater than or equal to 18°C.
+var A = B.not().and(mintemp.gte(18));
+
+// Subcategories within tropical climates:
+
+// Af: Tropical climates with minimum precipitation greater than or equal to 60mm.
+var Af = A.and(minprecip.gte(60));
+
+// Am: Tropical climates with minimum precipitation less than 60mm and greater than or equal to the monsoon minimum threshold.
+var Am = A.and(minprecip.lt(60))
+          .and(minprecip.gte(monsoonminimum));
+
+// Aw: Tropical climates with minimum precipitation less than 60mm and less than the monsoon minimum threshold.
+var Aw = A.and(minprecip.lt(60))
+          .and(minprecip.lt(monsoonminimum));
+
+                    // Group C - Temperate climates  
+ 
+// Conditions for identifying temperate climates based on various parameters.
+
+// C represents the general conditions for temperate climates.
+var C = B.not() // Not part of Group B (Arid climates)
+         .and(mintemp.gte(0)) // Minimum temperature greater than or equal to 0°C
+         .and(mintemp.lte(18)) // Minimum temperature less than or equal to 18°C
+         .and(maxtemp.gte(10)); // Maximum temperature greater than or equal to 10°C
+
+// Cw represents conditions for winter precipitation in temperate climates.
+var Cw = C.and(maxsprecip.gte(minwprecip.multiply(10))); // Winter precipitation greater than or equal to 10 times the minimum summer precipitation.
+
+// Cs represents conditions for summer precipitation in temperate climates.
+var Cs = C.and(Cw.not()) // Not part of the winter precipitation conditions
+          .and(maxwprecip.gte(minsprecip.multiply(3))) // Maximum winter precipitation greater than or equal to 3 times the minimum summer precipitation
+          .and(minsprecip.lt(40)); // Minimum summer precipitation less than 40mm.
+
+// Cf represents conditions for other cases within temperate climates.
+var Cf = C.and(Cw.not()).and(Cs.not()); // Conditions not meeting winter or summer precipitation criteria.
+
+// Sub-conditions based on temperature and months with temperature above 10°C (tenplus).
+
+// Cwa represents conditions for warm temperate climates with high precipitation.
+var Cwa = Cw.and(maxtemp.gte(22))
+            .and(tenplus.gte(4)); // Maximum temperature above 22°C and at least 4 months with temperature above 10°C.
+
+// Cwb represents conditions for warm temperate climates with lower precipitation.
+var Cwb = Cw.and(maxtemp.lt(22))
+            .and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
+
+// Cwc represents transitional conditions within warm temperate climates.
+var Cwc = Cw.and(tenplus.gte(1))
+            .and(tenplus.lt(4)); // Between 1 and 3 months with temperature above 10°C.
+
+// Csa represents conditions for cold temperate climates with high precipitation.
+var Csa = Cs.and(maxtemp.gte(22))
+            .and(tenplus.gte(4)); // Maximum temperature above 22°C and at least 4 months with temperature above 10°C.
+
+// Csb represents conditions for cold temperate climates with lower precipitation.
+var Csb = Cs.and(maxtemp.lt(22))
+            .and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
+
+// Csc represents transitional conditions within cold temperate climates.
+var Csc = Cs.and(tenplus.gte(1))
+            .and(tenplus.lt(4)); // Between 1 and 3 months with temperature above 10°C.
+
+// Cfa represents conditions for temperate climates with significant summer precipitation.
+var Cfa = Cf.and(maxtemp.gte(22))
+            .and(tenplus.gte(4))
+            .and(summerprecip.gt(0)); // Maximum temperature above 22°C, at least 4 months with temperature above 10°C, and summer precipitation greater than 0.
+
+// Cfb represents conditions for temperate climates with lower summer precipitation.
+var Cfb = Cf.and(maxtemp.lt(22))
+            .and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
+
+// Cfc represents transitional conditions within temperate climates.
+var Cfc = Cf.and(tenplus.gte(1))
+            .and(tenplus.lt(4)); // Between 1 and 3 months with temperature above 10°C.
+
+                    // Group D - Continental climates
+
+// Conditions for identifying continental climates based on various parameters.
+
+// D represents the general conditions for continental climates.
+var D = B.not() // Not part of Group B (Arid climates)
+         .and(C.not()) // Not part of Group C (Temperate climates)
+         .and(mintemp.lt(0)) // Minimum temperature less than 0°C
+         .and(maxtemp.gt(10)); // Maximum temperature greater than 10°C
+
+// Dw represents conditions for winter precipitation in continental climates.
+var Dw = D.and(maxsprecip.gt(minwprecip.multiply(10))); // Winter precipitation greater than 10 times the minimum summer precipitation.
+
+// Ds represents conditions for summer precipitation in continental climates.
+var Ds = D.and(Dw.not())
+          .and(maxwprecip.gt(minsprecip.multiply(3))) // Maximum winter precipitation greater than 3 times the minimum summer precipitation
+          .and(minsprecip.lt(30)); // Minimum summer precipitation less than 30mm.
+
+// Df represents conditions for other cases within continental climates.
+var Df = D.and(Dw.not())
+          .and(Ds.not()); // Conditions not meeting winter or summer precipitation criteria.
+
+// Sub-conditions based on temperature and months with temperature above 10°C (tenplus).
+
+// Dfa represents conditions for continental climates with significant summer precipitation and high temperatures.
+var Dfa = Df.and(maxtemp.gt(22))
+            .and(tenplus.gte(4)); // Maximum temperature above 22°C and at least 4 months with temperature above 10°C.
+
+// Dfb represents conditions for continental climates with lower summer precipitation and high temperatures.
+var Dfb = Df.and(maxtemp.lte(22))
+            .and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
+
+// Dfd represents conditions for continental climates with low temperatures and minimal summer precipitation.
+var Dfd = Df.and(mintemp.lte(-38))
+            .and(tenplus.lt(4)); // Minimum temperature below or equal to -38°C and less than 4 months with temperature above 10°C.
+
+// Dfc represents transitional conditions within continental climates.
+var Dfc = Df.and(Dfa.not())
+            .and(Dfb.not())
+            .and(Dfd.not()); // Conditions not meeting Dfa, Dfb, or Dfd criteria.
+
+// Sub-conditions within Dw:
+
+// Dwa represents conditions for continental climates with significant summer precipitation and high temperatures.
+var Dwa = Dw.and(maxtemp.gte(22)) 
+            .and(tenplus.gte(4)); // Maximum temperature above or equal to 22°C and at least 4 months with temperature above 10°C.
+
+// Dwb represents conditions for continental climates with lower summer precipitation and high temperatures.
+var Dwb = Dw.and(maxtemp.lt(22))
+            .and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
+
+// Dwd represents conditions for continental climates with low temperatures and minimal summer precipitation.
+var Dwd = Dw.and(mintemp.lte(-38))
+            .and(tenplus.lt(4)); // Minimum temperature below or equal to -38°C and less than 4 months with temperature above 10°C.
+
+// Dwc represents transitional conditions within Dw.
+var Dwc = Dw.and(Dwa.not())
+            .and(Dwb.not())
+            .and(Dwd.not()); // Conditions not meeting Dwa, Dwb, or Dwd criteria.
+
+// Sub-conditions within Ds:
+
+// Dsa represents conditions for continental climates with significant summer precipitation and high temperatures.
+var Dsa = Ds.and(maxtemp.gte(22))
+            .and(tenplus.gte(4)); // Maximum temperature above 22°C and at least 4 months with temperature above 10°C.
+
+// Dsb represents conditions for continental climates with lower summer precipitation and high temperatures.
+var Dsb = Ds.and(maxtemp.lt(22))
+            .and(tenplus.gte(4)); // Maximum temperature below 22°C and at least 4 months with temperature above 10°C.
+
+// Dsd represents conditions for continental climates with low temperatures and minimal summer precipitation.
+var Dsd = Ds.and(mintemp.lte(-38))
+            .and(tenplus.lt(4)); // Minimum temperature below or equal to -38°C and less than 4 months with temperature above 10°C.
+
+// Dsc represents transitional conditions within Ds.
+var Dsc = Ds.and(Dsa.not())
+            .and(Dsb.not())
+            .and(Dsd.not()); // Conditions not meeting Dsa, Dsb, or Dsd criteria.
+
+                    // Group E - Polar and alpine climates
+
+// Conditions for identifying polar and alpine climates based on various parameters.
+
+// EF represents conditions for extremely cold polar and alpine climates.
+var EF = maxtemp.lt(0); // Maximum temperature at or below 0°C.
+
+// ET represents conditions for transitional polar and alpine climates.
+var ET = maxtemp.gte(0) // Maximum temperature greater than or equal to 0°C
+                .and(maxtemp.lte(10)); // Maximum temperature less than or equal to 10°C.
+ 
+// Assigning numeric codes to each climate zone and multiplying by predefined values to determine color index.
+var classes = Af.multiply(1)                // Af class assigned numeric value 1 (color "0000FF")
+                .add(Am.multiply(2))        // Am class assigned numeric value 2 (color "4169E1")
+                .add(Aw.multiply(3))        // Aw class assigned numeric value 3 (color "6495ED")
+                .add(BWh.multiply(5))       // BWh class assigned numeric value 5 (color "FF0000")
+                .add(BWk.multiply(6))       // BWk class assigned numeric value 6 (color "F08080")
+                .add(BSh.multiply(7))       // BSh class assigned numeric value 7 (color "FF8C00")
+                .add(BSk.multiply(8))       // BSk class assigned numeric value 8 (color "FFD700")
+                .add(Cwa.multiply(9))       // Cwa class assigned numeric value 9 (color "98FB98")
+                .add(Cwb.multiply(10))      // Cwb class assigned numeric value 10 (color "3CB371")
+                .add(Cwc.multiply(11))      // Cwc class assigned numeric value 11 (color "2E8B57")
+                .add(Cfa.multiply(12))      // Cfa class assigned numeric value 12 (color "ADFF2F")
+                .add(Cfb.multiply(13))      // Cfb class assigned numeric value 13 (color "00FF00")
+                .add(Cfc.multiply(14))      // Cfc class assigned numeric value 14 (color "32CD32")
+                .add(Csa.multiply(15))      // Csa class assigned numeric value 15 (color "FFFF00")
+                .add(Csb.multiply(16))      // Csb class assigned numeric value 16 (color "BDB76B")
+                .add(Csc.multiply(17))      // Csc class assigned numeric value 17 (color "808000")
+                .add(Dwa.multiply(18))      // Dwa class assigned numeric value 18 (color "7B68EE")
+                .add(Dwb.multiply(19))      // Dwb class assigned numeric value 19 (color "6A5ACD")
+                .add(Dwc.multiply(20))      // Dwc class assigned numeric value 20 (color "483D8B")
+                .add(Dwd.multiply(21))      // Dwd class assigned numeric value 21 (color "191970")
+                .add(Dfa.multiply(22))      // Dfa class assigned numeric value 22 (color "D8BFD8")
+                .add(Dfb.multiply(23))      // Dfb class assigned numeric value 23 (color "A9A9A9")
+                .add(Dfc.multiply(24))      // Dfc class assigned numeric value 24 (color "696969")
+                .add(Dfd.multiply(25))      // Dfd class assigned numeric value 25 (color "A9A9A9")
+                .add(Dsa.multiply(26))      // Dsa class assigned numeric value 26 (color "FF00FF")
+                .add(Dsb.multiply(27))      // Dsb class assigned numeric value 27 (color "9400D3")
+                .add(Dsc.multiply(28))      // Dsc class assigned numeric value 28 (color "800080")
+                .add(Dsd.multiply(29))      // Dsd class assigned numeric value 29 (color "D8BFD8")
+                .add(ET.multiply(30))       // ET class assigned numeric value 30 (color "A9A9A9")
+                .add(EF.multiply(31))       // EF class assigned numeric value 31 (color "696969")
+            .rename('zone')                 // Renames the resulting image to 'zone'.
+        .set({                              // Sets metadata for the resulting image.
+              year: image.get('year'),      // Sets the 'year' metadata to the value obtained from the input image.
+              zoneNames: zoneNames          // Sets the 'zoneNames' metadata to the 'zoneNames' object.
+    });
+  return classes; // The resulting image with climate zone classifications and metadata is returned when the function is called.
+}
+
+function classificateImage(startDate, endDate) {
+  
+  // filter yearly images by start/end date
+  var finalYearlyImages = yearlyImages.filter(ee.Filter.rangeContains('year',startDate,endDate)).mean();
+  
+  // Perform climate zone classification using the Koppen climate classification function
+  var classification = koppenClass(finalYearlyImages);
+
+  // Return the resulting climate zone classification image
+  return classification;
+}
+
+
+//-------------------------------------------------------//
+                    // UI Sector
+//  Map Settings
+// Creates a new map object using the Earth Engine UI library.
+var customMap = ui.Map(); 
+    customMap.setControlVisibility({ // Configures map control visibility settings.
+  zoomControl: false,
+  drawingToolsControl: false,
+  fullscreenControl: false,
+  mapTypeControl: false
+});
+    customMap.centerObject(country); // Centers the map view on the 'country' object.
+
+
+// Project Title 
+var projectTitleLabel = ui.Label({ // Creates a label widget for the project title.
+  value: 'Köppen Climate Classification using fusion of CMIP6 data (historical)',
+  style: {
+    fontWeight: 'bold',
+    fontSize: '24px',
+    margin: '0px 0 0 0',
+    textAlign: 'center',
+    width: '100%'
+  }
+});
+    customMap.add(projectTitleLabel); // Adds the project title label to the map.
+
+// Info Text
+var infoPanel = ui.Panel({ // Creates a panel to display information about the project.
+  widgets: [ // Contains multiple label widgets with project information.
+    ui.Label('This Köppen Climate Classification map is generated using Google Earth Engine and fusion of mean values of GISS-E2-1-G and MIROC-ES2L climate models of CMIP6 ensemble.', { fontSize: '14px' }),
+    ui.Label('The map classifies climate of Kazakhstan based on monthly mean temperature of GISS-E2-1-G and precipitation amount parameters of MIROC-ES2L for historical scenario. ', { fontSize: '14px' }),
+    ui.Label('More information about methodology DOI. ', { fontSize: '14px' }),
+    ui.Label('Access the script https://github.com/yessimkhanova/koppen_maps', { fontSize: '14px', fontWeight: 'bold' }),
+    ui.Label('This work is part of a doctoral research project conducted by Kalamkas Yessimkhanova, supervised by Dr. Matyas Gede at ELTE Eötvös Loránd University, Budapest.', { fontSize: '14px' }),
+    ui.Label('Credit is given to Google Earth Engine for its powerful geospatial analysis capabilities and NASA/Climate Analytics Group for providing valuable climate data.', { fontSize: '14px' }),
+    ui.Label('Please contact Kalamkas Yessimkhanova for questions, comments, and feedback.', { fontSize: '12px' }),
+    ui.Label('Email: kalamkasyessimkhanova@gmail.com', { fontSize: '12px', fontWeight: 'bold'}),
+    ui.Label('Use the slider to select the time period for visualizing Köppen climate maps.', { fontSize: '17px', fontWeight: 'bold'}),
+ ],
+  style: {
+    width: '350px'
+  }
+});
+//print(typeof(newStartDate.get('year').getInfo()))
+
+// Start Year Slider Widget
+// Creates a slider widget to select the start year.
+// Initial values are obtained from 'newStartDate' and 'newEndDate' variables.
+// 'onChange' functions update the selected year values.
+// Additional widgets for end year selection follow a similar structure.
+
+// Start Year Slider Widget
+var min_slider = startDate;
+var max_slider = endDate;
+
+var startYearLabel = ui.Label('Select Start Year:');
+  var startYearSlider = ui.Slider({
+    min: min_slider,
+    max: max_slider,
+    value: min_slider,
+    step: 1,
+    style: {width: '270px'},
+    
+    onChange: function (value) {
+      min_slider = value;
+    }
+  });
+
+// End Year Slider Widget
+var endYearLabel = ui.Label('Select End Year:');
+  var endYearSlider = ui.Slider({
+    min: min_slider,
+    max: max_slider,
+    value: max_slider,
+    step: 1,
+    style: {width: '270px'},
+    
+    onChange: function (value) {
+      max_slider = value;
+    }
+  });
+
+// Note Label
+var noteLabel = ui.Label({ // Creates a label for displaying a note to the user.
+  value: 'Please note that map generation may take some time',
+  style: {
+    fontSize: '12px',
+    color: 'gray',
+    margin: '5px o',
+    padding: '10px'
+  }
+});
+// Area by Zone Label
+var areaByZoneLabel = ui.Label({
+  value: 'Climate zone areas in square kilometers for the territory of Kazakhstan in descending order :',
+  style: {
+    fontSize: '14px',
+    fontWeight: 'bold',
+    margin: '10px 0 5px 0'
+  }
+});
+
+// Define area by zone result label and panel
+var areaByZoneResultLabel = ui.Label({
+  value: '', // Initially empty, will be updated later
+  style: {
+    fontSize: '14px',
+    margin: '5px 0',
+  }
+});
+
+// Define area by zone result panel
+var areaByZoneResultPanel = ui.Panel({
+  style: {}
+});
+
+// Generate Button 
+var generateButton = ui.Button({ // Creates a button widget for generating the map.
+  label: 'Generate',
+  
+    // Defines an onClick event handler for the button.
+    // Inside the event handler, the selected start and end years are retrieved from sliders.
+    // The 'classificateImage' function is called to generate the map based on selected years.
+    // The generated map layers are then added to the 'customMap' object.
+    onClick: function(){ 
+      startDate = startYearSlider.getValue();
+      endDate = endYearSlider.getValue();
+    
+        // Function to update the map layers
+        function updateMapLayers(selectedMap) {
+         
+          // Add the map layer for Kazakhstan
+          var countryLayer = ui.Map.Layer(selectedMap.clip(country), {
+            bands: 'zone',
+            min: 0,
+            max: 31,
+            palette: colors
+          }, 'Kazakhstan'); // Name of the location can be change here
+        
+          // Clear existing layers and add new ones
+          customMap.layers().reset([countryLayer]);
+        }
+        
+        // Function to update the area by zone result
+        function updateAreaByZoneResult(areaByZone) {
+          // Clear the existing widgets in the areaByZoneResultPanel
+          areaByZoneResultPanel.clear();
+        
+          // Convert areaByZone object into an array of objects
+          var zoneArray = [];
+          for (var zone in areaByZone) {
+            if (areaByZone.hasOwnProperty(zone)) {
+              var zoneInfo = areaByZone[zone];
+              zoneArray.push({ zone: zoneInfo.zone, area: zoneInfo.sum });
+            }
+          }
+        
+          // Sort the zoneArray based on area values in descending order
+          zoneArray.sort(function (a, b) {
+            return b.area - a.area;
+          });
+        
+          // Create labels for each zone and add them to the panel
+          zoneArray.forEach(function (zoneObj) {
+            var zoneLabel = ui.Label({
+              value: 'Zone ' + zoneObj.zone + ': ' + zoneObj.area.toFixed(2),
+              style: { fontSize: '14px' }
+            });
+            areaByZoneResultPanel.add(zoneLabel);
+          });
+        }
+        
+                // Update area by zone result initially (empty)
+        updateAreaByZoneResult({});
+        
+        // Function to update the map and area calculation
+        function updateMapAndArea() {
+          var selectedMap = classificateImage(startDate, endDate);
+        
+          // Update map layers
+          updateMapLayers(selectedMap);
+        
+          // Calculate area by zone
+          var areaImageSqMeters = ee.Image.pixelArea();
+          var areaImageSqKm = areaImageSqMeters.divide(1e6);
+          areaImageSqKm = areaImageSqKm.addBands(selectedMap.select('zone'));
+        
+          var areaByZone = areaImageSqKm.reduceRegion({
+            reducer: ee.Reducer.sum().group({
+              groupField: 1,
+              groupName: 'zone',
+            }),
+            geometry: country,
+            scale: 55659.74539663678, // Resolution of input data, it can be adjusted
+            maxPixels: 1e13
+          }).getInfo(); // Convert the result to a client-side object
+        
+          print(areaByZone)
+          
+          // Update area by zone label
+          updateAreaByZoneResult(areaByZone.groups);
+        }
+        
+        // Call updateMapAndArea function when the Generate button is clicked
+        generateButton.onClick(updateMapAndArea);
+        
+        // Call updateMapAndArea function initially to set up the map and area calculation
+        updateMapAndArea();
+    }
+    
+});
+
+// Year Slider Panel
+// Creates a panel to contain start and end year sliders, along with other controls.
+// Includes labels, sliders, a note label, and a generate button.
+var yearFilterSlider = (ui.Panel({
+  style:{
+    position: 'top-left'
+  }
+})
+    .add(startYearLabel)
+    .add(startYearSlider)
+    .add(endYearLabel)
+    .add(endYearSlider)
+    .add(noteLabel)
+    .add(generateButton));
+
+// Info and Control Panel
+// Creates a panel to contain information and control elements.
+// Adds 'infoPanel' and 'yearFilterSlider' to this panel.
+var infoAndControlPanel = ui.Panel().add(infoPanel).add(yearFilterSlider);
+
+// Legend Title
+// Creates a label widget for the legend title.
+var legendTitle = ui.Label({
+  value: 'Legend',
+  style: {
+    fontWeight: 'bold',
+    fontSize: '18px',
+    margin: '0 0 4px 0',
+    padding: '10px'
+  }
+});
+
+// Widget Legend Record
+// Defines a function 'makeLegendRecord' to create a legend record containing a color box and zone code/name.
+var makeLegendRecord = function (color, zoneCode, zoneName){
+  var colorBox = ui.Label({
+    style: {
+      backgroundColor: color,
+      padding: '8px',
+      margin: '0 0 8px 8px'
+    }});
+  var zoneCodeAndName = ui.Label({
+    value: zoneCode + ': ' + zoneName,
+    style: {
+      margin: '0 0 3px 6px'
+    }});
+  return ui.Panel({
+    widgets: [colorBox, zoneCodeAndName],
+    layout: ui.Panel.Layout.Flow('horizontal')
+  });
+};
+
+// Panel: Legend
+// Creates a panel to contain legend items.
+var legendPanel = ui.Panel({
+  // TODO: add style
+  style: {}
+}).add(legendTitle);
+
+// Add legendRecord to Legend Panel
+// Iterates through each zone code/name pair and creates a legend record using the 'makeLegendRecord' function.
+// Adds each legend record to the legend panel.
+for (var i=0; i<Object.keys(zoneNames).length; i++){
+  var row = makeLegendRecord(colors[i], zoneCodes[i], zoneNames[zoneCodes[i]]);
+  legendPanel.add(row);
+}
+
+// Panel Settings
+// Creates left and right main panels for layout purposes.
+var leftMainPanel = ui.Panel({
+  style:{
+    width: '370px',
+    position: 'middle-left'
+  }
+});
+
+var rightMainPanel = ui.Panel(
+  {
+    style: {
+      width: '344px',
+      position: 'middle-right'}
+  });
+
+// // Adds 'infoAndControlPanel' to the left panel and 'legendPanel' to the right panel.
+rightMainPanel.add(legendPanel);
+leftMainPanel.add(infoAndControlPanel).add(areaByZoneLabel).add(areaByZoneResultPanel);
+
+
+// Panel init
+// Clears the UI root and adds the left main panel, custom map, and right main panel to the UI root.
+ui.root.clear();
+ui.root.add(leftMainPanel).add(customMap).add(rightMainPanel);
