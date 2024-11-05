@@ -6,7 +6,7 @@ var country = ee.FeatureCollection(path).filter(ee.Filter.eq('ADM0_CODE', countr
 
 // Specify the Earth Engine Image Collection for CMIP6 data and filter it for the historical scenario
 var collection = ee.ImageCollection('NASA/GDDP-CMIP6')
-                                    .filter(ee.Filter.eq('scenario', 'ssp245'))
+                                    .filter(ee.Filter.eq('scenario', 'ssp585'))
                                     .filterBounds(country);
 
 // List of climate models used in the analysis
