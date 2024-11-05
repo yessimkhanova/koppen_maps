@@ -27,12 +27,12 @@ var multiBandImageP = image66.addBands([image67, image68, image69, image70, imag
 
 //print(multiBandImageP); // Print information about the multi-band precipitation image to the console
 
-/*
+
 // Export the multiband temperature image containing all yearsto your Earth Engine Assets
 Export.image.toAsset({
     image: multiBandImageT,
     description: 'temp_mean_fusion',
-    assetId: 'users/yessimkhanovakalamkas/fusion_temp/temp_fusion_allyears',
+    assetId: 'users/kalamkas/fusion/temp_fusion_all_years',
     scale: 27830,
    });
     // Comment: Export temperature image to your Earth Engine Assets.
@@ -44,11 +44,10 @@ Export.image.toAsset({
 Export.image.toAsset({
     image: multiBandImageP,
     description: 'precip_mean_fusion',
-    assetId: 'users/yessimkhanovakalamkas/fusion_precip/precip_fusion_allyears',
+    assetId: 'users/kalamkas/fusion/precip_fusion_all_years',
     scale: 27830,
    });
     // Comment: Export ,ultiband precipitation image to your Earth Engine Assets.
     // Make sure to change the assetId to your desired location.
     // Example: 'users/your_username/your_asset_folder/precip_avgmodels_allyears'
     // Exported images will be stored in your asset and will be used in the next step (Step 3).
-*/
