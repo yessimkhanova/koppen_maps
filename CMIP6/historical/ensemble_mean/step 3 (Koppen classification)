@@ -11,7 +11,7 @@ var multiBandImageT = ee.Image("users/kalamkas/cmip6_ensemble_mean/temp_ensemble
 
 // Load the multi-band precipitation image from the specified Earth Engine asset generated in Step 2
 // Note: To add your own dataset, replace the asset ID with the proper path to your precipitation image
-var multiBandImageP = ee.Image("users/kalamkas/cmip6_ensemble_mean/pr_ensemble_mean_all_years");
+var multiBandImageP = ee.Image("users/kalamkas/cmip6_ensemble_mean/precip_ensemble_mean_all_years");
 //print(multiBandImageP); // Print the information about the loaded precipitation image to the console
 
 // Initialize arrays and dictionaries for colors, zone codes, and zone names
