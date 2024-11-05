@@ -43,8 +43,8 @@ Export.image.toAsset({
 // Export the multiband precipitation image containing all years data to your Earth Engine Assets
 Export.image.toAsset({
     image: multiBandImageP,
-    description: 'precip_ensemble_mean_all_years',
-    assetId: 'users/kalamkas/cmip6_ensemble_mean/pr_ensemble_mean_all_years',
+    description: 'precip_hist_ensemble_mean_all_years',
+    assetId: 'users/kalamkas/cmip6_ensemble_mean/precip_hist_ensemble_mean_all_years',
     scale: 27830,
    });
    
