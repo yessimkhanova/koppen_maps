@@ -17,8 +17,8 @@ var models = ['ACCESS-CM2', 'ACCESS-ESM1-5', 'BCC-CSM2-MR', 'CESM2', 'CESM2-WACC
               'MPI-ESM1-2-HR', 'MPI-ESM1-2-LR', 'MRI-ESM2-0', 'NESM3', 'NorESM2-MM', 'TaiESM1', 'UKESM1-0-LL'];
 
 // Define start and end date for filtering the ImageCollection
-var startDate = ee.Date('1950-01-01');
-var endDate = ee.Date('2014-12-31');
+var startDate = ee.Date('2015-01-01');
+var endDate = ee.Date('2100-12-31');
 
 // Loop over each year from 1950 to 2014
 for (var year = 2015; year <= 2100; year++) {
