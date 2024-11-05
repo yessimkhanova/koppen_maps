@@ -31,8 +31,8 @@ var multiBandImageP = image66.addBands([image67, image68, image69, image70, imag
 // Export the multiband temperature image containing all yearsto your Earth Engine Assets
 Export.image.toAsset({
     image: multiBandImageT,
-    description: 'temp_mean_fusion',
-    assetId: 'users/kalamkas/fusion/temp_fusion_all_years',
+    description: 'temp_fusion_hist',
+    assetId: 'users/kalamkas/fusion/temp_fusion__hist_all_years',
     scale: 27830,
    });
     // Comment: Export temperature image to your Earth Engine Assets.
