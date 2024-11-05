@@ -79,8 +79,8 @@ for (var year = 1950; year <= 2014; year++) {
   // Export the multiband image for temperature to Earth Engine Assets
   Export.image.toAsset({
     image: temperatureImage,
-    description: 't_' + year + '_GISS-E2-1-G',
-    assetId: 'users/kalamkas/fusion_temp/' + 't_' + year + '_GISS-E2-1-G',
+    description: 't_' + year + '_hist' + '_GISS-E2-1-G',
+    assetId: 'users/kalamkas/fusion_temp/' + 't_' + year + '_hist' + '_GISS-E2-1-G',
     scale: 27830 // Resolution of the source dataset is 27830 meters, so it is set by default
    });
     // Comment: Export temperature image to your Earth Engine Assets.
@@ -91,8 +91,8 @@ for (var year = 1950; year <= 2014; year++) {
   // Export the multiband image for precipitation to Earth Engine Assets
   Export.image.toAsset({
     image: precipitationImage,
-    description: 'pr_' + year + '_MIROC-ES2L',
-    assetId: 'users/kalamkas/fusion_precip/' + 'pr_' + year + '_MIROC-ES2L',
+    description: 'pr_' + year + '_hist' + '_MIROC-ES2L',
+    assetId: 'users/kalamkas/fusion_precip/' + 'pr_' + year + '_hist' + '_MIROC-ES2L',
     scale: 27830 // Resolution of the source dataset is 27830 meters, so it is set by default
    });
     // Comment: Export precipitation image to your Earth Engine Assets.
