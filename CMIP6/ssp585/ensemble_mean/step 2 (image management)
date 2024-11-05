@@ -44,7 +44,7 @@ Export.image.toAsset({
 Export.image.toAsset({
     image: multiBandImageP,
     description: 'precip_ssp585_ensemble_mean_all_years',
-    assetId: 'users/kalamkas/cmip6_ensemble_mean/pr_ssp585_ensemble_mean_all_years',
+    assetId: 'users/kalamkas/cmip6_ensemble_mean/precip_ssp585_ensemble_mean_all_years',
     scale: 27830,
    });
    
