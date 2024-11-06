@@ -4,14 +4,14 @@ var country = ee.FeatureCollection(path).filter(ee.Filter.eq('ADM0_CODE', countr
 
 // Load the multi-band temperature image from the specified Earth Engine asset
 // Note: To add your own dataset, replace the asset ID with the proper path to your temperature image
-var multiBandImageT = ee.Image("projects/ee-kalamkasyessimkhanova/t_mean_monthly_CRU");
+var multiBandImageT = ee.Image("projects/ee-kalamkasyessimkhanova/assets/t_mean_monthly_CRU");
 
 // Print the information about the loaded temperature image to the console
 //print(multiBandImageT);
 
 // Load the multi-band precipitation image from the specified Earth Engine asset
 // Note: To add your own dataset, replace the asset ID with the proper path to your precipitation image
-var multiBandImageP = ee.Image("projectss/ee-kalamkasyessimkhanova/pr_sum_monthly_CRU");
+var multiBandImageP = ee.Image("projects/ee-kalamkasyessimkhanova/assets/pr_sum_monthly_CRU");
 
 // Print the information about the loaded precipitation image to the console
 //print(multiBandImageP);
