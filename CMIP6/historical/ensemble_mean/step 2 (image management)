@@ -159,7 +159,7 @@ var multiBandImageP = image66.addBands([image67, image68, image69, image70, imag
 
 //print(multiBandImageP); // Print information about the multi-band precipitation image to the console
 
-
+/*
 // Export the multiband temperature image containing all yearsto your Earth Engine Assets
 Export.image.toAsset({
     image: multiBandImageT,
@@ -179,7 +179,7 @@ Export.image.toAsset({
     assetId: 'users/kalamkas/cmip6_ensemble_mean/precip_hist_ensemble_mean_all_years',
     scale: 27830,
    });
-   
+*/  
     // Comment: Export ,ultiband precipitation image to your Earth Engine Assets.
     // Make sure to change the assetId to your desired location.
     // Example: 'users/your_username/your_asset_folder/precip_avgmodels_allyears'
