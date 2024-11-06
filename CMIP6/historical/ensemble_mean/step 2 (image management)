@@ -180,7 +180,7 @@ Export.image.toAsset({
     scale: 27830,
    });
 */  
-    // Comment: Export ,ultiband precipitation image to your Earth Engine Assets.
+    // Comment: Export multiband precipitation image to your Earth Engine Assets.
     // Make sure to change the assetId to your desired location.
     // Example: 'users/your_username/your_asset_folder/precip_avgmodels_allyears'
     // Exported images will be stored in your asset and will be used in the next step (Step 3).
