@@ -80,7 +80,7 @@ for (var year = 1950; year <= 2014; year++) {
   Export.image.toAsset({
     image: temperatureImage,
     description: 't_' + year + '_ensemble_mean',
-    assetId: 'users/kalamkas/cmip6_ensemble_mean/' + 't_' + year + '_ensemble_mean',
+    assetId: 'users/kalamkas/cmip6_mean_of_models/historical/' + 't_' + year + '_ensemble_mean',
     scale: 27830 // Resolution of the source dataset is 27830 meters, so it is set by default
    });
     // Comment: Export temperature image to your Earth Engine Assets.
@@ -92,7 +92,7 @@ for (var year = 1950; year <= 2014; year++) {
   Export.image.toAsset({
     image: precipitationImage,
     description: 'pr_' + year + '_ensemble_mean',
-    assetId: 'users/kalamkas/cmip6_ensemble_mean/' + 'pr_' + year + '_ensemble_mean',
+    assetId: 'users/kalamkas/cmip6_mean_of_models/historical/' + 'pr_' + year + '_ensemble_mean',
     scale: 27830 // Resolution of the source dataset is 27830 meters, so it is set by default
    });
     // Comment: Export precipitation image to your Earth Engine Assets.
