@@ -30,12 +30,12 @@ var models = [
               'GFDL-CM4', 
               'GFDL-ESM4',       
               'GISS-E2-1-G', 
-              'HadGEM3-GC31-LL', 
+              'HadGEM3-GC31-LL',
               // 'HadGEM3-GC31-MM', // This model exluded from calculations, NO DATA
               // 'IITM-ESM',        // This model exluded from calculations, NO DATA FOR 2100
               'INM-CM4-8', 
               'INM-CM5-0', 
-              'IPSL-CM6A-LR', 
+              'IPSL-CM6A-LR',
               'KACE-1-0-G', 
               'KIOST-ESM', 
               'MIROC-ES2L', 
@@ -44,6 +44,7 @@ var models = [
               'MPI-ESM1-2-LR', 
               'MRI-ESM2-0', 
               'NESM3', 
+              'NorESM2-LM',        
               'NorESM2-MM', 
               'TaiESM1', 
               'UKESM1-0-LL'
