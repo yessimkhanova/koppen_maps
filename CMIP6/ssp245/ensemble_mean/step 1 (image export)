@@ -12,11 +12,11 @@ var collection = ee.ImageCollection('NASA/GDDP-CMIP6')
                                     .filter(ee.Filter.eq('scenario', 'ssp245'))
                                     .filterBounds(country)
                                     .map(function(image) {
-                                            return image.reproject({
-                                              crs: 'EPSG:4326',
-                                              scale: 25000 // Choose an appropriate scale based on your analysis needs
+                                      return image.reproject({
+                                          crs: 'EPSG:4326',
+                                          scale: 27830 // Choose an appropriate scale based on your analysis needs
                                             });
-                                          });
+                                    });
 
 // List of climate models used in the analysis
 var models = [
