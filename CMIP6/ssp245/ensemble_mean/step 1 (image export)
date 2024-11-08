@@ -12,11 +12,8 @@ var collection = ee.ImageCollection('NASA/GDDP-CMIP6')
                                     .filter(ee.Filter.eq('scenario', 'ssp245'))
                                     .filterBounds(country)
                                     .map(function(image) {
-                                      return image.reproject({
-                                          crs: 'EPSG:4326',
-                                          scale: 27830 // Choose an appropriate scale based on your analysis needs
-                                            });
-                                    });
+                                      return image.setDefaultProjection('EPSG:4326', null, 27830); // Set to 25 km resolution or adjust as needed
+                                          });
 
 // List of climate models used in the analysis
 var models = [
@@ -137,7 +134,8 @@ for (var year = 2015; year <= 2100; year++) {
     description: 't_' + year + '_ssp245' + '_ensemble_mean',
     assetId: 'users/kalamkas/cmip6/ssp245/' + 't_' + year + '_ssp245' + '_ensemble_mean',
     crs: 'EPSG:4326',
-    scale: 27830 // Resolution of the source dataset is 27830 meters, so it is set by default
+    scale: 27830, // Resolution of the source dataset is 27830 meters, so it is set by default
+    region: country.geometry()
    });
     // Comment: Export temperature image to your Earth Engine Assets.
     // Make sure to change the assetId to your desired location.
@@ -150,8 +148,9 @@ for (var year = 2015; year <= 2100; year++) {
     description: 'pr_' + year + '_ssp245' + '_ensemble_mean',
     assetId: 'users/kalamkas/cmip6/ssp245/' + 'pr_' + year + '_ssp245' + '_ensemble_mean',
     crs: 'EPSG:4326',
-    scale: 27830 // Resolution of the source dataset is 27830 meters, so it is set by default
-   });
+    scale: 27830, // Resolution of the source dataset is 27830 meters, so it is set by default
+    region: country.geometry()
+  });
     // Comment: Export precipitation image to your Earth Engine Assets.
     // Make sure to change the assetId to your desired location.
     // Example: 'users/your_username/your_asset_folder/pr' + year + '-avgmodels'
