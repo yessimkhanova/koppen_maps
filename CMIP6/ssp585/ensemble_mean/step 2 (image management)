@@ -32,7 +32,7 @@ var multiBandImageP = image66.addBands([image67, image68, image69, image70, imag
 Export.image.toAsset({
     image: multiBandImageT,
     description: 'temp_ssp585_ensemble_mean_all_years',
-    assetId: 'users/kalamkas/cmip6_ensemble_mean/temp_ssp585_ensemble_mean_all_years',
+    assetId: 'users/kalamkas/cmip6/ssp585/temp_ssp585_ensemble_mean_all_years',
     scale: 27830,
    });
     // Comment: Export temperature image to your Earth Engine Assets.
@@ -44,7 +44,7 @@ Export.image.toAsset({
 Export.image.toAsset({
     image: multiBandImageP,
     description: 'precip_ssp585_ensemble_mean_all_years',
-    assetId: 'users/kalamkas/cmip6_ensemble_mean/precip_ssp585_ensemble_mean_all_years',
+    assetId: 'users/kalamkas/cmip6/ssp585/precip_ssp585_ensemble_mean_all_years',
     scale: 27830,
    });
    
