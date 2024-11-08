@@ -130,7 +130,8 @@ for (var year = 1950; year <= 2014; year++) {
     description: 't_' + year + '_hist' + '_ensemble_mean',
     assetId: 'users/kalamkas/cmip6/historical/' + 't_' + year + '_hist' + '_ensemble_mean',
     crs: 'EPSG:4326',
-    scale: 27830 // Resolution of the source dataset is 27830 meters, so it is set by default
+    scale: 27830, // Resolution of the source dataset is 27830 meters, so it is set by default
+    region: country
    });
     // Comment: Export temperature image to your Earth Engine Assets.
     // Make sure to change the assetId to your desired location.
@@ -143,7 +144,8 @@ for (var year = 1950; year <= 2014; year++) {
     description: 'pr_' + year + '_hist' + '_ensemble_mean',
     assetId: 'users/kalamkas/cmip6/historical/' + 'pr_' + year + '_hist' + '_ensemble_mean',
     crs: 'EPSG:4326',
-    scale: 27830 // Resolution of the source dataset is 27830 meters, so it is set by default
+    scale: 27830, // Resolution of the source dataset is 27830 meters, so it is set by default
+    region: country
    });
     // Comment: Export precipitation image to your Earth Engine Assets.
     // Make sure to change the assetId to your desired location.
