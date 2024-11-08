@@ -1,3 +1,6 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var imageCollection = ee.ImageCollection("NASA/GDDP-CMIP6");
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
                 // THIS STEP 1 OF KOPPEN CLIMATE CLASSIFICATION USING CMIP6 DATA
 
 var path = "FAO/GAUL_SIMPLIFIED_500m/2015/level0"; 
