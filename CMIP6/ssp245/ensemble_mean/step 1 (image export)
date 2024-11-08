@@ -28,11 +28,11 @@ var models = [
               'EC-Earth3-Veg-LR', 
               'FGOALS-g3',
               'GFDL-CM4', 
-              'GFDL-ESM4', 
+              'GFDL-ESM4',       // This model exluded from calculations
               'GISS-E2-1-G', 
               'HadGEM3-GC31-LL', 
-              // 'HadGEM3-GC31-MM', // This model exluded from calculations
-              // 'IITM-ESM',        // This model exluded from calculations
+              // 'HadGEM3-GC31-MM', // This model exluded from calculations, NO DATA
+              // 'IITM-ESM',        // This model exluded from calculations, NO DATA FOR 2100
               'INM-CM4-8', 
               'INM-CM5-0', 
               'IPSL-CM6A-LR', 
@@ -53,7 +53,7 @@ var models = [
 var startDate = ee.Date('2015-01-01');
 var endDate = ee.Date('2100-12-31');
 
-// Loop over each year from 1950 to 2014
+// Loop over each year from 2015 to 2100
 for (var year = 2015; year <= 2100; year++) {
   
   // Define date range for each year
@@ -66,6 +66,17 @@ for (var year = 2015; year <= 2100; year++) {
   var temperatureBand = 'tas';
   var precipitationBand = 'pr';
 
+  // Define a function to apply the grid label filter conditionally for GFDL-CM4
+  function applyModelFilter(monthlyCollection, model) {
+    if (model === 'GFDL-CM4') {
+      return monthlyCollection
+                .filter(ee.Filter.eq('model', model))
+                .filterMetadata('grid_label', 'equals', 'gr1');  // Apply grid_label filter for GFDL-CM4
+    } else {
+      return monthlyCollection.filter(ee.Filter.eq('model', model));  // No grid_label filter for other models
+    }
+  }
+
   // Create an ImageCollection of monthly means for temperature and precipitation
   var monthlyMeansCollection = ee.ImageCollection.fromImages(
     ee.List.sequence(year, year).map(function (y) {
@@ -76,21 +87,24 @@ for (var year = 2015; year <= 2100; year++) {
           .filter(ee.Filter.calendarRange(y, y, 'year'))
           .filter(ee.Filter.calendarRange(month, month, 'month'));
 
-        // Calculate mean temperature of models for the month 
-        var meanTemperature = monthlyCollection.select(temperatureBand).filter(ee.Filter.inList('model',models))
-                                               .mean().subtract(273) // Convert Kelvin to Celsius
-                                               .rename(['meanTemperature']);
+        // Calculate mean temperature of models for the month
+        var meanTemperature = ee.ImageCollection.fromImages(models.map(function(m) {
+          var modelFilteredCollection = applyModelFilter(monthlyCollection, m);  // Apply conditional filter
+          return modelFilteredCollection.select(temperatureBand).mean();
+        })).mean().subtract(273) // Convert Kelvin to Celsius
+          .rename(['meanTemperature']);
 
         // Calculate sum of precipitation for each model
         var sumPrecipitation = ee.ImageCollection.fromImages(models.map(function(m) {
-          return monthlyCollection.filter(ee.Filter.eq('model', m))
-                                  .select(precipitationBand)
-                                  .sum().multiply(1000).multiply(86400).divide(997) // Convert kg m^-2 s^-1 to mm per month
-                                  .rename('sumPrecipitation');
-        }));
-        
+          var modelFilteredCollection = applyModelFilter(monthlyCollection, m);  // Apply conditional filter
+          return modelFilteredCollection.select(precipitationBand)
+                                        .sum()
+                                        .multiply(1000).multiply(86400).divide(997) // Convert kg m^-2 s^-1 to mm per month
+                                        .rename('sumPrecipitation');
+        })).mean();
+
         // Combine mean temperature and mean precipitation for each model
-        return meanTemperature.addBands(sumPrecipitation.select('sumPrecipitation').mean())
+        return meanTemperature.addBands(sumPrecipitation)
                               .set('year', y).set('month', month);
       });
     }).flatten()
