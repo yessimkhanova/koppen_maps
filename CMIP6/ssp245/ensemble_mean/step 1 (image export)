@@ -28,7 +28,7 @@ var models = [
               'EC-Earth3-Veg-LR', 
               'FGOALS-g3',
               'GFDL-CM4', 
-              'GFDL-ESM4',       // This model exluded from calculations
+              'GFDL-ESM4',       
               'GISS-E2-1-G', 
               'HadGEM3-GC31-LL', 
               // 'HadGEM3-GC31-MM', // This model exluded from calculations, NO DATA
