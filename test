@@ -53,7 +53,12 @@ var collection = ee.ImageCollection('NASA/GDDP-CMIP6').filterDate(startDate, end
                                     .select('pr')
                                     .filter(ee.Filter.eq('scenario', 'ssp585'))
                                     .filter(ee.Filter.inList('model', models))
-                                    .filterBounds(country);
+                                    .filterBounds(country)
+                                    .map(function(image) {
+                                      return image.reproject({
+                                          crs: 'EPSG:4326',
+                                          scale: 27830 // Choose an appropriate scale based on your analysis needs
+                                            })});
 
 print(collection)
 
