@@ -81,8 +81,9 @@ for (var year = 2015; year <= 2100; year++) {
     image: temperatureImage,
     description: 't_' + year + '_ssp585' + '_GISS-E2-1-G',
     assetId: 'users/kalamkas/fusion/ssp585/' + 't_' + year + '_ssp585' + '_GISS-E2-1-G',
-    scale: 27830 // Resolution of the source dataset is 27830 meters, so it is set by default
-   });
+    scale: 27830, // Resolution of the source dataset is 27830 meters, so it is set by default
+    region: country.geometry()
+  });
     // Comment: Export temperature image to your Earth Engine Assets.
     // Make sure to change the assetId to your desired location.
     // Example: 'users/your_username/your_asset_folder/temp' + year + '-avgmodels'
@@ -93,8 +94,9 @@ for (var year = 2015; year <= 2100; year++) {
     image: precipitationImage,
     description: 'pr_' + year + '_ssp585' + '_MIROC-ES2L',
     assetId: 'users/kalamkas/fusion/ssp585/' + 'pr_' + year + '_ssp585' + '_MIROC-ES2L',
-    scale: 27830 // Resolution of the source dataset is 27830 meters, so it is set by default
-   });
+    scale: 27830, // Resolution of the source dataset is 27830 meters, so it is set by default
+    region: country.geometry()
+  });
     // Comment: Export precipitation image to your Earth Engine Assets.
     // Make sure to change the assetId to your desired location.
     // Example: 'users/your_username/your_asset_folder/pr' + year + '-avgmodels'
