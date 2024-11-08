@@ -112,7 +112,7 @@ for (var year = 2015; year <= 2100; year++) {
   // Export the multiband image for temperature to Earth Engine Assets
   Export.image.toAsset({
     image: temperatureImage,
-    description: 't_' + year + '_ssp245' + '_ensemble_mean',
+    description: 't_' + year + '_ssp245' + '_ensemble_mean_test',
     assetId: 'users/kalamkas/test/' + 't_' + year + 'ssp245' + '_ensemble_mean',
     crs: 'EPSG:4326',
     scale: 27830 // Resolution of the source dataset is 27830 meters, so it is set by default
@@ -125,7 +125,7 @@ for (var year = 2015; year <= 2100; year++) {
   // Export the multiband image for precipitation to Earth Engine Assets
   Export.image.toAsset({
     image: precipitationImage,
-    description: 'pr_' + year + '_ssp245' + '_ensemble_mean',
+    description: 'pr_' + year + '_ssp245' + '_ensemble_mean_test',
     assetId: 'users/kalamkas/test/' + 'pr_' + year + 'ssp245' + '_ensemble_mean',
     crs: 'EPSG:4326',
     scale: 27830 // Resolution of the source dataset is 27830 meters, so it is set by default
