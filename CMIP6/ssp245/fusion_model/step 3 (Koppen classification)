@@ -168,8 +168,8 @@ var multiBandImageP = ee.Image("users/kalamkas/fusion/precip_ssp245_fusion_all_y
 // - These ImageCollections will be used to accumulate precipitation, temperature, and combined images over multiple years.
 
       // Set the start and end years for the analysis based on the available date range of the source data
-      var startDate = 1950;
-      var endDate = 2014;
+      var startDate = 2015;
+      var endDate = 2100;
       
       // Generate a list of years from the start to the end year
       var years = ee.List.sequence(startDate, endDate);
