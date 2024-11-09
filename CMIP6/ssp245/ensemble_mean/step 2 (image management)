@@ -203,7 +203,7 @@ var multiBandImageT = image87.addBands([image87, image88, image89, image90,image
                                         image145, image146, image147, image148, image149, image150, image151, 
                                         image152, image153, image154, image155, image156, image157, image158,
                                         image159, image160, image161, image162, image163, image164, image165,
-                                        image166, image167, image168, image169, image170, image171, image172);
+                                        image166, image167, image168, image169, image170, image171, image172]);
 
 //print(multiBandImageP); // Print information about the multi-band precipitation image to the console
 
