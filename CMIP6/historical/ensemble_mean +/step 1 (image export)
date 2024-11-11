@@ -51,10 +51,6 @@ var models = [
               ];
 
 
-// Define start and end date for filtering the ImageCollection
-var startDate = ee.Date('1950-01-01');
-var endDate = ee.Date('2014-12-31');
-
 // Loop over each year from 2015 to 2100
 for (var year = 1950; year <= 2014; year++) {
   
