@@ -53,10 +53,6 @@ var models = [
               'UKESM1-0-LL'
               ];
 
-// Define start and end date for filtering the ImageCollection
-var startDate = ee.Date('2015-01-01');
-var endDate = ee.Date('2100-12-31');
-
 // Loop over each year from 2015 to 2100
 for (var year = 2015; year <= 2100; year++) {
   
