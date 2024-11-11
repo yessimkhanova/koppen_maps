@@ -16,10 +16,6 @@ var collection = ee.ImageCollection('NASA/GDDP-CMIP6')
 var tempModel = ['GISS-E2-1-G']; // For extracting monthly temperature we will use this model data
 var precipModel = ['MIROC-ES2L']; // For extracting monthly precipitation we will use this model data
 
-// Define start and end date for filtering the ImageCollection
-var startDate = ee.Date('2015-01-01');
-var endDate = ee.Date('2100-12-31');
-
 // Loop over each year from 1950 to 2014
 for (var year = 2015; year <= 2100; year++) {
   
