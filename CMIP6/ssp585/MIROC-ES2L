@@ -4,10 +4,6 @@ var collection = ee.ImageCollection('NASA/GDDP-CMIP6').filter(ee.Filter.eq('scen
 // List of climate models used in the analysis
 var models = ['MIROC-ES2L'];
 
-// Define start and end date for filtering the ImageCollection
-var startDate = ee.Date('2015-01-01');
-var endDate = ee.Date('2100-12-31');
-
 // Create an empty Image Collection to store the results
 var yearlyMeansCollection = ee.ImageCollection([]); 
 
