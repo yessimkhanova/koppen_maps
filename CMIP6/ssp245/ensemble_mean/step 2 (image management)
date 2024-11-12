@@ -214,7 +214,7 @@ Export.image.toAsset({
     description: 'temp_ssp245_ensemble_mean_all_years',
     assetId: 'users/kalamkas/cmip6/ssp245/temp_ssp245_ensemble_mean_all_years',
     scale: 27830,
-   });
+  });
     // Comment: Export temperature image to your Earth Engine Assets.
     // Make sure to change the assetId to your desired location.
     // Example: 'users/your_username/your_asset_folder/temp_avgmodels_allyears'
@@ -224,7 +224,7 @@ Export.image.toAsset({
 Export.image.toAsset({
     image: multiBandImageP,
     description: 'precip_ssp245_ensemble_mean_all_years',
-    assetId: 'users/kalamkas/cmip6/ssp585/precip_ssp245_ensemble_mean_all_years',
+    assetId: 'users/kalamkas/cmip6/ssp245/precip_ssp245_ensemble_mean_all_years',
     scale: 27830,
    });
    
