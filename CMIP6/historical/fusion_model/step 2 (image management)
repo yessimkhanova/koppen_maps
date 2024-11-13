@@ -163,7 +163,7 @@ var multiBandImageP = image66.addBands([image67, image68, image69, image70, imag
 // Export the multiband temperature image containing all yearsto your Earth Engine Assets
 Export.image.toAsset({
     image: multiBandImageT,
-    description: 'temp_hist_fusion',
+    description: 'temp_historical_fusion_all_years',
     assetId: 'users/kalamkas/fusion/historical/temp_historical_fusion_all_years',
     scale: 27830,
    });
@@ -175,7 +175,7 @@ Export.image.toAsset({
 // Export the multiband precipitation image containing all years data to your Earth Engine Assets
 Export.image.toAsset({
     image: multiBandImageP,
-    description: 'precip_hist_fusion',
+    description: 'precip_historical_fusion_all_years',
     assetId: 'users/kalamkas/fusion/historical/precip_historical_fusion_all_years',
     scale: 27830,
    });
