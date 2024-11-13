@@ -181,7 +181,7 @@ var multiBandImageP = ee.Image("users/kalamkas/cmip6/ssp245/precip_ssp245_ensemb
 
 // Loop through each year in the specified date range
 years.getInfo().forEach(function (year) {
-  var startBand = (year - 1950) * 12; // Calculate the start and end bands for the current year.
+  var startBand = (year - 2015) * 12; // Calculate the start and end bands for the current year.
   var endBand = startBand + 11;
         
         // Rename temperature bands from generic names to more meaningful names ('t1' to 't12') for better interpretation
@@ -620,7 +620,7 @@ var customMap = ui.Map();
 
 // Project Title 
 var projectTitleLabel = ui.Label({ // Creates a label widget for the project title.
-  value: 'Köppen Climate Classification using CMIP6 data (historical)',
+  value: 'Köppen Climate Classification using CMIP6 data (scenario SSP2-4.5)',
   style: {
     fontWeight: 'bold',
     fontSize: '24px',
