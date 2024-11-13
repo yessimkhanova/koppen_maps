@@ -6,12 +6,12 @@ var country = ee.FeatureCollection(path).filter(ee.Filter.eq('ADM0_CODE', countr
 
 // Load the multi-band temperature image from the specified Earth Engine asset generated in Step 2
 // Note: To add your own dataset, replace the asset ID with the proper path to your temperature image
-var multiBandImageT = ee.Image("users/kalamkas/fusion/temp_ssp585_fusion_all_years");
+var multiBandImageT = ee.Image("users/kalamkas/fusion/ssp585/temp_ssp585_fusion_all_years");
 //print(multiBandImageT); // Print the information about the loaded temperature image to the console
 
 // Load the multi-band precipitation image from the specified Earth Engine asset generated in Step 2
 // Note: To add your own dataset, replace the asset ID with the proper path to your precipitation image
-var multiBandImageP = ee.Image("users/kalamkas/fusion/precip_ssp585_fusion_all_years");
+var multiBandImageP = ee.Image("users/kalamkas/fusion/ssp585/precip_ssp585_fusion_all_years");
 //print(multiBandImageP); // Print the information about the loaded precipitation image to the console
 
 // Initialize arrays and dictionaries for colors, zone codes, and zone names
@@ -181,7 +181,7 @@ var multiBandImageP = ee.Image("users/kalamkas/fusion/precip_ssp585_fusion_all_y
 
 // Loop through each year in the specified date range
 years.getInfo().forEach(function (year) {
-  var startBand = (year - 1950) * 12; // Calculate the start and end bands for the current year.
+  var startBand = (year - 2015) * 12; // Calculate the start and end bands for the current year.
   var endBand = startBand + 11;
         
         // Rename temperature bands from generic names to more meaningful names ('t1' to 't12') for better interpretation
@@ -620,7 +620,7 @@ var customMap = ui.Map();
 
 // Project Title 
 var projectTitleLabel = ui.Label({ // Creates a label widget for the project title.
-  value: 'Köppen Climate Classification using fusion of CMIP6 data (historical)',
+  value: 'Köppen Climate Classification using fusion of CMIP6 data (SSP5-8.5 scenario)',
   style: {
     fontWeight: 'bold',
     fontSize: '24px',
@@ -635,7 +635,7 @@ var projectTitleLabel = ui.Label({ // Creates a label widget for the project tit
 var infoPanel = ui.Panel({ // Creates a panel to display information about the project.
   widgets: [ // Contains multiple label widgets with project information.
     ui.Label('This Köppen Climate Classification map is generated using Google Earth Engine and fusion of mean values of GISS-E2-1-G and MIROC-ES2L climate models of CMIP6 ensemble.', { fontSize: '14px' }),
-    ui.Label('The map classifies climate of Kazakhstan based on monthly mean temperature of GISS-E2-1-G and precipitation amount parameters of MIROC-ES2L for historical scenario. ', { fontSize: '14px' }),
+    ui.Label('The map classifies climate of Kazakhstan based on monthly mean temperature of GISS-E2-1-G and precipitation amount parameters of MIROC-ES2L for SSP5-8.5 scenario. ', { fontSize: '14px' }),
     ui.Label('More information about methodology DOI. ', { fontSize: '14px' }),
     ui.Label('Access the script https://github.com/yessimkhanova/koppen_maps', { fontSize: '14px', fontWeight: 'bold' }),
     ui.Label('This work is part of a doctoral research project conducted by Kalamkas Yessimkhanova, supervised by Dr. Matyas Gede at ELTE Eötvös Loránd University, Budapest.', { fontSize: '14px' }),
