@@ -181,7 +181,7 @@ var multiBandImageP = ee.Image("users/kalamkas/fusion/ssp245/precip_ssp245_fusio
 
 // Loop through each year in the specified date range
 years.getInfo().forEach(function (year) {
-  var startBand = (year - 1950) * 12; // Calculate the start and end bands for the current year.
+  var startBand = (year - 2015) * 12; // Calculate the start and end bands for the current year.
   var endBand = startBand + 11;
         
         // Rename temperature bands from generic names to more meaningful names ('t1' to 't12') for better interpretation
