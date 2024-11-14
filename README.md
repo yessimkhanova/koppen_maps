@@ -43,7 +43,7 @@ Each file in the repository is associated with a specific dataset:
 ### Explore the following GEE Apps for Köppen Climate Classification: 
 
 
-•	[Köppen Climate Classification GEE apps gallery](https://kalamkas.users.earthengine.app/))
+•	[Köppen Climate Classification GEE apps gallery](https://kalamkas.users.earthengine.app/)
 
 Gallery features following Köppen maps based on
 
