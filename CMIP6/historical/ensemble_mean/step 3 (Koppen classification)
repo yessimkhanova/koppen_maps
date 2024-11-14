@@ -634,11 +634,11 @@ var projectTitleLabel = ui.Label({ // Creates a label widget for the project tit
 // Info Text
 var infoPanel = ui.Panel({ // Creates a panel to display information about the project.
   widgets: [ // Contains multiple label widgets with project information.
-    ui.Label('This Köppen Climate Classification map is generated using Google Earth Engine and the <b>mean values of 32 climate models from the CMIP6 ensemble</b>.', { fontSize: '14px' }),
+    ui.Label('This Köppen Climate Classification map is generated using Google Earth Engine and the mean values of 32 climate models from the CMIP6 ensemble.', { fontSize: '14px' }),
     ui.Label('The map classifies climate of Kazakhstan based on monthly mean temperature and precipitation amount parameters for historical scenario. ', { fontSize: '14px' }),
     ui.Label('More information about methodology DOI. ', { fontSize: '14px' }),
     ui.Label('Access the script https://github.com/yessimkhanova/koppen_maps', { fontSize: '14px', fontWeight: 'bold' }),
-    ui.Label('This work is part of a doctoral research project conducted by <b>Kalamkas Yessimkhanova</b>, supervised by Dr. Matyas Gede at ELTE Eötvös Loránd University, Budapest.', { fontSize: '14px' }),
+    ui.Label('This work is part of a doctoral research project conducted by Kalamkas Yessimkhanova, supervised by Dr. Matyas Gede at ELTE Eötvös Loránd University, Budapest.', { fontSize: '14px' }),
     ui.Label('Credit is given to Google Earth Engine for its powerful geospatial analysis capabilities and NASA/Climate Analytics Group for providing valuable climate data.', { fontSize: '14px' }),
     ui.Label('Please contact Kalamkas Yessimkhanova for questions, comments, and feedback.', { fontSize: '12px' }),
     ui.Label('Email: kalamkasyessimkhanova@gmail.com', { fontSize: '12px', fontWeight: 'bold'}),
@@ -704,8 +704,8 @@ var areaByZoneLabel = ui.Label({
     fontSize: '14px',
     fontWeight: 'bold',
     margin: '10px 0 5px 0',
-    padding: '10px',
-    color: 'blue'
+    padding: '10px'
+    
   }
 });
 
