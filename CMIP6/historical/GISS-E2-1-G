@@ -759,7 +759,7 @@ var noteLabel = ui.Label({ // Creates a label for displaying a note to the user.
 
 // Area by Zone Label
 var areaByZoneLabel = ui.Label({
-  value: 'Climate zone areas in square kilometers for the territory of Kazakhstan in descending order :',
+  value: 'Climate zone areas in square kilometers in descending order :',
   style: {
     fontSize: '14px',
     fontWeight: 'bold',
