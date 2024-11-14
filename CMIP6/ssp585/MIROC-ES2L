@@ -678,7 +678,7 @@ var customMap = ui.Map();
 
 // Project Title 
 var projectTitleLabel = ui.Label({ // Creates a label widget for the project title.
-  value: 'Köppen Climate Classification using MIROC-ES2L model (SSP 5-8.5 scenario)',
+  value: 'Köppen Climate Classification using MIROC-ES2L model (scenario SSP5-8.5)',
   style: {
     fontWeight: 'bold',
     fontSize: '24px',
@@ -693,7 +693,7 @@ var projectTitleLabel = ui.Label({ // Creates a label widget for the project tit
 var infoPanel = ui.Panel({ // Creates a panel to display information about the project.
   widgets: [ // Contains multiple label widgets with project information.
     ui.Label('This Köppen Climate Classification map is generated using Google Earth Engine and MIROC-ES2L climate model of CMIP6 ensemble.', { fontSize: '14px' }),
-    ui.Label('The map classifies the climate of Kazakhstan based on the monthly mean temperature and precipitation amount parameters of the MIROC-ES2L climate model for Shared Socioeconomic Pathways (SSPs) 5-8.5 scenario. ', { fontSize: '14px' }),
+    ui.Label('The map classifies the climate of Kazakhstan based on the monthly mean temperature and precipitation amount parameters of the MIROC-ES2L climate model for scenario SSP5-8.5. ', { fontSize: '14px' }),
     ui.Label('More information about methodology DOI. ', { fontSize: '14px' }),
     ui.Label('Access the script https://github.com/yessimkhanova/koppen_maps', { fontSize: '14px', fontWeight: 'bold' }),
     ui.Label('This work is part of a doctoral research project conducted by Kalamkas Yessimkhanova, supervised by Dr. Matyas Gede at ELTE Eötvös Loránd University, Budapest.', { fontSize: '14px' }),
