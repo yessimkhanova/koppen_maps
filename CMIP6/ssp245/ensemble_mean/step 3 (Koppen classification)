@@ -692,7 +692,7 @@ var noteLabel = ui.Label({ // Creates a label for displaying a note to the user.
   value: 'Please note that map generation may take some time',
   style: {
     fontSize: '12px',
-    color: 'gray',
+    color: 'red',
     margin: '5px o',
     padding: '10px'
   }
@@ -703,7 +703,8 @@ var areaByZoneLabel = ui.Label({
   style: {
     fontSize: '14px',
     fontWeight: 'bold',
-    margin: '10px 0 5px 0'
+    margin: '10px 0 5px 0',
+    padding: '10px'
   }
 });
 
@@ -888,8 +889,9 @@ for (var i=0; i<Object.keys(zoneNames).length; i++){
 // Creates left and right main panels for layout purposes.
 var leftMainPanel = ui.Panel({
   style:{
-    width: '370px',
-    position: 'middle-left'
+    width: '390px',
+    position: 'middle-left',
+    padding: '10px'
   }
 });
 
