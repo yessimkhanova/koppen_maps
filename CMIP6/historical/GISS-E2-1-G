@@ -763,7 +763,8 @@ var areaByZoneLabel = ui.Label({
   style: {
     fontSize: '14px',
     fontWeight: 'bold',
-    margin: '10px 0 5px 0'
+    margin: '10px 0 5px 0',
+    padding: '10px'
   }
 });
 
