@@ -40,12 +40,10 @@ Each file in the repository is associated with a specific dataset:
 
 **ERA5-Land:** Corresponds to the ERA5-Land dataset.
 
-### Explore the following GEE Apps for Köppen Climate Classification: 
 
+### Explore the GEE Apps for Köppen Climate Classification
 
-•	[Köppen Climate Classification GEE apps gallery](https://kalamkas.users.earthengine.app/)
-
-Gallery features following Köppen maps based on
+[Köppen Climate Classification GEE apps gallery](https://kalamkas.users.earthengine.app/) features following Köppen maps based on
 
 - CRU data
 - ERA5-Land data 
