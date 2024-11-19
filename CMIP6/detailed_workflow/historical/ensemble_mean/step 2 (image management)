@@ -161,24 +161,24 @@ print(multiBandImageP); // Print information about the multi-band precipitation 
 
 
 // // Export the multiband temperature image containing all yearsto your Earth Engine Assets
-// Export.image.toAsset({
-//     image: multiBandImageT,
-//     description: 'temp_historical_ensemble_mean_all_years',
-//     assetId: 'users/kalamkas/cmip6/historical/temp_historical_ensemble_mean_all_years',
-//     scale: 27830,
-//   });
-//     // Comment: Export temperature image to your Earth Engine Assets.
-//     // Make sure to change the assetId to your desired location.
-//     // Example: 'users/your_username/your_asset_folder/temp_avgmodels_allyears'
-//     // Exported images will be stored in your asset and will be used in the next step (Step 3).
+Export.image.toAsset({
+    image: multiBandImageT,
+    description: 'temp_historical_ensemble_mean_all_years',
+    assetId: 'users/kalamkas/cmip6/historical/temp_historical_ensemble_mean_all_years',
+    scale: 27830,
+  });
+    // Comment: Export temperature image to your Earth Engine Assets.
+    // Make sure to change the assetId to your desired location.
+    // Example: 'users/your_username/your_asset_folder/temp_avgmodels_allyears'
+    // Exported images will be stored in your asset and will be used in the next step (Step 3).
     
-// // Export the multiband precipitation image containing all years data to your Earth Engine Assets
-// Export.image.toAsset({
-//     image: multiBandImageP,
-//     description: 'precip_historical_ensemble_mean_all_years',
-//     assetId: 'users/kalamkas/cmip6/historical/precip_historical_ensemble_mean_all_years',
-//     scale: 27830,
-//   });
+// Export the multiband precipitation image containing all years data to your Earth Engine Assets
+Export.image.toAsset({
+    image: multiBandImageP,
+    description: 'precip_historical_ensemble_mean_all_years',
+    assetId: 'users/kalamkas/cmip6/historical/precip_historical_ensemble_mean_all_years',
+    scale: 27830,
+  });
    
     // Comment: Export ,ultiband precipitation image to your Earth Engine Assets.
     // Make sure to change the assetId to your desired location.
