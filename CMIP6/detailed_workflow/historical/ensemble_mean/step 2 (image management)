@@ -144,7 +144,7 @@ var multiBandImageT = image.addBands([image2, image3, image4, image5, image6, im
                                       image51, image52, image53, image54, image55, image56, image57, image58, 
                                       image59, image60, image61, image62, image63, image64, image65]);
 
-//print(multiBandImageT); // Print information about the multi-band temperature image to the console
+print(multiBandImageT); // Print information about the multi-band temperature image to the console
 
 // Combine multiple precipitation images into a single multi-band image
 var multiBandImageP = image66.addBands([image67, image68, image69, image70, image71, image72, image73, image74, 
@@ -157,7 +157,7 @@ var multiBandImageP = image66.addBands([image67, image68, image69, image70, imag
                                         image120, image121, image122, image123, image124, image125, image126, 
                                         image127, image128, image129, image130]);
 
-//print(multiBandImageP); // Print information about the multi-band precipitation image to the console
+print(multiBandImageP); // Print information about the multi-band precipitation image to the console
 
 
 // Export the multiband temperature image containing all yearsto your Earth Engine Assets
