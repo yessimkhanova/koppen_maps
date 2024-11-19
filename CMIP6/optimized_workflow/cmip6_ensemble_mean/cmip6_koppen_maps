@@ -776,8 +776,8 @@ customMap.add(projectTitleLabel); // Adds the project title label to the map.
 // Info Text
 var infoPanel = ui.Panel({ // Creates a panel to display information about the project.
   widgets: [ // Contains multiple label widgets with project information.
-    ui.Label('This Köppen Climate Classification map is generated using Google Earth Engine and the mean values of 32 climate models from the CMIP6 ensemble.', { fontSize: '14px' }),
-    ui.Label('The map classifies climate of Kazakhstan based on monthly mean temperature and precipitation amount parameters. ', { fontSize: '14px' }),
+    ui.Label('This Köppen Climate Classification map is generated using Google Earth Engine and CMIP6 ensemble.', { fontSize: '14px' }),
+    ui.Label('The map classifies climate of Kazakhstan based on monthly mean temperature and precipitation amount parameters of the mean values of 32 climate models from the CMIP6 ensemble for historical data and scenarios SSP2-4.8 and SSP5-8.5. ', { fontSize: '14px' }),
     ui.Label('More information about methodology DOI. ', { fontSize: '14px' }),
     ui.Label('Access the script https://github.com/yessimkhanova/koppen_maps', { fontSize: '14px', fontWeight: 'bold' }),
     ui.Label('This work is part of a doctoral research project conducted by Kalamkas Yessimkhanova, supervised by Dr. Matyas Gede at ELTE Eötvös Loránd University, Budapest.', { fontSize: '14px' }),
