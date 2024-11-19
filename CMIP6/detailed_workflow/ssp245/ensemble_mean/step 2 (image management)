@@ -189,7 +189,7 @@ var multiBandImageP = image.addBands([image2, image3, image4, image5, image6, im
                                       image75, image76, image77, image78, image79, image80, image81, image82, 
                                       image83, image84, image85, image86]);
 
-print(multiBandImageT); // Print information about the multi-band temperature image to the console
+print(multiBandImageP); // Print information about the multi-band temperature image to the console
 
 // Combine multiple precipitation images into a single multi-band image
 var multiBandImageT = image87.addBands([image88, image89, image90,image91, image92, image93, image94, 
