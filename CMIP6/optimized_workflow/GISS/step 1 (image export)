@@ -87,8 +87,8 @@ for (var year = 1950; year <= 2014; year++) {
   // Export the multiband image for temperature to Earth Engine Assets
   Export.image.toAsset({
     image: temperatureImage,
-    description: 't_' + year + '_hist' + '_ensemble_mean',
-    assetId: 'users/kalamkas/cmip6/historical/' + 't_' + year + '_hist' + '_ensemble_mean',
+    description: 't_' + year + '_hist' + '_GISS-E2-1-G',
+    assetId: 'users/kalamkas/cmip6/fusion/historial/' + 't_' + year + '_hist' + '_GISS-E2-1-G',
     crs: 'EPSG:4326',
     scale: 27830, // Resolution of the source dataset is 27830 meters, so it is set by default
     region: country.geometry()
@@ -102,7 +102,7 @@ for (var year = 1950; year <= 2014; year++) {
   Export.image.toAsset({
     image: precipitationImage,
     description: 'pr_' + year + '_hist' + '_ensemble_mean',
-    assetId: 'users/kalamkas/cmip6/historical/' + 'pr_' + year + '_hist' + '_ensemble_mean',
+    assetId: 'users/kalamkas/cmip6/fusion/historical/' + 'pr_' + year + '_hist' + '_GISS-E2-1-G',
     crs: 'EPSG:4326',
     scale: 27830, // Resolution of the source dataset is 27830 meters, so it is set by default
     region: country.geometry()
