@@ -72,6 +72,6 @@ For questions, comments, and feedback, please contact **Kalamkas Yessimkhanova**
 
 Credit is given to the tools and datasets used in this work:
 - Google Earth Engine (Gorelick, N., et al., 2017)
-- NEX-GDDP-CMIP6 dataset (Thrasher, B., et al., 2012)
-- ERA5-Land dataset (Muñoz Sabater, J., 2019)
-- CRU dataset (World Bank Group, Climate Change Knowledge Portal, 2024)
+- NEX-GDDP-CMIP6: NASA Earth Exchange Global Daily Downscaled Climate Projections (Thrasher, B., Maurer, E. P., McKellar, C., & Duffy, P. B., 2012: Technical Note: Bias correcting climate model simulated daily temperature extremes with quantile mapping. Hydrology and Earth System Sciences, 16(9), 3309-3314. doi:10.5194/hess-16-3309-2012)
+- ERA5-Land Monthly Aggregated - ECMWF Climate Reanalysis (Muñoz Sabater, J., (2019): ERA5-Land monthly averaged data from 1981 to present. Copernicus Climate Change Service (C3S) Climate Data Store (CDS). (<date 2024>), doi:10.24381/cds.68d2bb30)
+- CRU dataset (World Bank, Climate Change Knowledge Portal (2024). URL: https://climateknowledgeportal.worldbank.org/. Date Accessed: 2024)
