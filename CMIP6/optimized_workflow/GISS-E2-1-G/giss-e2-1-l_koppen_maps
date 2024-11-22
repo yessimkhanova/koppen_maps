@@ -6,21 +6,21 @@ var country = ee.FeatureCollection(path).filter(ee.Filter.eq('ADM0_CODE', countr
 
 // Load the multi-band temperature image from the specified Earth Engine asset generated in Step 2
 // Note: To add your own dataset, replace the asset ID with the proper path to your temperature image
-var multiBandImageTssp245 = ee.Image("users/kalamkas/fusion/temp_hist_ssp245_fusion_all_years");
+var multiBandImageTssp245 = ee.Image("users/kalamkas/fusion/temp_hist_ssp245_GISS_all_years");
 print(multiBandImageTssp245); // Print the information about the loaded temperature image to the console
 
 // Load the multi-band precipitation image from the specified Earth Engine asset generated in Step 2
 // Note: To add your own dataset, replace the asset ID with the proper path to your precipitation image
-var multiBandImagePssp245 = ee.Image("users/kalamkas/fusion/precip_hist_ssp245_fusion_all_years");
+var multiBandImagePssp245 = ee.Image("users/kalamkas/fusion/precip_hist_ssp245_GISS_all_years");
 print(multiBandImagePssp245); // Print the information about the loaded precipitation image to the console
 
 
-var multiBandImageTssp585 = ee.Image("users/kalamkas/fusion/temp_hist_ssp585_fusion_all_years");
+var multiBandImageTssp585 = ee.Image("users/kalamkas/fusion/temp_hist_ssp585_GISS_all_years");
 print(multiBandImageTssp585); // Print the information about the loaded temperature image to the console
 
 // Load the multi-band precipitation image from the specified Earth Engine asset generated in Step 2
 // Note: To add your own dataset, replace the asset ID with the proper path to your precipitation image
-var multiBandImagePssp585 = ee.Image("users/kalamkas/fusion/precip_hist_ssp585_fusion_all_years");
+var multiBandImagePssp585 = ee.Image("users/kalamkas/fusion/precip_hist_ssp585_GISS_all_years");
 print(multiBandImagePssp585); // Print the information about the loaded precipitation image to the console
 
 // Initialize arrays and dictionaries for colors, zone codes, and zone names
@@ -776,8 +776,8 @@ customMap.add(projectTitleLabel); // Adds the project title label to the map.
 // Info Text
 var infoPanel = ui.Panel({ // Creates a panel to display information about the project.
   widgets: [ // Contains multiple label widgets with project information.
-    ui.Label('This Köppen Climate Classification map is generated using Google Earth Engine and fusion of CMIP6 models.', { fontSize: '14px' }),
-    ui.Label('The map classifies climate of Kazakhstan based on monthly mean temperature of GISS-E2-1-G and precipitation amount parameters of MIROC-ES2L models. ', { fontSize: '14px' }),
+    ui.Label('This Köppen Climate Classification map is generated using Google Earth Engine and GISS-E2-1-G model of CMIP6 ensemble.', { fontSize: '14px' }),
+    ui.Label('The map classifies climate of Kazakhstan based on monthly mean temperature of and precipitation amount parameters. ', { fontSize: '14px' }),
     ui.Label('More information about methodology DOI. ', { fontSize: '14px' }),
     ui.Label('Access the script https://github.com/yessimkhanova/koppen_maps', { fontSize: '14px', fontWeight: 'bold' }),
     ui.Label('This work is part of a doctoral research project conducted by Kalamkas Yessimkhanova, supervised by Dr. Matyas Gede at ELTE Eötvös Loránd University, Budapest.', { fontSize: '14px' }),
