@@ -762,7 +762,7 @@ customMap.centerObject(country); // Centers the map view on the 'country' object
 
 // Project Title 
 var projectTitleLabel = ui.Label({ // Creates a label widget for the project title.
-  value: 'Köppen Climate Classification based on fusion model',
+  value: 'Köppen Climate Classification based on GISSS-E2-1-G model',
   style: {
     fontWeight: 'bold',
     fontSize: '24px',
