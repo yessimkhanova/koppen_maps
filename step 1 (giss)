@@ -89,7 +89,7 @@ for (var year = 2015; year <= 2100; year++) {
   Export.image.toAsset({
     image: temperatureImage,
     description: 't_' + year + '_ssp585' + '_MIROC',
-    assetId: 'users/kalamkas/models/giss-e2-1-g/ssp585/' + 't_' + year + '_ssp585' + '_MIROC',
+    assetId: 'users/kalamkas/models/miroc-es2l/ssp585/' + 't_' + year + '_ssp585' + '_MIROC',
     crs: 'EPSG:4326',
     scale: 27830, // Resolution of the source dataset is 27830 meters, so it is set by default
     region: country.geometry()
@@ -103,7 +103,7 @@ for (var year = 2015; year <= 2100; year++) {
   Export.image.toAsset({
     image: precipitationImage,
     description: 'pr_' + year + '_ssp585' + '_MIROC',
-    assetId: 'users/kalamkas/models/giss-e2-1-g/ssp585/' + 'pr_' + year + '_ssp585' + '_MIROC',
+    assetId: 'users/kalamkas/models/miroc-es2l/ssp585/' + 'pr_' + year + '_ssp585' + '_MIROC',
     crs: 'EPSG:4326',
     scale: 27830, // Resolution of the source dataset is 27830 meters, so it is set by default
     region: country.geometry()
