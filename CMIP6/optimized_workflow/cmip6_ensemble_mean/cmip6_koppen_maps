@@ -7,21 +7,21 @@ var country = ee.FeatureCollection(path).filter(ee.Filter.eq('ADM0_CODE', countr
 // Load the multi-band temperature image from the specified Earth Engine asset generated in Step 2
 // Note: To add your own dataset, replace the asset ID with the proper path to your temperature image
 var multiBandImageTssp245 = ee.Image("users/kalamkas/cmip6/temp_hist_ssp245_ensemble_mean_all_years");
-//print(multiBandImageT); // Print the information about the loaded temperature image to the console
+print(multiBandImageTssp245); // Print the information about the loaded temperature image to the console
 
 // Load the multi-band precipitation image from the specified Earth Engine asset generated in Step 2
 // Note: To add your own dataset, replace the asset ID with the proper path to your precipitation image
 var multiBandImagePssp245 = ee.Image("users/kalamkas/cmip6/precip_hist_ssp245_ensemble_mean_all_years");
-//print(multiBandImageP); // Print the information about the loaded precipitation image to the console
+print(multiBandImagePssp245); // Print the information about the loaded precipitation image to the console
 
 
 var multiBandImageTssp585 = ee.Image("users/kalamkas/cmip6/temp_hist_ssp585_ensemble_mean_all_years");
-//print(multiBandImageT); // Print the information about the loaded temperature image to the console
+print(multiBandImageTssp585); // Print the information about the loaded temperature image to the console
 
 // Load the multi-band precipitation image from the specified Earth Engine asset generated in Step 2
 // Note: To add your own dataset, replace the asset ID with the proper path to your precipitation image
 var multiBandImagePssp585 = ee.Image("users/kalamkas/cmip6/precip_hist_ssp585_ensemble_mean_all_years");
-//print(multiBandImageP); // Print the information about the loaded precipitation image to the console
+print(multiBandImagePssp585); // Print the information about the loaded precipitation image to the console
 
 // Initialize arrays and dictionaries for colors, zone codes, and zone names
 //Init directory: Köppen climate classification system colors, zoneNames, zoneCodes
