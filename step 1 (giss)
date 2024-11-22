@@ -9,7 +9,7 @@ var collection = ee.ImageCollection('NASA/GDDP-CMIP6')
                                     .filter(ee.Filter.eq('scenario', 'ssp245'))
                                     .filterBounds(country)
                                     .map(function(image) {
-                                      return image.setDefaultProjection('EPSG:4326', null, 27830); // Set to 25 km resolution or adjust as needed
+                                      return image.setDefaultProjection('EPSG:4326', null, 27830); // Set resolution
                                           });
 
 // List of climate models used in the analysis
