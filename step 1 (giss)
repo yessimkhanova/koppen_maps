@@ -13,7 +13,7 @@ var collection = ee.ImageCollection('NASA/GDDP-CMIP6')
                                           });
 
 // List of climate models used in the analysis
-var models = ['GISS-E2-1-G'];
+var models = ['MIROC-ES2L'];
 
 
 // Loop over each year from 2015 to 2100
