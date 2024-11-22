@@ -1,0 +1,79 @@
+                              // THIS STEP 2 OF KOPPEN CLIMATE CLASSIFICATION USING CMIP6 DATA
+
+// Import previously exported images from your Earth Engine asset in Step 1
+
+// Combine multiple temperature images into a single multi-band image
+var multiBandImageT = image.addBands([image2, image3, image4, image5, image6, image7, image8, image9, image10, 
+                                      image11, image12, image13, image14, image15, image16, image17, image18, 
+                                      image19, image20, image21, image22, image23, image24, image25, image26, 
+                                      image27, image28, image29, image30, image31, image32, image33, image34, 
+                                      image35, image36, image37, image38, image39, image40, image41, image42, 
+                                      image43, image44, image45, image46, image47, image48, image49, image50, 
+                                      image51, image52, image53, image54, image55, image56, image57, image58, 
+                                      image59, image60, image61, image62, image63, image64, image65, image66,
+                                      image67, image68, image69, image70, image71, image72, image73, image74, 
+                                      image75, image76, image77, image78, image79, image80, image81, image82, 
+                                      image83, image84, image85, image86, image87, image88, image89, image90, 
+                                      image91, image92, image93, image94, image95, image96, image97, image98, 
+                                      image99, image100, image101, image102, image103, image104, image105, 
+                                      image106, image107, image108, image109, image110, image111, image112, 
+                                      image113, image114, image115, image116, image117, image118, image119, 
+                                      image120, image121, image122, image123, image124, image125, image126, 
+                                      image127, image128, image129, image130, image131, image132, image133,
+                                      image134, image135, image136, image137, image138, image139, image140, 
+                                      image141, image142, image143, image144, image145, image146, image147, 
+                                      image148, image149, image150, image151]);
+
+print(multiBandImageT); // Print information about the multi-band temperature image to the console
+
+// Combine multiple precipitation images into a single multi-band image
+var multiBandImageP = image152.addBands([image153, image154, image155, image156, image157, image158, image159, 
+                                         image160, image161, image162, image163, image164, image165, 
+                                         image166, image167, image168, image169, image170, image171, image172, 
+                                         image173, image174, image175, image176, image177, image178, image179, 
+                                         image180, image181, image182, image183, image184, image185, image186, 
+                                         image187, image188, image189, image190, image191, image192, image193, 
+                                         image194, image195, image196, image197, image198, image199, image200, 
+                                         image201, image202, image203, image204, image205, image206, image207, 
+                                         image208, image209, image210, image211, image212, image213, image214, 
+                                         image215, image216, image217, image218, image219, image220, image221, 
+                                         image222, image223, image224, image225, image226, image227, image228, 
+                                         image229, image230, image231, image232, image233, image234, image235, 
+                                         image236, image237, image238, image239, image240, image241, image242, 
+                                         image243, image244, image245, image246, image247, image248, image249, 
+                                         image250, image251, image252, image253, image254, image255, image256, 
+                                         image257, image258, image259, image260, image261, image262, image263, 
+                                         image264, image265, image266, image267, image268, image269, image270, 
+                                         image271, image272, image273, image274, image275, image276, image277, 
+                                         image278, image279, image280, image281, image282, image283, image284, 
+                                         image285, image286, image287, image288, image289, image290, image291, 
+                                         image292, image293, image294, image295, image296, image297, image298, 
+                                         image299, image300, image301, image302]);
+
+print(multiBandImageP); // Print information about the multi-band precipitation image to the console
+
+
+// // Export the multiband temperature image containing all yearsto your Earth Engine Assets
+Export.image.toAsset({
+    image: multiBandImageT,
+    description: 'temp_hist_ssp585_GISS_all_years',
+    assetId: 'users/kalamkas/fusion/temp_hist_ssp585_GISS_all_years',
+    scale: 27830,
+  });
+    // Comment: Export temperature image to your Earth Engine Assets.
+    // Make sure to change the assetId to your desired location.
+    // Example: 'users/your_username/your_asset_folder/temp_avgmodels_allyears'
+    // Exported images will be stored in your asset and will be used in the next step (Step 3).
+    
+// Export the multiband precipitation image containing all years data to your Earth Engine Assets
+Export.image.toAsset({
+    image: multiBandImageP,
+    description: 'precip_hist_ssp585_GISS_all_years',
+    assetId: 'users/kalamkas/fusion/precip_hist_ssp585_GISS_all_years',
+    scale: 27830,
+  });
+   
+    // Comment: Export ,ultiband precipitation image to your Earth Engine Assets.
+    // Make sure to change the assetId to your desired location.
+    // Example: 'users/your_username/your_asset_folder/precip_avgmodels_allyears'
+    // Exported images will be stored in your asset and will be used in the next step (Step 3).
