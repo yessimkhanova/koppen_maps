@@ -13,7 +13,7 @@ var collection = ee.ImageCollection('NASA/GDDP-CMIP6')
                                           });
 
 // List of climate models used in the analysis
-var models = ['GISS-E2-1-G'];
+var models = ['MIROC-ES2L'];
 
 
 // Loop over each year from 2015 to 2100
@@ -88,8 +88,8 @@ for (var year = 2015; year <= 2100; year++) {
   // Export the multiband image for temperature to Earth Engine Assets
   Export.image.toAsset({
     image: temperatureImage,
-    description: 't_' + year + '_ssp585' + '_GISS',
-    assetId: 'users/kalamkas/models/giss-e2-1-g/ssp585/' + 't_' + year + '_ssp585' + '_GISS',
+    description: 't_' + year + '_ssp585' + '_MIROC',
+    assetId: 'users/kalamkas/models/giss-e2-1-g/ssp585/' + 't_' + year + '_ssp585' + '_MIROC',
     crs: 'EPSG:4326',
     scale: 27830, // Resolution of the source dataset is 27830 meters, so it is set by default
     region: country.geometry()
@@ -102,8 +102,8 @@ for (var year = 2015; year <= 2100; year++) {
   // Export the multiband image for precipitation to Earth Engine Assets
   Export.image.toAsset({
     image: precipitationImage,
-    description: 'pr_' + year + '_ssp585' + '_GISS',
-    assetId: 'users/kalamkas/models/giss-e2-1-g/ssp585/' + 'pr_' + year + '_ssp585' + '_GISS',
+    description: 'pr_' + year + '_ssp585' + '_MIROC',
+    assetId: 'users/kalamkas/models/giss-e2-1-g/ssp585/' + 'pr_' + year + '_ssp585' + '_MIROC',
     crs: 'EPSG:4326',
     scale: 27830, // Resolution of the source dataset is 27830 meters, so it is set by default
     region: country.geometry()
