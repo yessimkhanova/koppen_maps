@@ -6,7 +6,7 @@ var country = ee.FeatureCollection(path).filter(ee.Filter.eq('ADM0_CODE', countr
 
 // Specify the Earth Engine Image Collection for CMIP6 data and filter it for the historical scenario
 var collection = ee.ImageCollection('NASA/GDDP-CMIP6')
-                                    .filter(ee.Filter.eq('scenario', 'historical'))
+                                    .filter(ee.Filter.eq('scenario', 'ssp245'))
                                     .filterBounds(country)
                                     .map(function(image) {
                                       return image.setDefaultProjection('EPSG:4326', null, 27830); // Set to 25 km resolution or adjust as needed
@@ -17,7 +17,7 @@ var models = ['MIROC-ES2L'];
 
 
 // Loop over each year from 2015 to 2100
-for (var year = 1950; year <= 2014; year++) {
+for (var year = 2015; year <= 2100; year++) {
   
   // Define date range for each year
   var dateRange = ee.DateRange(ee.Date(year + '-01-01'), ee.Date(year + '-12-31'));
@@ -88,8 +88,8 @@ for (var year = 1950; year <= 2014; year++) {
   // Export the multiband image for temperature to Earth Engine Assets
   Export.image.toAsset({
     image: temperatureImage,
-    description: 't_' + year + '_hist' + '_MIROC',
-    assetId: 'users/kalamkas/models/miroc-es2l/historical/' + 't_' + year + '_hist' + '_MIROC',
+    description: 't_' + year + '_ssp245' + '_MIROC',
+    assetId: 'users/kalamkas/models/miroc-es2l/ssp245/' + 't_' + year + '_ssp245' + '_MIROC',
     crs: 'EPSG:4326',
     scale: 27830, // Resolution of the source dataset is 27830 meters, so it is set by default
     region: country.geometry()
@@ -102,8 +102,8 @@ for (var year = 1950; year <= 2014; year++) {
   // Export the multiband image for precipitation to Earth Engine Assets
   Export.image.toAsset({
     image: precipitationImage,
-    description: 'pr_' + year + '_hist' + '_MIROC',
-    assetId: 'users/kalamkas/models/miroc-es2l/historical/' + 'pr_' + year + '_hist' + '_MIROC',
+    description: 'pr_' + year + '_ssp245' + '_MIROC',
+    assetId: 'users/kalamkas/models/miroc-es2l/ssp245/' + 'pr_' + year + '_ssp245' + '_MIROC',
     crs: 'EPSG:4326',
     scale: 27830, // Resolution of the source dataset is 27830 meters, so it is set by default
     region: country.geometry()
