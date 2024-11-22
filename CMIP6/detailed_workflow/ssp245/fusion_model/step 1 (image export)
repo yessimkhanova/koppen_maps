@@ -72,46 +72,26 @@ for (var year = 2015; year <= 2100; year++) {
   multiBandImage = multiBandImage.set('year', year);
 
 
-  // // Export the multiband image for temperature to Earth Engine Assets
-  // Export.image.toAsset({
-  //   image: temperatureImage,
-  //   description: 't_' + year + '_ssp245' + '_GISS-E2-1-G',
-  //   assetId: 'users/kalamkas/fusion/ssp245/' + 't_' + year + '_ssp245' + '_GISS-E2-1-G',
-  //   scale: 27830, // Resolution of the source dataset is 27830 meters, so it is set by default
-  //   region: country.geometry()
-  // });
+  // Export the multiband image for temperature to Earth Engine Assets
+  Export.image.toAsset({
+    image: temperatureImage,
+    description: 't_' + year + '_ssp245' + '_GISS-E2-1-G',
+    assetId: 'users/kalamkas/fusion/ssp245/' + 't_' + year + '_ssp245' + '_GISS-E2-1-G',
+    scale: 27830, // Resolution of the source dataset is 27830 meters, so it is set by default
+    region: country.geometry()
+  });
     // Comment: Export temperature image to your Earth Engine Assets.
     // Make sure to change the assetId to your desired location.
     // Example: 'users/your_username/your_asset_folder/temp' + year + '-avgmodels'
     // Exported images will be stored in your asset and will be used in the next step (Step 2).
     
-  // Export the multiband image for temperature to Earth Engine Assets
-  Export.image.toAsset({
-    image: temperatureImage,
-    description: 'pr_' + year + '_ssp245' + '_GISS-E2-1-G',
-    assetId: 'users/kalamkas/fusion/ssp245/' + 'pr_' + year + '_ssp245' + '_GISS-E2-1-G',
-    scale: 27830, // Resolution of the source dataset is 27830 meters, so it is set by default
-    region: country.geometry()
-  });
-        // Comment: Export precipitation image to your Earth Engine Assets.
-    // Make sure to change the assetId to your desired location.
-    // Example: 'users/your_username/your_asset_folder/pr' + year + '-avgmodels'
-    // Exported images will be stored in your asset and will be used in the next step (Step 2).
-    
-  // // Export the multiband image for precipitation to Earth Engine Assets
-  // Export.image.toAsset({
-  //   image: precipitationImage,
-  //   description: 'pr_' + year + '_ssp245' + '_MIROC-ES2L',
-  //   assetId: 'users/kalamkas/fusion/ssp245/' + 'pr_' + year + '_ssp245' + '_MIROC-ES2L',
-  //   scale: 27830, // Resolution of the source dataset is 27830 meters, so it is set by default
-  //   region: country.geometry()
-  // });
   
+    
   // Export the multiband image for precipitation to Earth Engine Assets
   Export.image.toAsset({
     image: precipitationImage,
-    description: 't_' + year + '_ssp245' + '_MIROC-ES2L',
-    assetId: 'users/kalamkas/fusion/ssp245/' + 't_' + year + '_ssp245' + '_MIROC-ES2L',
+    description: 'pr_' + year + '_ssp245' + '_MIROC-ES2L',
+    assetId: 'users/kalamkas/fusion/ssp245/' + 'pr_' + year + '_ssp245' + '_MIROC-ES2L',
     scale: 27830, // Resolution of the source dataset is 27830 meters, so it is set by default
     region: country.geometry()
   });
