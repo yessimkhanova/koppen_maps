@@ -75,16 +75,15 @@ for (var year = 2015; year <= 2015; year++) {
   );
   // Create multiband images for temperature
   var temperatureImage = monthlyMeansCollection.select('meanTemperature').toBands().rename(['t1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12']);
-  temperatureImage = temperatureImage.set('year', year).clip(country);
+  temperatureImage = temperatureImage.set('year', year).updateMask(country.geometry());
   
   // Create multiband images for precipitation
   var precipitationImage = monthlyMeansCollection.select('sumPrecipitation').toBands().rename(['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12']);
-  precipitationImage = precipitationImage.set('year', year).clip(country);
+  precipitationImage = precipitationImage.set('year', year).updateMask(country.geometry());
 
   // Combine temperature and precipitation bands into a single multiband image
   var multiBandImage = temperatureImage.addBands(precipitationImage);
   multiBandImage = multiBandImage.set('year', year);
-
 
   // Export the multiband image for temperature to Earth Engine Assets
   Export.image.toAsset({
@@ -93,7 +92,7 @@ for (var year = 2015; year <= 2015; year++) {
     assetId: 'users/kalamkas/test/' + 't_' + year + '_ssp585' + '_GISS',
     crs: 'EPSG:4326',
     scale: 27830, // Resolution of the source dataset is 27830 meters, so it is set by default
-    region: country.bounds()
+    region: country.geometry()
    });
     // Comment: Export temperature image to your Earth Engine Assets.
     // Make sure to change the assetId to your desired location.
@@ -107,7 +106,7 @@ for (var year = 2015; year <= 2015; year++) {
     assetId: 'users/kalamkas/test/' + 'pr_' + year + '_ssp585' + '_GISS',
     crs: 'EPSG:4326',
     scale: 27830, // Resolution of the source dataset is 27830 meters, so it is set by default
-    region: country.geometry().bounds()
+    region: country.geometry()
    });
     // Comment: Export precipitation image to your Earth Engine Assets.
     // Make sure to change the assetId to your desired location.
