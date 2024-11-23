@@ -18,7 +18,7 @@ var models = ['GISS-E2-1-G'];
 
 
 // Loop over each year from 2015 to 2100
-for (var year = 2015; year <= 2100; year++) {
+for (var year = 2015; year <= 2015; year++) {
   
   // Define date range for each year
   var dateRange = ee.DateRange(ee.Date(year + '-01-01'), ee.Date(year + '-12-31'));
