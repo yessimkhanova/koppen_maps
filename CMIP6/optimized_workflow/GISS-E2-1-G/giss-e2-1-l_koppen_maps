@@ -6,7 +6,7 @@ var country = ee.FeatureCollection(path).filter(ee.Filter.eq('ADM0_CODE', countr
 
 // Load the multi-band temperature image from the specified Earth Engine asset generated in Step 2
 // Note: To add your own dataset, replace the asset ID with the proper path to your temperature image
-var multiBandImageTssp245 = ee.Image("users/kalamkas/fusion/temp_hist_ssp245_GISS_all_years");
+var multiBandImageTssp245 = ee.Image("users/kalamkas/models/giss-e2-1-g/temp_hist_ssp245_GISS_all_years");
 print(multiBandImageTssp245); // Print the information about the loaded temperature image to the console
 
 // Load the multi-band precipitation image from the specified Earth Engine asset generated in Step 2
