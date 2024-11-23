@@ -105,7 +105,7 @@ var precipitationMasked = precipitationImage.updateMask(countryMask);
     assetId: 'users/kalamkas/test/' + 't_' + year + '_ssp585' + '_GISS',
     crs: 'EPSG:4326',
     scale: 27830, // Resolution of the source dataset is 27830 meters, so it is set by default
-    region: country
+    region: country.geometry().bounds()
    });
     // Comment: Export temperature image to your Earth Engine Assets.
     // Make sure to change the assetId to your desired location.
