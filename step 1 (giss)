@@ -96,11 +96,20 @@ var temperatureMasked = temperatureImage.updateMask(countryMask);
 // Mask the precipitation image
 var precipitationMasked = precipitationImage.updateMask(countryMask);
 
+var reprojectedTemperature = temperatureMasked.reproject({
+  crs: 'EPSG:4326',
+  scale: 27830
+});
+
+var reprojectedPrecipitation = precipitationMasked.reproject({
+  crs: 'EPSG:4326',
+  scale: 27830
+});
 
 
   // Export the multiband image for temperature to Earth Engine Assets
   Export.image.toAsset({
-    image: temperatureMasked,
+    image: reprojectedTemperature,
     description: 't_' + year + '_ssp585' + '_GISS',
     assetId: 'users/kalamkas/test/' + 't_' + year + '_ssp585' + '_GISS',
     crs: 'EPSG:4326',
