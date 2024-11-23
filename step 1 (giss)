@@ -4,6 +4,12 @@ var path = "FAO/GAUL_SIMPLIFIED_500m/2015/level0";
 var country_code = 132; // Set the country code for Kazakhstan.
 var country = ee.FeatureCollection(path).filter(ee.Filter.eq('ADM0_CODE', country_code)); // Filter the country feature collection for Kazakhstan.
 // var alignedCountry = country.geometry().buffer(0).simplify(27830); // Match dataset resolution
+// Rasterize the country geometry into a binary mask
+var countryMask = ee.Image.constant(1).clip(country).mask(ee.Image.constant(1).clip(country));
+
+// Apply the mask to the temperature and precipitation images
+var temperatureMasked = temperatureImage.updateMask(countryMask);
+var precipitationMasked = precipitationImage.updateMask(countryMask);
 
 // Specify the Earth Engine Image Collection for CMIP6 data and filter it for the historical scenario
 var collection = ee.ImageCollection('NASA/GDDP-CMIP6')
@@ -86,10 +92,10 @@ for (var year = 2015; year <= 2015; year++) {
   multiBandImage = multiBandImage.set('year', year);
 
 // Mask the temperature image
-var temperatureMasked = temperatureImage.updateMask(country.geometry());
+var temperatureMasked = temperatureImage.updateMask(countryMask);
 
 // Mask the precipitation image
-var precipitationMasked = precipitationImage.updateMask(country.geometry());
+var precipitationMasked = precipitationImage.updateMask(countryMask);
 
 
 
