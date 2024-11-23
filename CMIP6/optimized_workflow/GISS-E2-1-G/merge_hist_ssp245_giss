@@ -57,7 +57,7 @@ print(multiBandImageP); // Print information about the multi-band precipitation 
 Export.image.toAsset({
     image: multiBandImageT,
     description: 'temp_hist_ssp245_GISS_all_years',
-    assetId: 'users/kalamkas/fusion/temp_hist_ssp245_GISS_all_years',
+    assetId: 'users/kalamkas/models/giss-e2-1-g/temp_hist_ssp245_GISS_all_years',
     scale: 27830,
   });
     // Comment: Export temperature image to your Earth Engine Assets.
@@ -69,7 +69,7 @@ Export.image.toAsset({
 Export.image.toAsset({
     image: multiBandImageP,
     description: 'precip_hist_ssp245_GISS_all_years',
-    assetId: 'users/kalamkas/fusion/precip_hist_ssp245_GISS_all_years',
+    assetId: 'users/kalamkas/models/giss-e2-1-g/precip_hist_ssp245_GISS_all_years',
     scale: 27830,
   });
    
