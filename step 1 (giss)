@@ -3,9 +3,12 @@
 var path = "FAO/GAUL_SIMPLIFIED_500m/2015/level0"; 
 var country_code = 132; // Set the country code for Kazakhstan.
 var country = ee.FeatureCollection(path).filter(ee.Filter.eq('ADM0_CODE', country_code)); // Filter the country feature collection for Kazakhstan.
-// var alignedCountry = country.geometry().buffer(0).simplify(27830); // Match dataset resolution
-// Rasterize the country geometry into a binary mask
-var countryMask = ee.Image.constant(1).clip(country).mask(ee.Image.constant(1).clip(country));
+// Rasterize the country geometry
+var countryMask = ee.Image.constant(1).clip(country)
+  .reproject({
+    crs: 'EPSG:4326',
+    scale: 27830 // Match the native resolution of CMIP6
+  });
 
 // Specify the Earth Engine Image Collection for CMIP6 data and filter it for the historical scenario
 var collection = ee.ImageCollection('NASA/GDDP-CMIP6')
