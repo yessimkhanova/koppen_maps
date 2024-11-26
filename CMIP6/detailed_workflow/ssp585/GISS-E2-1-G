@@ -1,3 +1,10 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var imageCollection = ee.ImageCollection("NASA/GDDP-CMIP6");
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+// Export GEOBoarders
+var path = "FAO/GAUL_SIMPLIFIED_500m/2015/level0"; var country_code = 132; // Set the country code for Kazakhstan.
+var country = ee.FeatureCollection(path).filter(ee.Filter.eq('ADM0_CODE', country_code)); // Filter the country feature collection for Kazakhstan.
+
 // Specify the Earth Engine Image Collection for CMIP6 data and filter it for the historical scenario
 var collection = ee.ImageCollection('NASA/GDDP-CMIP6').filter(ee.Filter.eq('scenario', 'ssp585'));
 
@@ -57,10 +64,6 @@ for (var year = 2015; year <= 2100; year++) {
 
 var multiBandImageT=yearlyMeansCollection.select('meanTemperature').toBands()
 var multiBandImageP=yearlyMeansCollection.select('sumPrecipitation').toBands()
-
-// Export GEOBoarders
-var path = "FAO/GAUL_SIMPLIFIED_500m/2015/level0"; var country_code = 132; // Set the country code for Kazakhstan.
-var country = ee.FeatureCollection(path).filter(ee.Filter.eq('ADM0_CODE', country_code)); // Filter the country feature collection for Kazakhstan.
 
 // Load the multi-band temperature image from the specified Earth Engine asset generated in Step 2
 // Note: To add your own dataset, replace the asset ID with the proper path to your temperature image
