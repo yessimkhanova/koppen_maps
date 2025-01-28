@@ -11,6 +11,7 @@ var country = ee.FeatureCollection(path).filter(ee.Filter.eq('ADM0_CODE', countr
 var collection = ee.ImageCollection('NASA/GDDP-CMIP6')
                                     .filter(ee.Filter.eq('scenario', 'ssp585'))
                                     .filterBounds(country);
+// print(collection.first().projection().nominalScale())
 
 // List of climate models used in the analysis
 var tempModel = ['CESM2']; // For extracting monthly temperature we will use this model data
@@ -42,14 +43,20 @@ for (var year = 2015; year <= 2100; year++) {
         // Calculate mean temperature of models for the month 
         var meanTemperature = monthlyCollection.select(temperatureBand).filter(ee.Filter.inList('model',tempModel))
                                                .mean().subtract(273) // Convert Kelvin to Celsius
-                                               .rename(['meanTemperature']);
+                                               .reproject({
+                              crs: collection.first().projection().crs(),
+                              scale: collection.first().projection().nominalScale()
+                            }).rename(['meanTemperature']);
 
         // Calculate sum of precipitation for each model
         var sumPrecipitation = ee.ImageCollection.fromImages(precipModel.map(function(m) {
           return monthlyCollection.filter(ee.Filter.eq('model', m))
                                   .select(precipitationBand)
                                   .sum().multiply(1000).multiply(86400).divide(997) // Convert kg m^-2 s^-1 to mm per month
-                                  .rename('sumPrecipitation');
+                                  .reproject({
+                              crs: collection.first().projection().crs(),
+                              scale: collection.first().projection().nominalScale()
+                            }).rename('sumPrecipitation');
         }));
         
         // Combine mean temperature and mean precipitation for each model
