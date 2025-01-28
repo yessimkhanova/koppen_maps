@@ -86,7 +86,7 @@ for (var year = 2015; year <= 2100; year++) {
   Export.image.toAsset({
     image: temperatureImage,
     description: 't_' + year + '_ssp585' + '_CESM2',
-    assetId: 'users/kalamkas/fusion/ssp585/' + 't_' + year + '_ssp585' + '_CESM2',
+    assetId: 'users/kalamkas/fusion_2/ssp585/' + 't_' + year + '_ssp585' + '_CESM2',
     scale: 27829.87269831839, // Resolution of the source dataset is 27830 meters, so it is set by default
     region: country.geometry()
   });
@@ -99,7 +99,7 @@ for (var year = 2015; year <= 2100; year++) {
   Export.image.toAsset({
     image: precipitationImage,
     description: 'pr_' + year + '_ssp585' + '_BCC-CSM2-MR',
-    assetId: 'users/kalamkas/fusion/ssp585/' + 'pr_' + year + '_ssp585' + '_BCC-CSM2-MR',
+    assetId: 'users/kalamkas/fusion_2/ssp585/' + 'pr_' + year + '_ssp585' + '_BCC-CSM2-MR',
     scale: 2783027829.87269831839, // Resolution of the source dataset is 27830 meters, so it is set by default
     region: country.geometry()
   });
