@@ -213,7 +213,7 @@ Export.image.toAsset({
     image: multiBandImageT,
     description: 'temp_ssp585_fusion_2_all_years',
     assetId: 'users/kalamkas/fusion_2/ssp585/temp_ssp585_fusion_2_all_years',
-    scale: 27830,
+    scale: 27829.87269831839,
   });
     // Comment: Export temperature image to your Earth Engine Assets.
     // Make sure to change the assetId to your desired location.
@@ -225,7 +225,7 @@ Export.image.toAsset({
     image: multiBandImageP,
     description: 'precip_ssp585_fusion_2_all_years',
     assetId: 'users/kalamkas/fusion_2/ssp585/precip_ssp585_fusion_2_all_years',
-    scale: 27830,
+    scale: 27829.87269831839,
   });
     // Comment: Export ,ultiband precipitation image to your Earth Engine Assets.
     // Make sure to change the assetId to your desired location.
