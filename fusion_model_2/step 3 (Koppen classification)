@@ -639,7 +639,7 @@ var infoPanel = ui.Panel({ // Creates a panel to display information about the p
   widgets: [ // Contains multiple label widgets with project information.
     ui.Label('This Köppen Climate Classification map is generated using Google Earth Engine and fusion of mean values of CESM2 and BCC-CSM2-MR climate models of CMIP6 ensemble.', { fontSize: '14px' }),
     ui.Label('The map classifies climate of Kazakhstan based on monthly mean temperature of CESM2 and precipitation amount parameters of BCC-CSM2-MR for SSP5-8.5 scenario. ', { fontSize: '14px' }),
-    ui.Label('More information about methodology DOI. ', { fontSize: '14px' }),
+    ui.Label('More information about methodology (manuscript in submitted)[DOI]. ', { fontSize: '14px' }),
     ui.Label('Access the script https://github.com/yessimkhanova/koppen_maps', { fontSize: '14px', fontWeight: 'bold' }),
     ui.Label('This work is part of a doctoral research project conducted by Kalamkas Yessimkhanova, supervised by Dr. Matyas Gede at ELTE Eötvös Loránd University, Budapest.', { fontSize: '14px' }),
     ui.Label('Credit is given to Google Earth Engine for its powerful geospatial analysis capabilities and NASA/Climate Analytics Group for providing valuable climate data.', { fontSize: '14px' }),
