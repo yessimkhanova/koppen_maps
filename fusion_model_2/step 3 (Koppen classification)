@@ -8,7 +8,7 @@ var country = ee.FeatureCollection(path).filter(ee.Filter.eq('ADM0_CODE', countr
 // Note: To add your own dataset, replace the asset ID with the proper path to your temperature image
 var multiBandImageT = ee.Image("users/kalamkas/fusion_2/ssp585/temp_ssp585_fusion_2_all_years");
 //print(multiBandImageT); // Print the information about the loaded temperature image to the console
-
+print(multiBandImageT.projection().nominalScale());
 // Load the multi-band precipitation image from the specified Earth Engine asset generated in Step 2
 // Note: To add your own dataset, replace the asset ID with the proper path to your precipitation image
 var multiBandImageP = ee.Image("users/kalamkas/fusion_2/ssp585/precip_ssp585_fusion_2_all_years");
@@ -288,6 +288,7 @@ years.getInfo().forEach(function (year) {
 
 var finalYearlyImages = yearlyImages.mean();
 // print(finalYearlyImages);
+// print(finalYearlyImages.projection().nominalScale())
 
 // Determine which hemisphere the pixel belongs to
 var northernHemisphere=ee.Image.pixelLonLat().select('latitude').gt(0); 
@@ -601,7 +602,9 @@ function classificateImage(startDate, endDate) {
 
   // Return the resulting climate zone classification image
   return classification;
+
 }
+
 
 
 //-------------------------------------------------------//
