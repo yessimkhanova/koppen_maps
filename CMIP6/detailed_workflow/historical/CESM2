@@ -38,7 +38,8 @@ for (var year = 1950; year <= 2014; year++) {
         var sumPrecipitation = ee.ImageCollection.fromImages(models.map(function(m) {
           return monthlyCollection.filter(ee.Filter.eq('model', m))
                                   .select(precipitationBand)
-                                  .sum().multiply(1000).multiply(86400).divide(997) // Convert kg m^-2 s^-1 to mm per month
+                                  .sum()
+                                  .multiply(86400) // Convert seconds to day
                                   .rename('sumPrecipitation');
         }));
         
