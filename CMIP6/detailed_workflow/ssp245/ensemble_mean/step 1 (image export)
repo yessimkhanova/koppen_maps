@@ -99,7 +99,7 @@ for (var year = 2015; year <= 2100; year++) {
           var modelFilteredCollection = applyModelFilter(monthlyCollection, m);  // Apply conditional filter
           return modelFilteredCollection.select(precipitationBand)
                                         .sum()
-                                        .multiply(1000).multiply(86400).divide(997) // Convert kg m^-2 s^-1 to mm per month
+                                        .multiply(86400) // Convert seconds to day
                                         .rename('sumPrecipitation');
         })).mean();
 
