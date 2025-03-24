@@ -18,7 +18,7 @@ var tempModel = ['CESM2']; // For extracting monthly temperature we will use thi
 var precipModel = ['BCC-CSM2-MR']; // For extracting monthly precipitation we will use this model data
 
 // Loop over each year from 1950 to 2014
-for (var year = 2015; year <= 2100; year++) {
+for (var year = 1950; year <= 2014; year++) {
   
   // Define date range for each year
   var dateRange = ee.DateRange(ee.Date(year + '-01-01'), ee.Date(year + '-12-31'));
@@ -86,8 +86,8 @@ for (var year = 2015; year <= 2100; year++) {
   // Export the multiband image for temperature to Earth Engine Assets
   Export.image.toAsset({
     image: temperatureImage,
-    description: 't_' + year + '_ssp585' + '_CESM2',
-    assetId: 'users/kalamkas/fusion_2/ssp585/' + 't_' + year + '_ssp585' + '_CESM2',
+    description: 't_' + year + '_historical' + '_CESM2',
+    assetId: 'users/kalamkas/fusion_2/historical/' + 't_' + year + '_historical' + '_CESM2',
     scale: 27829.87269831839, // Resolution of the source dataset is 27830 meters, so it is set by default
     region: country.geometry()
   });
@@ -99,8 +99,8 @@ for (var year = 2015; year <= 2100; year++) {
   // Export the multiband image for precipitation to Earth Engine Assets
   Export.image.toAsset({
     image: precipitationImage,
-    description: 'pr_' + year + '_ssp585' + '_BCC-CSM2-MR',
-    assetId: 'users/kalamkas/fusion_2/ssp585/' + 'pr_' + year + '_ssp585' + '_BCC-CSM2-MR',
+    description: 'pr_' + year + '_historical' + '_BCC-CSM2-MR',
+    assetId: 'users/kalamkas/fusion_2/historical/' + 'pr_' + year + 'historical' + '_BCC-CSM2-MR',
     scale: 27829.87269831839, // Resolution of the source dataset is 27830 meters, so it is set by default
     region: country.geometry()
   });
