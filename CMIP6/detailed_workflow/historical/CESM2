@@ -418,7 +418,7 @@ function koppenClass(image) {
   // Calculate an aridity threshold based on average temperature and the 'summerratio'.
   // The formula is: aridthreshold = avgtemp * 20 + (summerratio between 0.3 and 0.7) * 140
   // var aridthreshold = avgtemp.multiply(20).add(summerratio.gt(0.3).and(summerratio.lt(0.7)).multiply(140)); // 'aridthreshold' now represents the calculated aridity threshold based on temperature and summer precipitation ratio.
-  ar aridthreshold = avgtemp.multiply(20)
+  var aridthreshold = avgtemp.multiply(20)
   .add(summerratio.gte(0.7).multiply(0)) // Summer dry
   .add(summerratio.lte(0.3).multiply(280)) // Winter dry
   .add(summerratio.gt(0.3).and(summerratio.lt(0.7)).multiply(140)); 
