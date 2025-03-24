@@ -360,8 +360,8 @@ print(multiBandImageP); // Print information about the multi-band precipitation 
 // // Export the multiband temperature image containing all yearsto your Earth Engine Assets
 Export.image.toAsset({
     image: multiBandImageT,
-    description: 'temp_hist_ssp245_fusion_2_all_years',
-    assetId: 'users/kalamkas/fusion_2/temp_hist_ssp245_fusion_2_all_years',
+    description: 'temp_hist_ssp585_fusion_2_all_years',
+    assetId: 'users/kalamkas/fusion_2/temp_hist_ssp585_fusion_2_all_years',
     scale: 27830,
   });
     // Comment: Export temperature image to your Earth Engine Assets.
@@ -372,8 +372,8 @@ Export.image.toAsset({
 // Export the multiband precipitation image containing all years data to your Earth Engine Assets
 Export.image.toAsset({
     image: multiBandImageP,
-    description: 'precip_hist_ssp245_fusion_2_all_years',
-    assetId: 'users/kalamkas/fusion_2/precip_hist_ssp245_fusion_2_all_years',
+    description: 'precip_hist_ssp585_fusion_2_all_years',
+    assetId: 'users/kalamkas/fusion_2/precip_hist_ssp585_fusion_2_all_years',
     scale: 27830,
   });
    
