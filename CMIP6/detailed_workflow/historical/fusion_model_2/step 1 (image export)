@@ -100,7 +100,7 @@ for (var year = 1950; year <= 2014; year++) {
   Export.image.toAsset({
     image: precipitationImage,
     description: 'pr_' + year + '_historical' + '_BCC-CSM2-MR',
-    assetId: 'users/kalamkas/fusion_2/historical/' + 'pr_' + year + 'historical' + '_BCC-CSM2-MR',
+    assetId: 'users/kalamkas/fusion_2/historical/' + 'pr_' + year + '_historical' + '_BCC-CSM2-MR',
     scale: 27829.87269831839, // Resolution of the source dataset is 27830 meters, so it is set by default
     region: country.geometry()
   });
