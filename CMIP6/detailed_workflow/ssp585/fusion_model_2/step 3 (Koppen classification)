@@ -626,7 +626,7 @@ var customMap = ui.Map();
 
 // Project Title 
 var projectTitleLabel = ui.Label({ // Creates a label widget for the project title.
-  value: 'Köppen Climate Classification using fusion of CMIP6 data (scenario SSP5-8.5)',
+  value: 'Köppen Climate Classification using fusion of CMIP6 data (Fusion Model 2, scenario SSP5-8.5)',
   style: {
     fontWeight: 'bold',
     fontSize: '24px',
