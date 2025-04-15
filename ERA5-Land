@@ -248,7 +248,7 @@ function createImageCollection(startDate, endDate, args){
                                 .rename('maxtemp'); // Rename the resulting band as 'maxtemp'
             
             // Count the number of months where the temperature is greater than 10 degrees Celsius
-            var monthsGreaterThan10 = yearImage.gt(273)
+            var monthsGreaterThan10 = yearImage.gt(283)
                                                 .reduce('sum') // Sum the number of occurrences
                                                 .rename('tenplusmonths'); // Rename the resulting band as 'tenplusmonths'
             
