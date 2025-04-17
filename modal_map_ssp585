@@ -93,7 +93,7 @@ var mediumHighConfidenceColor = "66FF66";  // Light green for medium-high confid
 var highConfidenceColors = ["00FF00", "32CD32", "228B22", "006400"];  // Dark green shades for high confidence
 
 Map.setCenter(67.5, 48.0, 4);
-
+/*
 // Add the modal Köppen class layer
 Map.addLayer(modalKoppen, {
   min: 0,
@@ -101,7 +101,6 @@ Map.addLayer(modalKoppen, {
   palette: koppenColors
 }, 'Modal Köppen Class');
 
-/*
 // Add the agreement image layer
 Map.addLayer(agreementImage, {
   min: 0,
@@ -205,18 +204,16 @@ leftMainPanel.add(infoPanel);
 Map.add(projectTitleLabel);
 Map.add(leftMainPanel);
 
-// Define the region of interest (ROI) using the geometry of modalKoppen or a bounding box
-var roi = modalKoppen.geometry();  // Use the geometry of the modalKoppen image
-
-// If you prefer to use a specific bounding box (e.g., for Kazakhstan or a smaller area), use this:
-// var roi = ee.Geometry.Rectangle([minLon, minLat, maxLon, maxLat]);
+// Manually define a bounding box (or use geometry of modalKoppen if it's available)
+var roi = ee.Geometry.Rectangle([60, 40, 90, 55]);  // Example: Bounding box for Kazakhstan
+// You can adjust the coordinates as needed for your region
 
 // Vectorize the modalKoppen image (converting raster to vector)
 var vectorizedModalKoppen = modalKoppen.reduceToVectors({
   reducer: ee.Reducer.countEvery(),  // Counts the number of pixels in each vectorized region
-  scale: 1000,  // The resolution (same as the scale used in your map)
+  scale: 1000,  // Resolution (same as scale used in your map)
   maxPixels: 1e8,  // Set max pixels (optional)
-  geometry: roi  // Specify the geometry (region) over which to perform the operation
+  geometry: roi  // Define the region over which to perform the vectorization
 });
 
 // Export the vectorized modalKoppen as a Shapefile
@@ -225,5 +222,3 @@ Export.table.toDrive({
   description: 'modalKoppenShapefile', // The name of the exported shapefile
   fileFormat: 'SHP'  // Export as Shapefile
 });
-
-
