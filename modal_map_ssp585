@@ -92,6 +92,8 @@ var mediumConfidenceColor = "FFFF66";  // Yellow for medium confidence
 var mediumHighConfidenceColor = "66FF66";  // Light green for medium-high confidence
 var highConfidenceColors = ["00FF00", "32CD32", "228B22", "006400"];  // Dark green shades for high confidence
 
+Map.setCenter(67.5, 48.0, 5);
+
 // Add the modal Köppen class layer
 Map.addLayer(modalKoppen, {
   min: 0,
