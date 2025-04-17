@@ -164,7 +164,7 @@ Map.addLayer(modalHighConfidence, {
 }, 'Modal Köppen (High Confidence Zones, Above 80%)')
 
 Export.image.toDrive({
-  image: modalKoppen,
+  image: modalHighConfidence,
   description: 'Modal_Koppen_Export',
   scale: 500,
   region: modalKoppen.geometry(),
