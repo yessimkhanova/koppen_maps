@@ -163,12 +163,14 @@ Map.addLayer(modalHighConfidence, {
   palette: koppenColors
 }, 'Modal Köppen (High Confidence Zones, Above 80%)')
 
-// Export.image.toDrive({
-//   image: modalKoppen,
-//   description: 'Modal_Koppen_Export',
-//   scale: 500,
-//   region: modalKoppen.geometry(),  // Ensure region matches the modal Köppen geometry
-//   fileFormat: 'GeoTIFF',
-//   maxPixels: 1e8
-// });
+Export.image.toDrive({
+  image: modalKoppen,
+  description: 'Modal_Koppen_Export',
+  scale: 500,
+  region: modalKoppen.geometry(),
+  fileFormat: 'GeoTIFF',
+  crs: 'EPSG:4326',  // Specify CRS if needed
+  maxPixels: 1e8
+});
+
 
