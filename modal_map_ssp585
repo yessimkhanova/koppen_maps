@@ -215,17 +215,27 @@ var colorizedModalKoppen = modalKoppen.visualize({
 var roi = ee.Geometry.Rectangle([60, 40, 90, 55]);  // Example: Bounding box for Kazakhstan
 // You can adjust the coordinates as needed for your region
 
-// Vectorize the modalKoppen image (converting raster to vector)
-var vectorizedModalKoppen = colorizedModalKoppen.reduceToVectors({
-  reducer: ee.Reducer.countEvery(),  // Counts the number of pixels in each vectorized region
-  scale: 1000,  // Resolution (same as scale used in your map)
-  maxPixels: 1e8,  // Set max pixels (optional)
-  geometry: roi  // Define the region over which to perform the vectorization
-});
+// // Vectorize the modalKoppen image (converting raster to vector)
+// var vectorizedModalKoppen = colorizedModalKoppen.reduceToVectors({
+//   reducer: ee.Reducer.countEvery(),  // Counts the number of pixels in each vectorized region
+//   scale: 1000,  // Resolution (same as scale used in your map)
+//   maxPixels: 1e8,  // Set max pixels (optional)
+//   geometry: roi  // Define the region over which to perform the vectorization
+// });
 
-// Export the vectorized modalKoppen as a Shapefile
-Export.table.toDrive({
-  collection: vectorizedModalKoppen,  // The vectorized FeatureCollection
-  description: 'modalKoppenShapefile', // The name of the exported shapefile
-  fileFormat: 'SHP'  // Export as Shapefile
+// // Export the vectorized modalKoppen as a Shapefile
+// Export.table.toDrive({
+//   collection: vectorizedModalKoppen,  // The vectorized FeatureCollection
+//   description: 'modalKoppenShapefile', // The name of the exported shapefile
+//   fileFormat: 'SHP'  // Export as Shapefile
+// });
+
+
+Export.image.toDrive({
+  image: colorizedModalKoppen,  // The colorized modal Köppen image
+  description: 'colorizedModalKoppen',  // Name for the exported image
+  scale: 1000,  // Resolution in meters (same as your map scale)
+  region: modalKoppen.geometry(),  // Define the region to export (geometry of the modalKoppen)
+  fileFormat: 'GeoTIFF',  // Export as GeoTIFF (suitable for RGB images)
+  maxPixels: 1e8  // Set max pixels (optional)
 });
