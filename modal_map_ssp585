@@ -42,21 +42,14 @@ var modelCount = koppenCollection.size();
 
 var modalKoppen = koppenCollection.reduce(ee.Reducer.mode()).rename('modal_zone');
 
+// Agreement images for calculating confidence levels
 var agreementImages = koppenCollection.map(function(img) {
   return img.eq(modalKoppen).rename('agree');
 });
-
 var agreementImage = agreementImages.reduce(ee.Reducer.sum()).rename('agreement');
-
 var agreementNorm = agreementImage.divide(modelCount).rename('agreement_norm');
 
-var confidenceThreshold = 0.75;
-
-var highConfidenceMask = agreementNorm.gte(confidenceThreshold);
-
-var modalHighConfidence = modalKoppen.updateMask(highConfidenceMask);
-
-var colors = [
+var koppenColors = [
   "000000", "0000FF", "4169E1", "6495ED", "00BFFF",
   "FF0000", "F08080", "FF8C00", "FFD700", "98FB98",
   "3CB371", "2E8B57", "ADFF2F", "00FF00", "32CD32",
@@ -66,28 +59,114 @@ var colors = [
   "A9A9A9", "696969"
 ];
 
-Map.setCenter(65, 50, 5);
 
+// Confidence thresholds
+var highConfidenceThreshold = 0.80;  // Above 80% confidence
+var mediumHighConfidenceThreshold = 0.60;  // 60%-80% confidence
+var mediumConfidenceThreshold = 0.50;  // 50%-60% confidence
+var mediumLowConfidenceThreshold = 0.40;  // 40%-50% confidence
+var lowConfidenceThreshold = 0.30;  // 30%-40% confidence
+var veryLowConfidenceThreshold = 0.00;  // Below 30% confidence
+
+// Confidence Masks for different thresholds
+var veryLowConfidenceMask = agreementNorm.lt(lowConfidenceThreshold);
+var lowConfidenceMask = agreementNorm.gte(lowConfidenceThreshold).and(agreementNorm.lt(mediumLowConfidenceThreshold));
+var mediumLowConfidenceMask = agreementNorm.gte(mediumLowConfidenceThreshold).and(agreementNorm.lt(mediumConfidenceThreshold));
+var mediumConfidenceMask = agreementNorm.gte(mediumConfidenceThreshold).and(agreementNorm.lt(mediumHighConfidenceThreshold));
+var mediumHighConfidenceMask = agreementNorm.gte(mediumHighConfidenceThreshold).and(agreementNorm.lt(highConfidenceThreshold));
+var highConfidenceMask = agreementNorm.gte(highConfidenceThreshold);
+
+// Modal layers for each confidence range
+var modalVeryLowConfidence = modalKoppen.updateMask(veryLowConfidenceMask);
+var modalLowConfidence = modalKoppen.updateMask(lowConfidenceMask);
+var modalMediumLowConfidence = modalKoppen.updateMask(mediumLowConfidenceMask);
+var modalMediumConfidence = modalKoppen.updateMask(mediumConfidenceMask);
+var modalMediumHighConfidence = modalKoppen.updateMask(mediumHighConfidenceMask);
+var modalHighConfidence = modalKoppen.updateMask(highConfidenceMask);
+
+// Color palettes for each confidence level
+var veryLowConfidenceColor = "FF3333";  // Dark red for very low confidence
+var lowConfidenceColor = "FF6666";  // Light red for low confidence
+var mediumLowConfidenceColor = "FFCC66";  // Light orange for medium-low confidence
+var mediumConfidenceColor = "FFFF66";  // Yellow for medium confidence
+var mediumHighConfidenceColor = "66FF66";  // Light green for medium-high confidence
+var highConfidenceColors = ["00FF00", "32CD32", "228B22", "006400"];  // Dark green shades for high confidence
+
+// Add the modal Köppen class layer
 Map.addLayer(modalKoppen, {
   min: 0,
   max: 31,
-  palette: colors
+  palette: koppenColors
 }, 'Modal Köppen Class');
 
+// Add the agreement image layer
 Map.addLayer(agreementImage, {
   min: 0,
   max: modelCount.getInfo(),
   palette: ['white', 'gray', 'black']
 }, 'Agreement (Number of models - Count)');
 
+// Add the normalized agreement layer
 Map.addLayer(agreementNorm, {
   min: 0,
   max: 1,
   palette: ['white', 'yellow', 'green']
 }, 'Agreement (% Normalized)');
 
+// Add the modal Köppen layer for very low confidence zones (below 30%)
+Map.addLayer(modalVeryLowConfidence, {
+  min: 0,
+  max: 31,
+  palette: [veryLowConfidenceColor]
+}, 'Modal Köppen (Very Low Confidence, Below 30%)');
+
+// Add the modal Köppen layer for low confidence zones (30%-40%)
+Map.addLayer(modalLowConfidence, {
+  min: 0,
+  max: 31,
+  palette: [lowConfidenceColor]
+}, 'Modal Köppen (Low Confidence, 30%-40%)');
+
+// Add the modal Köppen layer for medium-low confidence zones (40%-50%)
+Map.addLayer(modalMediumLowConfidence, {
+  min: 0,
+  max: 31,
+  palette: [mediumLowConfidenceColor]
+}, 'Modal Köppen (Medium-Low Confidence, 40%-50%)');
+
+// Add the modal Köppen layer for medium confidence zones (50%-60%)
+Map.addLayer(modalMediumConfidence, {
+  min: 0,
+  max: 31,
+  palette: [mediumConfidenceColor]
+}, 'Modal Köppen (Medium Confidence, 50%-60%)');
+
+// Add the modal Köppen layer for medium-high confidence zones (60%-80%)
+Map.addLayer(modalMediumHighConfidence, {
+  min: 0,
+  max: 31,
+  palette: [mediumHighConfidenceColor]
+}, 'Modal Köppen (Medium-High Confidence, 60%-80%)');
+
+// Add the modal Köppen layer for high confidence zones (above 80%)
 Map.addLayer(modalHighConfidence, {
   min: 0,
   max: 31,
-  palette: colors
-}, 'Modal Köppen (High Confidence Only, 75 Percent)');
+  palette: highConfidenceColors
+}, 'Modal Köppen (High Confidence, Above 80%)');
+
+Map.addLayer(modalHighConfidence, {
+  min: 0,
+  max: 31,
+  palette: koppenColors
+}, 'Modal Köppen (High Confidence Zones, Above 80%)')
+
+// // Export the modal Köppen image to Google Drive
+// Export.image.toDrive({
+//   image: modalKoppen,  // The modal Köppen image
+//   description: 'Modal_Koppen_Export',  // Name of the exported image
+//   scale: 1000,  // Set the scale (pixel resolution) - adjust based on your region's needs
+//   region: modalKoppen.geometry(),  // Use the geometry of the modal Köppen image for the region
+//   fileFormat: 'GeoTIFF',  // The file format for the export (GeoTIFF is recommended)
+//   maxPixels: 1e8  // This is a limit for the number of pixels you want to export, adjust as needed
+// });
