@@ -163,14 +163,49 @@ Map.addLayer(modalHighConfidence, {
   palette: koppenColors
 }, 'Modal Köppen (High Confidence Zones, Above 80%)')
 
-Export.image.toDrive({
-  image: modalHighConfidence,
-  description: 'Modal_Koppen_Export',
-  scale: 500,
-  region: modalKoppen.geometry(),
-  fileFormat: 'GeoTIFF',
-  crs: 'EPSG:4326',  // Specify CRS if needed
-  maxPixels: 1e8
+// Create a description with HTML content
+var description = "<h3>Confidence in Climate Models: Köppen Climate Classification</h3>" +
+  "<p>This map is part of the research presented in the <a href='https://github.com/yessimkhanova/koppen_maps' target='_blank'>Köppen Climate Map Generator</a> repository.</p>" +
+  "<p>The project, part of doctoral research conducted by Kalamkas Yessimkhanova under the supervision of Dr. Matyas Gede at Eötvös Loránd University, Budapest, uses Google Earth Engine and CMIP6 datasets to generate Köppen Climate Classification maps. These maps provide an analysis of climate zones worldwide, based on monthly mean temperature and precipitation parameters.</p>" +
+  "<p>This work specifically focuses on the confidence among 32 models from the CMIP6 ensemble for the SSP585 scenario (2071-2100). The confidence levels in the maps show how much agreement there is among the models regarding specific climate zones. Higher confidence levels indicate a stronger consensus among the climate models, while lower confidence levels suggest greater uncertainty.</p>" +
+  "<p><strong>Confidence Levels:</strong> The confidence levels shown in this map reflect the degree of agreement between the climate models. Models with higher agreement lead to stronger confidence in predicting climate zones, while areas with low model agreement show lower confidence in the projections.</p>";
+
+// Create a panel for the description
+var descriptionPanel = ui.Panel({
+  widgets: [
+    ui.Label({
+      value: description,
+      style: {
+        fontSize: '14px',
+        padding: '10px',
+        color: 'black'
+      }
+    })
+  ],
+  style: {
+    position: 'bottom-left',
+    width: '300px',
+    padding: '10px',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    border: '2px solid #000',
+    borderRadius: '5px'
+  }
 });
+
+// Add the description panel to the map
+Map.add(descriptionPanel);
+
+
+
+
+// Export.image.toDrive({
+//   image: modalHighConfidence,
+//   description: 'Modal_Koppen_Export',
+//   scale: 500,
+//   region: modalKoppen.geometry(),
+//   fileFormat: 'GeoTIFF',
+//   crs: 'EPSG:4326',  // Specify CRS if needed
+//   maxPixels: 1e8
+// });
 
 
