@@ -224,23 +224,23 @@ var region = modalKoppen.geometry(); // You can specify a region if needed, e.g.
 // });
 
 
-// // Manually define a bounding box (or use geometry of modalKoppen if it's available)
-// var roi = ee.Geometry.Rectangle([45, 38, 90, 55]);  // Example: Bounding box for Kazakhstan
+// Manually define a bounding box (or use geometry of modalKoppen if it's available)
+var roi = ee.Geometry.Rectangle([45, 38, 90, 55]);  // Example: Bounding box for Kazakhstan
 
-// // Vectorize the modalKoppen image (converting raster to vector)
-// var vectorizedModalKoppen = modalKoppen.reduceToVectors({
-//   reducer: ee.Reducer.countEvery(),  // Counts the number of pixels in each vectorized region
-//   scale: 1000,  // Resolution (same as scale used in your map)
-//   maxPixels: 1e8,  // Set max pixels (optional)
-//   geometry: roi  // Define the region over which to perform the vectorization
-// });
+// Vectorize the modalKoppen image (converting raster to vector)
+var vectorizedModalKoppen = modalKoppen.reduceToVectors({
+  reducer: ee.Reducer.countEvery(),  // Counts the number of pixels in each vectorized region
+  scale: 1000,  // Resolution (same as scale used in your map)
+  maxPixels: 1e8,  // Set max pixels (optional)
+  geometry: roi  // Define the region over which to perform the vectorization
+});
 
-// // Export the vectorized modalKoppen as a Shapefile
-// Export.table.toDrive({
-//   collection: vectorizedModalKoppen,  // The vectorized FeatureCollection
-//   description: 'modalKoppenShapefile', // The name of the exported shapefile
-//   fileFormat: 'SHP'  // Export as Shapefile
-// });
+// Export the vectorized modalKoppen as a Shapefile
+Export.table.toDrive({
+  collection: vectorizedModalKoppen,  // The vectorized FeatureCollection
+  description: 'modalKoppenShapefile', // The name of the exported shapefile
+  fileFormat: 'SHP'  // Export as Shapefile
+});
 
 
 
