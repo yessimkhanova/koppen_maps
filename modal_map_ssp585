@@ -181,7 +181,7 @@ var infoPanel = ui.Panel({ // Creates a panel to display information about the p
     ui.Label('The map classifies climate of Kazakhstan based on monthly mean temperature and precipitation amount parameters using CMIP6 datasets to generate future Köppen Climate Classification maps. ', { fontSize: '14px' }),
     ui.Label('This work specifically focuses on the confidence among 32 models from the CMIP6 ensemble for the SSP585 scenario (2071-2100). The confidence levels in the maps show how much agreement there is among the models regarding specific climate zones. Higher confidence levels indicate a stronger consensus among the climate models, while lower confidence levels suggest greater uncertainty.', { fontSize: '14px' }),
     ui.Label('Confidence Levels: ', { fontSize: '14px', fontWeight:'bold'}),
-    ui.Label('Confidence Levels: The confidence levels shown in this map reflect the degree of agreement between the climate models. Models with higher agreement lead to stronger confidence in predicting climate zones, while areas with low model agreement show lower confidence in the projections. ', { fontSize: '14px', fontWeight:'bold'}),
+    ui.Label('The confidence levels shown in this map reflect the degree of agreement between the climate models. Models with higher agreement lead to stronger confidence in predicting climate zones, while areas with low model agreement show lower confidence in the projections. ', { fontSize: '14px', fontWeight:'bold'}),
     ui.Label('Credit is given to Google Earth Engine for its powerful geospatial analysis capabilities and NASA/Climate Analytics Group for providing valuable climate data. ', { fontSize: '14px' }),
     ui.Label('Please contact Kalamkas Yessimkhanova for questions, comments, and feedback. ', { fontSize: '12px' }),
     ui.Label('Email: kalamkasyessimkhanova@gmail.com', { fontSize: '12px', fontWeight: 'bold'}),
@@ -201,7 +201,7 @@ var leftMainPanel = ui.Panel({
 });
 
 leftMainPanel.add(infoPanel);
-// Add the description panel to the map
+Map.add(projectTitleLabel);
 Map.add(leftMainPanel);
 
 
