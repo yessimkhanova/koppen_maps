@@ -163,12 +163,12 @@ Map.addLayer(modalHighConfidence, {
   palette: koppenColors
 }, 'Modal Köppen (High Confidence Zones, Above 80%)')
 
-// // Export the modal Köppen image to Google Drive
 // Export.image.toDrive({
-//   image: modalKoppen,  // The modal Köppen image
-//   description: 'Modal_Koppen_Export',  // Name of the exported image
-//   scale: 1000,  // Set the scale (pixel resolution) - adjust based on your region's needs
-//   region: modalKoppen.geometry(),  // Use the geometry of the modal Köppen image for the region
-//   fileFormat: 'GeoTIFF',  // The file format for the export (GeoTIFF is recommended)
-//   maxPixels: 1e8  // This is a limit for the number of pixels you want to export, adjust as needed
+//   image: modalKoppen,
+//   description: 'Modal_Koppen_Export',
+//   scale: 500,
+//   region: modalKoppen.geometry(),  // Ensure region matches the modal Köppen geometry
+//   fileFormat: 'GeoTIFF',
+//   maxPixels: 1e8
 // });
+
