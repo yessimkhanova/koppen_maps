@@ -94,7 +94,7 @@ var highConfidenceColors = ["00FF00", "32CD32", "228B22", "006400"];  // Dark gr
 
 Map.setCenter(67.5, 48.0, 4);
 
-/*
+
 // Add the modal Köppen class layer
 Map.addLayer(modalKoppen, {
   min: 0,
@@ -163,7 +163,7 @@ Map.addLayer(modalHighConfidence, {
   max: 31,
   palette: koppenColors
 }, 'Modal Köppen (High Confidence Zones, Above 80%)')
-*/
+
 var projectTitleLabel = ui.Label({ // Creates a label widget for the project title.
   value: 'Confidence in Climate Models: Köppen Climate Classification',
   style: {
