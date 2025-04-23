@@ -60,7 +60,7 @@ for (var i = 0; i < n; i++ ) {
 }
 
 var arrayImg = ee.ImageCollection(zonecount).toArrayPerBand();
-Map.addLayer(arrayImg,{},'zone counts');
+Map.addLayer(arrayImg,{},'zone counts'); // only for debugging - this way we can inspect the array image at any location
 
 // Generate an index array image
 var indicesImage = ee.Image(ee.Array(ee.List.sequence(0, n-1)));
