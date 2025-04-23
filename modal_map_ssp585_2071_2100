@@ -67,11 +67,15 @@ Map.addLayer(arrayImg,{},'zone counts');
 // Generate an index array image
 var indicesImage = ee.Image(ee.Array(ee.List.sequence(0, n-1)));
 
-// Sort the indices array by based on the values array
+// Sort the indices array image by based on the values array image
 var sortedIndices = indicesImage.arraySort(arrayImg);
+// Then sort the values array image
+var sortedArrayImg = arrayImg.arraySort();
 
 var best1 = sortedIndices.arrayGet(n-1);
 var best2 = sortedIndices.arrayGet(n-2);
+var best1cnt = sortedArrayImg.arrayGet(n-1);
+var best2cnt = sortedArrayImg.arrayGet(n-2);
 
 var koppenColors = [
   "000000", "0000FF", "4169E1", "6495ED", "00BFFF",
@@ -85,6 +89,8 @@ var koppenColors = [
 
 Map.addLayer(best1,{ min:0, max:31, palette: koppenColors },'best zone index');
 Map.addLayer(best2,{ min:0, max:31, palette: koppenColors },'2nd best zone index');
+Map.addLayer(best1cnt,{ min:0, max:31 },'best zone count');
+Map.addLayer(best2cn1,{ min:0, max:31 },'2nd best zone count');
 
 // Confidence thresholds
 var highConfidenceThreshold = 0.80;  // Above 80% confidence
