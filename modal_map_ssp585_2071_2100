@@ -51,8 +51,8 @@ var agreementNorm = agreementImage.divide(modelCount).rename('agreement_norm');
 
 // count matching models for each zone appearing in KZ
 var zonecount = []; // we'll store zone count images here. zonecount[i] shows how many models predict zone number 'i' at a given pixel
-
-for (var i = 0; i < 32; i++ ) {
+var n = 32; // number of zones
+for (var i = 0; i < n; i++ ) {
   var imeq = koppenCollection.map(function(img) {
     return img.eq(i).rename('agree');
   });
@@ -61,27 +61,17 @@ for (var i = 0; i < 32; i++ ) {
   zonecount[i] = cnt;
 }
 
-// Map.addLayer(zonecount[8],{ min: 0, max: 31 },'Zone 8 count');
-
 var arrayImg = ee.ImageCollection(zonecount).toArrayPerBand();
 Map.addLayer(arrayImg,{},'zone counts');
 
-// Extract the array from the image
-var array = arrayImg;
-
-// Get the number of elements in the array
-var arrayLength = array.arrayLength(0);
-
 // Generate an index array image
-var indicesImage = ee.Image(ee.Array(ee.List.sequence(0, 31)));
+var indicesImage = ee.Image(ee.Array(ee.List.sequence(0, n-1)));
 
 // Sort the indices array by based on the values array
 var sortedIndices = indicesImage.arraySort(arrayImg);
 
-var best1 = sortedIndices.arrayGet(31);
-var best2 = sortedIndices.arrayGet(30);
-Map.addLayer(best1,{},'best zone index');
-Map.addLayer(best2,{},'2nd best zone index');
+var best1 = sortedIndices.arrayGet(n-1);
+var best2 = sortedIndices.arrayGet(n-2);
 
 var koppenColors = [
   "000000", "0000FF", "4169E1", "6495ED", "00BFFF",
@@ -93,6 +83,8 @@ var koppenColors = [
   "A9A9A9", "696969"
 ];
 
+Map.addLayer(best1,{ min:0, max:31, palette: koppenColors },'best zone index');
+Map.addLayer(best2,{ min:0, max:31, palette: koppenColors },'2nd best zone index');
 
 // Confidence thresholds
 var highConfidenceThreshold = 0.80;  // Above 80% confidence
