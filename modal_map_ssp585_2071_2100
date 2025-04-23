@@ -51,14 +51,12 @@ var agreementNorm = agreementImage.divide(modelCount).rename('agreement_norm');
 
 // count matching models for each zone appearing in KZ
 var zonecount = []; // we'll store zone count images here. zonecount[i] shows how many models predict zone number 'i' at a given pixel
+// function to use in map() - this way we can avoid creating functions within the loop
+function matchi(img) { return img.eq(i).rename('agree'); }
 var n = 32; // number of zones
 for (var i = 0; i < n; i++ ) {
-  var imeq = koppenCollection.map(function(img) {
-    return img.eq(i).rename('agree');
-  });
-  
-  var cnt = imeq.reduce(ee.Reducer.sum()).rename('count');
-  zonecount[i] = cnt;
+  var imeq = koppenCollection.map(matchi);
+  zonecount[i] = imeq.reduce(ee.Reducer.sum()).rename('count');
 }
 
 var arrayImg = ee.ImageCollection(zonecount).toArrayPerBand();
