@@ -125,74 +125,74 @@ var highConfidenceColors = ["00FF00", "32CD32", "228B22", "006400"];  // Dark gr
 Map.setCenter(67.5, 48.0, 4);
 
 
-// Add the modal Köppen class layer
-Map.addLayer(modalKoppen, {
-  min: 0,
-  max: 31,
-  palette: koppenColors
-}, 'Modal Köppen Class');
+// // Add the modal Köppen class layer
+// Map.addLayer(modalKoppen, {
+//   min: 0,
+//   max: 31,
+//   palette: koppenColors
+// }, 'Modal Köppen Class');
 
-// Add the agreement image layer
-Map.addLayer(agreementImage, {
-  min: 0,
-  max: modelCount.getInfo(),
-  palette: ['white', 'gray', 'black']
-}, 'Agreement (Number of models - Count)');
+// // Add the agreement image layer
+// Map.addLayer(agreementImage, {
+//   min: 0,
+//   max: modelCount.getInfo(),
+//   palette: ['white', 'gray', 'black']
+// }, 'Agreement (Number of models - Count)');
 
-// Add the normalized agreement layer
-Map.addLayer(agreementNorm, {
-  min: 0,
-  max: 1,
-  palette: ['white', 'yellow', 'green']
-}, 'Agreement (% Normalized)');
+// // Add the normalized agreement layer
+// Map.addLayer(agreementNorm, {
+//   min: 0,
+//   max: 1,
+//   palette: ['white', 'yellow', 'green']
+// }, 'Agreement (% Normalized)');
 
-// Add the modal Köppen layer for very low confidence zones (below 30%)
-Map.addLayer(modalVeryLowConfidence, {
-  min: 0,
-  max: 31,
-  palette: [veryLowConfidenceColor]
-}, 'Modal Köppen (Very Low Confidence, Below 30%)');
+// // Add the modal Köppen layer for very low confidence zones (below 30%)
+// Map.addLayer(modalVeryLowConfidence, {
+//   min: 0,
+//   max: 31,
+//   palette: [veryLowConfidenceColor]
+// }, 'Modal Köppen (Very Low Confidence, Below 30%)');
 
-// Add the modal Köppen layer for low confidence zones (30%-40%)
-Map.addLayer(modalLowConfidence, {
-  min: 0,
-  max: 31,
-  palette: [lowConfidenceColor]
-}, 'Modal Köppen (Low Confidence, 30%-40%)');
+// // Add the modal Köppen layer for low confidence zones (30%-40%)
+// Map.addLayer(modalLowConfidence, {
+//   min: 0,
+//   max: 31,
+//   palette: [lowConfidenceColor]
+// }, 'Modal Köppen (Low Confidence, 30%-40%)');
 
-// Add the modal Köppen layer for medium-low confidence zones (40%-50%)
-Map.addLayer(modalMediumLowConfidence, {
-  min: 0,
-  max: 31,
-  palette: [mediumLowConfidenceColor]
-}, 'Modal Köppen (Medium-Low Confidence, 40%-50%)');
+// // Add the modal Köppen layer for medium-low confidence zones (40%-50%)
+// Map.addLayer(modalMediumLowConfidence, {
+//   min: 0,
+//   max: 31,
+//   palette: [mediumLowConfidenceColor]
+// }, 'Modal Köppen (Medium-Low Confidence, 40%-50%)');
 
-// Add the modal Köppen layer for medium confidence zones (50%-60%)
-Map.addLayer(modalMediumConfidence, {
-  min: 0,
-  max: 31,
-  palette: [mediumConfidenceColor]
-}, 'Modal Köppen (Medium Confidence, 50%-60%)');
+// // Add the modal Köppen layer for medium confidence zones (50%-60%)
+// Map.addLayer(modalMediumConfidence, {
+//   min: 0,
+//   max: 31,
+//   palette: [mediumConfidenceColor]
+// }, 'Modal Köppen (Medium Confidence, 50%-60%)');
 
-// Add the modal Köppen layer for medium-high confidence zones (60%-80%)
-Map.addLayer(modalMediumHighConfidence, {
-  min: 0,
-  max: 31,
-  palette: [mediumHighConfidenceColor]
-}, 'Modal Köppen (Medium-High Confidence, 60%-80%)');
+// // Add the modal Köppen layer for medium-high confidence zones (60%-80%)
+// Map.addLayer(modalMediumHighConfidence, {
+//   min: 0,
+//   max: 31,
+//   palette: [mediumHighConfidenceColor]
+// }, 'Modal Köppen (Medium-High Confidence, 60%-80%)');
 
-// Add the modal Köppen layer for high confidence zones (above 80%)
-Map.addLayer(modalHighConfidence, {
-  min: 0,
-  max: 31,
-  palette: highConfidenceColors
-}, 'Modal Köppen (High Confidence, Above 80%)');
+// // Add the modal Köppen layer for high confidence zones (above 80%)
+// Map.addLayer(modalHighConfidence, {
+//   min: 0,
+//   max: 31,
+//   palette: highConfidenceColors
+// }, 'Modal Köppen (High Confidence, Above 80%)');
 
-Map.addLayer(modalHighConfidence, {
-  min: 0,
-  max: 31,
-  palette: koppenColors
-}, 'Modal Köppen (High Confidence Zones, Above 80%)')
+// Map.addLayer(modalHighConfidence, {
+//   min: 0,
+//   max: 31,
+//   palette: koppenColors
+// }, 'Modal Köppen (High Confidence Zones, Above 80%)')
 
 var projectTitleLabel = ui.Label({ // Creates a label widget for the project title.
   value: 'Confidence in Climate Models: Köppen Climate Classification',
@@ -354,3 +354,37 @@ var region = modalKoppen.geometry(); // You can specify a region if needed, e.g.
 //   fileFormat: 'SHP'
 // });
 
+
+
+
+
+// Assume sortedIndices and sortedArrayImg are defined from earlier
+var best1Img = sortedIndices.arraySlice(0, n-1, n).arrayProject([0]).arrayFlatten([['best1']]).toInt16();
+var best2Img = sortedIndices.arraySlice(0, n-2, n-1).arrayProject([0]).arrayFlatten([['best2']]).toInt16();
+var best1cntImg = sortedArrayImg.arraySlice(0, n-1, n).arrayProject([0]).arrayFlatten([['best1cnt']]).toInt16();
+var best2cntImg = sortedArrayImg.arraySlice(0, n-2, n-1).arrayProject([0]).arrayFlatten([['best2cnt']]).toInt16();
+
+var resultImg = best1Img
+  .addBands(best2Img)
+  .addBands(best1cntImg)
+  .addBands(best2cntImg);
+
+// // Define region of interest
+// var roi = ee.Geometry.Rectangle([45, 38, 90, 55]); // Adjust to your needs
+
+// var vector = resultImg.reduceToVectors({
+//   geometry: roi,
+//   scale: 1000,
+//   maxPixels: 1e8,
+//   geometryType: 'polygon',
+//   labelProperty: 'best1',
+//   reducer: ee.Reducer.first()
+// });
+
+// Export.table.toDrive({
+//   collection: vector,
+//   description: 'Koppen_Best_Zones',
+//   folder: 'GEE_Exports',
+//   fileFormat: 'SHP'
+// });
+// Step 1: Low confidence mask (adjust threshold here)
