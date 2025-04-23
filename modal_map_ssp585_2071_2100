@@ -90,7 +90,7 @@ var koppenColors = [
 Map.addLayer(best1,{ min:0, max:31, palette: koppenColors },'best zone index');
 Map.addLayer(best2,{ min:0, max:31, palette: koppenColors },'2nd best zone index');
 Map.addLayer(best1cnt,{ min:0, max:31 },'best zone count');
-Map.addLayer(best2cn1,{ min:0, max:31 },'2nd best zone count');
+Map.addLayer(best2cnt,{ min:0, max:31 },'2nd best zone count');
 
 // Confidence thresholds
 var highConfidenceThreshold = 0.80;  // Above 80% confidence
