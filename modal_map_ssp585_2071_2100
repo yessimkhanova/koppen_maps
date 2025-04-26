@@ -387,4 +387,3 @@ var resultImg = best1Img
 //   folder: 'GEE_Exports',
 //   fileFormat: 'SHP'
 // });
-// Step 1: Low confidence mask (adjust threshold here)
