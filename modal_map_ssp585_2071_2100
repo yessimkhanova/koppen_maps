@@ -85,10 +85,10 @@ var koppenColors = [
   "A9A9A9", "696969"
 ];
 
-Map.addLayer(best1,{ min:0, max:31, palette: koppenColors },'best zone index');
-Map.addLayer(best2,{ min:0, max:31, palette: koppenColors },'2nd best zone index');
-Map.addLayer(best1cnt,{ min:0, max:31 },'best zone count');
-Map.addLayer(best2cnt,{ min:0, max:31 },'2nd best zone count');
+// Map.addLayer(best1,{ min:0, max:31, palette: koppenColors },'best zone index');
+// Map.addLayer(best2,{ min:0, max:31, palette: koppenColors },'2nd best zone index');
+// Map.addLayer(best1cnt,{ min:0, max:31 },'best zone count');
+// Map.addLayer(best2cnt,{ min:0, max:31 },'2nd best zone count');
 
 // Confidence thresholds
 var highConfidenceThreshold = 0.80;  // Above 80% confidence
@@ -364,26 +364,69 @@ var best2Img = sortedIndices.arraySlice(0, n-2, n-1).arrayProject([0]).arrayFlat
 var best1cntImg = sortedArrayImg.arraySlice(0, n-1, n).arrayProject([0]).arrayFlatten([['best1cnt']]).toInt16();
 var best2cntImg = sortedArrayImg.arraySlice(0, n-2, n-1).arrayProject([0]).arrayFlatten([['best2cnt']]).toInt16();
 
+// Create the result image with the four bands
 var resultImg = best1Img
   .addBands(best2Img)
   .addBands(best1cntImg)
   .addBands(best2cntImg);
 
-// // Define region of interest
-// var roi = ee.Geometry.Rectangle([45, 38, 90, 55]); // Adjust to your needs
+// Define the region of interest (optional, you can change the geometry as needed)
+var roi = ee.Geometry.Rectangle([45, 38, 90, 55]); // Adjust to your needs
 
-// var vector = resultImg.reduceToVectors({
-//   geometry: roi,
-//   scale: 1000,
-//   maxPixels: 1e8,
-//   geometryType: 'polygon',
-//   labelProperty: 'best1',
-//   reducer: ee.Reducer.first()
-// });
+// Add artificial constant bands (with value 1) to each of the four bands
+var resultImgWithConstant = resultImg
+  .addBands(ee.Image(1).rename('best1_constant'))
+  .addBands(ee.Image(1).rename('best2_constant'))
+  .addBands(ee.Image(1).rename('best1cnt_constant'))
+  .addBands(ee.Image(1).rename('best2cnt_constant'));
 
-// Export.table.toDrive({
-//   collection: vector,
-//   description: 'Koppen_Best_Zones',
-//   folder: 'GEE_Exports',
-//   fileFormat: 'SHP'
-// });
+// Reduce to vectors for each band (now with two bands)
+var best1Vectors = resultImgWithConstant.select(['best1', 'best1_constant']).reduceToVectors({
+  reducer: ee.Reducer.count(),
+  scale: 1000,
+  maxPixels: 1e8,
+  geometryType: 'polygon',
+  labelProperty: 'best1',
+  geometry: roi
+});
+
+var best2Vectors = resultImgWithConstant.select(['best2', 'best2_constant']).reduceToVectors({
+  reducer: ee.Reducer.count(),
+  scale: 1000,
+  maxPixels: 1e8,
+  geometryType: 'polygon',
+  labelProperty: 'best2',
+  geometry: roi
+});
+
+var best1cntVectors = resultImgWithConstant.select(['best1cnt', 'best1cnt_constant']).reduceToVectors({
+  reducer: ee.Reducer.count(),
+  scale: 1000,
+  maxPixels: 1e8,
+  geometryType: 'polygon',
+  labelProperty: 'best1cnt',
+  geometry: roi
+});
+
+var best2cntVectors = resultImgWithConstant.select(['best2cnt', 'best2cnt_constant']).reduceToVectors({
+  reducer: ee.Reducer.count(),
+  scale: 1000,
+  maxPixels: 1e8,
+  geometryType: 'polygon',
+  labelProperty: 'best2cnt',
+  geometry: roi
+});
+
+// Combine the vectorized features into a single FeatureCollection
+var combinedVectors = best1Vectors
+  .merge(best2Vectors)
+  .merge(best1cntVectors)
+  .merge(best2cntVectors);
+
+// Export the combined vectorized result as a single shapefile
+Export.table.toDrive({
+  collection: combinedVectors,
+  description: 'Combined_Polygons',  // Name for the exported shapefile
+  folder: 'GEE_Exports',  // Folder in your Google Drive
+  fileFormat: 'SHP'  // Export as Shapefile
+});
