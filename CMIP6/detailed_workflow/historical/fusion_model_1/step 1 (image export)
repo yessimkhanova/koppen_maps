@@ -1,0 +1,108 @@
+                // THIS STEP 1 OF KOPPEN CLIMATE CLASSIFICATION USING CMIP6 DATA
+// This is fusion of two best pfitting model for thr territory of Kazakhstan
+// Model validation sdemontsrated that GISS-E2-1-G model's temperature data is more close to actual data
+// Model validation sdemontsrated that MIROC-ES2L model's precipitation data is more close to actual data
+
+var path = "FAO/GAUL_SIMPLIFIED_500m/2015/level0"; 
+var country_code = 132; // Set the country code for Kazakhstan.
+var country = ee.FeatureCollection(path).filter(ee.Filter.eq('ADM0_CODE', country_code)); // Filter the country feature collection for Kazakhstan.
+
+// Specify the Earth Engine Image Collection for CMIP6 data and filter it for the historical scenario
+var collection = ee.ImageCollection('NASA/GDDP-CMIP6')
+                                    .filter(ee.Filter.eq('scenario', 'historical'))
+                                    .filterBounds(country);
+
+// List of climate models used in the analysis
+var tempModel = ['GISS-E2-1-G']; // For extracting monthly temperature we will use this model data
+var precipModel = ['MIROC-ES2L']; // For extracting monthly precipitation we will use this model data
+
+// Loop over each year from 1950 to 2014
+for (var year = 1950; year <= 2014; year++) {
+  
+  // Define date range for each year
+  var dateRange = ee.DateRange(ee.Date(year + '-01-01'), ee.Date(year + '-12-31'));
+  
+  // Filter the ImageCollection for the current year
+  var filteredCollection = collection.filterDate(dateRange);
+
+  // Specify temperature and precipitation bands
+  var temperatureBand = 'tas';
+  var precipitationBand = 'pr';
+
+  // Create an ImageCollection of monthly means for temperature and precipitation
+  var monthlyMeansCollection = ee.ImageCollection.fromImages(
+    ee.List.sequence(year, year).map(function (y) {
+      return ee.List.sequence(1, 12).map(function (month) {
+        
+        // Filter collection by year and month
+        var monthlyCollection = filteredCollection
+          .filter(ee.Filter.calendarRange(y, y, 'year'))
+          .filter(ee.Filter.calendarRange(month, month, 'month'));
+
+        // Calculate mean temperature of models for the month 
+        var meanTemperature = monthlyCollection.select(temperatureBand).filter(ee.Filter.inList('model',tempModel))
+                                               .mean().subtract(273) // Convert Kelvin to Celsius
+                                               .rename(['meanTemperature']);
+
+        // Calculate sum of precipitation for each model
+        var sumPrecipitation = ee.ImageCollection.fromImages(precipModel.map(function(m) {
+          return monthlyCollection.filter(ee.Filter.eq('model', m))
+                                  .select(precipitationBand)
+                                  .sum()
+                                  .multiply(86400) // Convert seconds to day
+                                  .rename('sumPrecipitation');
+        }));
+        
+        // Combine mean temperature and mean precipitation for each model
+        return meanTemperature.addBands(sumPrecipitation.select('sumPrecipitation').mean())
+                              .set('year', y).set('month', month);
+      });
+    }).flatten()
+  );
+
+  // Create multiband images for temperature
+  var temperatureImage = monthlyMeansCollection.select('meanTemperature').toBands().rename(['t1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 't10', 't11', 't12']);
+  temperatureImage = temperatureImage.set('year', year).clip(country);
+  
+  // Create multiband images for precipitation
+  var precipitationImage = monthlyMeansCollection.select('sumPrecipitation').toBands().rename(['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12']);
+  precipitationImage = precipitationImage.set('year', year).clip(country);
+
+  // Combine temperature and precipitation bands into a single multiband image
+  var multiBandImage = temperatureImage.addBands(precipitationImage);
+  multiBandImage = multiBandImage.set('year', year);
+
+
+  // Export the multiband image for temperature to Earth Engine Assets
+  Export.image.toAsset({
+    image: temperatureImage,
+    description: 't_' + year + '_hist' + '_GISS-E2-1-G',
+    assetId: 'users/kalamkas/fusion/historical/' + 't_' + year + '_hist' + '_GISS-E2-1-G',
+    scale: 27830, // Resolution of the source dataset is 27830 meters, so it is set by default
+    region: country.geometry()
+  });
+    // Comment: Export temperature image to your Earth Engine Assets.
+    // Make sure to change the assetId to your desired location.
+    // Example: 'users/your_username/your_asset_folder/temp' + year + '-avgmodels'
+    // Exported images will be stored in your asset and will be used in the next step (Step 2).
+    
+  
+  // Export the multiband image for temperature to Earth Engine Assets
+  Export.image.toAsset({
+    image: temperatureImage,
+    description: 'pr_' + year + '_hist' + '_MIROC-ES2L',
+    assetId: 'users/kalamkas/fusion/historical/' + 't_' + year + '_hist' + '_MIROC-ES2L',
+    scale: 27830, // Resolution of the source dataset is 27830 meters, so it is set by default
+    region: country.geometry()
+  });
+    // Comment: Export temperature image to your Earth Engine Assets.
+    // Make sure to change the assetId to your desired location.
+    // Example: 'users/your_username/your_asset_folder/temp' + year + '-avgmodels'
+    // Exported images will be stored in your asset and will be used in the next step (Step 2).
+    
+    // Comment: Export precipitation image to your Earth Engine Assets.
+    // Make sure to change the assetId to your desired location.
+    // Example: 'users/your_username/your_asset_folder/pr' + year + '-avgmodels'
+    // Exported images will be stored in your asset and will be used in the next step (Step 2).
+
+}

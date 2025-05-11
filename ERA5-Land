@@ -1,3 +1,6 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var imageCollection = ee.ImageCollection("ECMWF/ERA5_LAND/MONTHLY_AGGR");
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 // Export GEOBoarders
 var path = "FAO/GAUL_SIMPLIFIED_500m/2015/level0"; // Set the path to the GAUL dataset, which contains simplified country borders at 500m resolution in 2015.
@@ -245,7 +248,7 @@ function createImageCollection(startDate, endDate, args){
                                 .rename('maxtemp'); // Rename the resulting band as 'maxtemp'
             
             // Count the number of months where the temperature is greater than 10 degrees Celsius
-            var monthsGreaterThan10 = yearImage.gt(10)
+            var monthsGreaterThan10 = yearImage.gt(283)
                                                 .reduce('sum') // Sum the number of occurrences
                                                 .rename('tenplusmonths'); // Rename the resulting band as 'tenplusmonths'
             
@@ -392,7 +395,7 @@ function koppenClass(image) {
   
   // Calculate an aridity threshold based on average temperature and the 'summerratio'.
   // The formula is: aridthreshold = avgtemp * 20 + (summerratio between 0.3 and 0.7) * 140
-  var aridthreshold = avgtemp.multiply(20).add(summerratio.gt(0.3).and(summerratio.lt(0.7)).multiply(140)); // 'aridthreshold' now represents the calculated aridity threshold based on temperature and summer precipitation ratio.
+  var aridthreshold = avgtemp.multiply(20).add(summerratio.gt(0.3).add(summerratio.gt(0.7)).multiply(140));// 'aridthreshold' now represents the calculated aridity threshold based on temperature and summer precipitation ratio.
 
                     // Group B - Arid climates
 

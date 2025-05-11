@@ -1,39 +1,18 @@
+                        // THIS STEP 3 OF KOPPEN CLIMATE CLASSIFICATION USING FUSION OF CMIP6 DATA
+
 // Export GEOBoarders
 var path = "FAO/GAUL_SIMPLIFIED_500m/2015/level0"; var country_code = 132; // Set the country code for Kazakhstan.
 var country = ee.FeatureCollection(path).filter(ee.Filter.eq('ADM0_CODE', country_code)); // Filter the country feature collection for Kazakhstan.
 
-// Load the multi-band temperature image from the specified Earth Engine asset
+// Load the multi-band temperature image from the specified Earth Engine asset generated in Step 2
 // Note: To add your own dataset, replace the asset ID with the proper path to your temperature image
-var multiBandImageT = ee.Image("users/kalamkas/cru/t_mean_monthly_CRU");
-
-// Print the information about the loaded temperature image to the console
-//print(multiBandImageT);
-
-// Load the multi-band precipitation image from the specified Earth Engine asset
+var multiBandImageT = ee.Image("users/kalamkas/fusion_2/ssp585/temp_ssp585_fusion_2_all_years");
+//print(multiBandImageT); // Print the information about the loaded temperature image to the console
+// print(multiBandImageT.projection().nominalScale());
+// Load the multi-band precipitation image from the specified Earth Engine asset generated in Step 2
 // Note: To add your own dataset, replace the asset ID with the proper path to your precipitation image
-var multiBandImageP = ee.Image("users/kalamkas/cru/pr_sum_monthly_CRU");
-
-// Print the information about the loaded precipitation image to the console
-//print(multiBandImageP);
-
-// Get the projection of the image
-var projectionT = multiBandImageT.projection();
-
-// Get the nominal scale of the projection (in meters)
-var nominalScaleT = projectionT.nominalScale();
-
-// Print the nominal scale
-// print('Nominal scale of Temperature image:', nominalScaleT);
-
-// Get the projection of the image
-var projectionP = multiBandImageP.projection();
-
-// Get the nominal scale of the projection (in meters)
-var nominalScaleP = projectionP.nominalScale();
-
-// Print the nominal scale
-// print('Nominal scale of Precipitation image:', nominalScaleP);
-
+var multiBandImageP = ee.Image("users/kalamkas/fusion_2/ssp585/precip_ssp585_fusion_2_all_years");
+//print(multiBandImageP); // Print the information about the loaded precipitation image to the console
 
 // Initialize arrays and dictionaries for colors, zone codes, and zone names
 //Init directory: Köppen climate classification system colors, zoneNames, zoneCodes
@@ -75,7 +54,7 @@ var nominalScaleP = projectionP.nominalScale();
       "800080",        // 28: Purple
       "D8BFD8",        // 29: Thistle
       "A9A9A9",        // 30: Dark Gray
-      "696969"         // 31: Dim Gray
+      "696969"         // 31: Dim Gray 
     ];
 
 // Explanation:
@@ -189,8 +168,8 @@ var nominalScaleP = projectionP.nominalScale();
 // - These ImageCollections will be used to accumulate precipitation, temperature, and combined images over multiple years.
 
       // Set the start and end years for the analysis based on the available date range of the source data
-      var startDate = 1901;
-      var endDate = 2020;
+      var startDate = 2015;
+      var endDate = 2100;
       
       // Generate a list of years from the start to the end year
       var years = ee.List.sequence(startDate, endDate);
@@ -202,7 +181,7 @@ var nominalScaleP = projectionP.nominalScale();
 
 // Loop through each year in the specified date range
 years.getInfo().forEach(function (year) {
-  var startBand = (year - 1901) * 12; // Calculate the start and end bands for the current year.
+  var startBand = (year - 2015) * 12; // Calculate the start and end bands for the current year.
   var endBand = startBand + 11;
         
         // Rename temperature bands from generic names to more meaningful names ('t1' to 't12') for better interpretation
@@ -308,7 +287,8 @@ years.getInfo().forEach(function (year) {
 // print('Yearly Images Collection together', yearlyImages);
 
 var finalYearlyImages = yearlyImages.mean();
-// print(finalYearlyImages, 'finalYearlyImages');
+// print(finalYearlyImages);
+// print(finalYearlyImages.projection().nominalScale())
 
 // Determine which hemisphere the pixel belongs to
 var northernHemisphere=ee.Image.pixelLonLat().select('latitude').gt(0); 
@@ -483,7 +463,6 @@ var Cfb = Cf.and(maxtemp.lt(22))
 var Cfc = Cf.and(tenplus.gte(1))
             .and(tenplus.lt(4)); // Between 1 and 3 months with temperature above 10°C.
 
-                                              
                     // Group D - Continental climates
 
 // Conditions for identifying continental climates based on various parameters.
@@ -623,7 +602,10 @@ function classificateImage(startDate, endDate) {
 
   // Return the resulting climate zone classification image
   return classification;
+
 }
+
+
 
 //-------------------------------------------------------//
                     // UI Sector
@@ -641,7 +623,7 @@ var customMap = ui.Map();
 
 // Project Title 
 var projectTitleLabel = ui.Label({ // Creates a label widget for the project title.
-  value: 'Köppen Climate Map based on CRU data',
+  value: 'Köppen Climate Classification using fusion of CMIP6 data (Fusion Model 2, scenario SSP5-8.5)',
   style: {
     fontWeight: 'bold',
     fontSize: '24px',
@@ -655,16 +637,16 @@ var projectTitleLabel = ui.Label({ // Creates a label widget for the project tit
 // Info Text
 var infoPanel = ui.Panel({ // Creates a panel to display information about the project.
   widgets: [ // Contains multiple label widgets with project information.
-    ui.Label('This Köppen Climate Classification map is generated using Google Earth Engine and Climatic Research Unit data.', { fontSize: '14px' }),
-    ui.Label('The map classifies climate of Kazakhstan based on monthly mean temperature and precipitation amount parameters. ', { fontSize: '14px' }),
-    ui.Label('More information about methodology DOI. ', { fontSize: '14px' }),
-    ui.Label('Access the script https://github.com/yessimkhanova/koppen_maps. ', { fontSize: '14px', fontWeight: 'bold' }),
+    ui.Label('This Köppen Climate Classification map is generated using Google Earth Engine and fusion of mean values of CESM2 and BCC-CSM2-MR climate models of CMIP6 ensemble.', { fontSize: '14px' }),
+    ui.Label('The map classifies climate of Kazakhstan based on monthly mean temperature of CESM2 and precipitation amount parameters of BCC-CSM2-MR for SSP5-8.5 scenario. ', { fontSize: '14px' }),
+    ui.Label('More information about methodology (manuscript in submitted)[DOI]. ', { fontSize: '14px' }),
+    ui.Label('Access the script https://github.com/yessimkhanova/koppen_maps', { fontSize: '14px', fontWeight: 'bold' }),
     ui.Label('This work is part of a doctoral research project conducted by Kalamkas Yessimkhanova, supervised by Dr. Matyas Gede at ELTE Eötvös Loránd University, Budapest.', { fontSize: '14px' }),
-    ui.Label('Credit is given to Google Earth Engine for its powerful geospatial analysis capabilities and Climatic Research Unit for providing valuable climate data.', { fontSize: '14px' }),
+    ui.Label('Credit is given to Google Earth Engine for its powerful geospatial analysis capabilities and NASA/Climate Analytics Group for providing valuable climate data.', { fontSize: '14px' }),
     ui.Label('Please contact Kalamkas Yessimkhanova for questions, comments, and feedback.', { fontSize: '12px' }),
     ui.Label('Email: kalamkasyessimkhanova@gmail.com', { fontSize: '12px', fontWeight: 'bold'}),
     ui.Label('Use the slider to select the time period for visualizing Köppen climate maps.', { fontSize: '17px', fontWeight: 'bold'}),
-   ],
+ ],
   style: {
     width: '350px'
   }
@@ -713,19 +695,19 @@ var noteLabel = ui.Label({ // Creates a label for displaying a note to the user.
   value: 'Please note that map generation may take some time',
   style: {
     fontSize: '12px',
-    color: 'gray',
+    color: 'red',
     margin: '5px o',
-    padding: '10px'
+    padding: '15px'
   }
 });
-
 // Area by Zone Label
 var areaByZoneLabel = ui.Label({
   value: 'Climate zone areas in square kilometers in descending order :',
   style: {
     fontSize: '14px',
     fontWeight: 'bold',
-    margin: '10px 0 5px 0'
+    margin: '10px 0 5px 0',
+    padding: '10px'
   }
 });
 
@@ -754,7 +736,7 @@ var generateButton = ui.Button({ // Creates a button widget for generating the m
     onClick: function(){ 
       startDate = startYearSlider.getValue();
       endDate = endYearSlider.getValue();
-      
+    
         // Function to update the map layers
         function updateMapLayers(selectedMap) {
          
@@ -766,16 +748,8 @@ var generateButton = ui.Button({ // Creates a button widget for generating the m
             palette: colors
           }, 'Kazakhstan'); // Name of the location can be change here
         
-          // Add the map layer for the World
-          var worldLayer = ui.Map.Layer(selectedMap, {
-            bands: 'zone',
-            min: 0,
-            max: 31,
-            palette: colors
-          }, 'World');
-        
           // Clear existing layers and add new ones
-          customMap.layers().reset([countryLayer, worldLayer]);
+          customMap.layers().reset([countryLayer]);
         }
         
         // Function to update the area by zone result
@@ -839,7 +813,7 @@ var generateButton = ui.Button({ // Creates a button widget for generating the m
         }
         
         // Call updateMapAndArea function when the Generate button is clicked
-        //generateButton.onClick(updateMapAndArea);
+        generateButton.onClick(updateMapAndArea);
         
         // Call updateMapAndArea function initially to set up the map and area calculation
         updateMapAndArea();
@@ -875,7 +849,7 @@ var legendTitle = ui.Label({
     fontWeight: 'bold',
     fontSize: '18px',
     margin: '0 0 4px 0',
-    padding: '10px'
+    padding: '15px'
   }
 });
 
@@ -918,7 +892,8 @@ for (var i=0; i<Object.keys(zoneNames).length; i++){
 // Creates left and right main panels for layout purposes.
 var leftMainPanel = ui.Panel({
   style:{
-    width: '370px',
+    width: '390px',
+    padding: '10px',
     position: 'middle-left'
   }
 });
@@ -933,6 +908,7 @@ var rightMainPanel = ui.Panel(
 // // Adds 'infoAndControlPanel' to the left panel and 'legendPanel' to the right panel.
 rightMainPanel.add(legendPanel);
 leftMainPanel.add(infoAndControlPanel).add(areaByZoneLabel).add(areaByZoneResultPanel);
+
 
 // Panel init
 // Clears the UI root and adds the left main panel, custom map, and right main panel to the UI root.

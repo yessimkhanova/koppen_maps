@@ -1,0 +1,432 @@
+var model1 = ee.Image('users/kalamkas/koppen_maps_models/GISS-E2-1-G_koppen_ssp585_2071_2100').select('zone');
+var model2 = ee.Image('users/kalamkas/koppen_maps_models/BCC-CSM2-MR_koppen_ssp585_2071_2100').select('zone');
+var model3 = ee.Image('users/kalamkas/koppen_maps_models/CESM2_koppen_ssp585_2071_2100').select('zone');
+var model4 = ee.Image('users/kalamkas/koppen_maps_models/MIROC-ES2L_koppen_ssp585_2071_2100').select('zone');
+var model5 = ee.Image('users/kalamkas/koppen_maps_models/ACCESS-ESM1-5_koppen_ssp585_2071_2100').select('zone');
+var model6 = ee.Image('users/kalamkas/koppen_maps_models/CESM2-WACCM_koppen_ssp585_2071_2100').select('zone');
+var model7 = ee.Image('users/kalamkas/koppen_maps_models/CMCC-CM2-SR5_koppen_ssp585_2071_2100').select('zone');
+var model8 = ee.Image('users/kalamkas/koppen_maps_models/ACCESS-CM2_koppen_ssp585_2071_2100').select('zone');
+var model9 = ee.Image('users/kalamkas/koppen_maps_models/CMCC-ESM2_koppen_ssp585_2071_2100').select('zone');
+var model10 = ee.Image('users/kalamkas/koppen_maps_models/CNRM-CM6-1_koppen_ssp585_2071_2100').select('zone');
+var model11 = ee.Image('users/kalamkas/koppen_maps_models/CanESM5_koppen_ssp585_2071_2100').select('zone');
+var model12 = ee.Image('users/kalamkas/koppen_maps_models/EC-Earth3-Veg-LR_koppen_ssp585_2071_2100').select('zone');
+var model13 = ee.Image('users/kalamkas/koppen_maps_models/EC-Earth3_koppen_ssp585_2071_2100').select('zone');
+var model14 = ee.Image('users/kalamkas/koppen_maps_models/FGOALS-g3_koppen_ssp585_2071_2100').select('zone');
+var model15 = ee.Image('users/kalamkas/koppen_maps_models/GFDL-CM4_koppen_ssp585_2071_2100').select('zone');
+var model16 = ee.Image('users/kalamkas/koppen_maps_models/GFDL-ESM4_koppen_ssp585_2071_2100').select('zone');
+var model17 = ee.Image('users/kalamkas/koppen_maps_models/HadGEM3-GC31-LL_koppen_ssp585_2071_2100').select('zone');
+var model18 = ee.Image('users/kalamkas/koppen_maps_models/INM-CM4-8_koppen_ssp585_2071_2100').select('zone');
+var model19 = ee.Image('users/kalamkas/koppen_maps_models/INM-CM5-0_koppen_ssp585_2071_2100').select('zone');
+var model20 = ee.Image('users/kalamkas/koppen_maps_models/IPSL-CM6A-LR_koppen_ssp585_2071_2100').select('zone');
+var model21 = ee.Image('users/kalamkas/koppen_maps_models/KACE-1-0-G_koppen_ssp585_2071_2100').select('zone');
+var model22 = ee.Image('users/kalamkas/koppen_maps_models/KIOST-ESM_koppen_ssp585_2071_2100').select('zone');
+var model23 = ee.Image('users/kalamkas/koppen_maps_models/MIROC6_koppen_ssp585_2071_2100').select('zone');
+var model24 = ee.Image('users/kalamkas/koppen_maps_models/MPI-ESM1-2-HR_koppen_ssp585_2071_2100').select('zone');
+var model25 = ee.Image('users/kalamkas/koppen_maps_models/MPI-ESM1-2-LR_koppen_ssp585_2071_2100').select('zone');
+var model26 = ee.Image('users/kalamkas/koppen_maps_models/NESM3_koppen_ssp585_2071_2100').select('zone');
+var model27 = ee.Image('users/kalamkas/koppen_maps_models/NorESM2-LM_koppen_ssp585_2071_2100').select('zone');
+var model28 = ee.Image('users/kalamkas/koppen_maps_models/NorESM2-MM_koppen_ssp585_2071_2100').select('zone');
+var model29 = ee.Image('users/kalamkas/koppen_maps_models/TaiESM1_koppen_ssp585_2071_2100').select('zone');
+var model30 = ee.Image('users/kalamkas/koppen_maps_models/UKESM1-0-LL_koppen_ssp585_2071_2100').select('zone');
+var model31 = ee.Image('users/kalamkas/koppen_maps_models/MRI-ESM2-0_koppen_ssp585_2071_2100').select('zone');
+var model32 = ee.Image('users/kalamkas/koppen_maps_models/CNRM-ESM2-1_koppen_ssp585_2071_2100').select('zone');
+
+var koppenCollection = ee.ImageCollection([
+  model1, model2, model3, model4, model5, model6, model7, model8,
+  model9, model10, model11, model12, model13, model14, model15, model16, model17, model18,
+  model19, model20, model21, model22, model23, model24, model25, model26, model27, model28, model29,
+  model30, model31, model32
+]);
+
+var modelCount = koppenCollection.size(); 
+
+var modalKoppen = koppenCollection.reduce(ee.Reducer.mode()).rename('modal_zone');
+
+// Agreement images for calculating confidence levels
+var agreementImages = koppenCollection.map(function(img) {
+  return img.eq(modalKoppen).rename('agree');
+});
+var agreementImage = agreementImages.reduce(ee.Reducer.sum()).rename('agreement');
+var agreementNorm = agreementImage.divide(modelCount).rename('agreement_norm');
+
+// count matching models for each zone appearing in KZ
+var zonecount = []; // we'll store zone count images here. zonecount[i] shows how many models predict zone number 'i' at a given pixel
+// function to use in map() - this way we can avoid creating functions within the loop
+function matchi(img) { return img.eq(i).rename('agree'); }
+var n = 32; // number of zones
+for (var i = 0; i < n; i++ ) {
+  var imeq = koppenCollection.map(matchi);
+  zonecount[i] = imeq.reduce(ee.Reducer.sum()).rename('count');
+}
+
+var arrayImg = ee.ImageCollection(zonecount).toArrayPerBand();
+Map.addLayer(arrayImg,{},'zone counts'); // only for debugging - this way we can inspect the array image at any location
+
+// Generate an index array image
+var indicesImage = ee.Image(ee.Array(ee.List.sequence(0, n-1)));
+
+// Sort the indices array image by based on the values array image
+var sortedIndices = indicesImage.arraySort(arrayImg);
+// Then sort the values array image
+var sortedArrayImg = arrayImg.arraySort();
+
+var best1 = sortedIndices.arrayGet(n-1);
+var best2 = sortedIndices.arrayGet(n-2);
+var best1cnt = sortedArrayImg.arrayGet(n-1);
+var best2cnt = sortedArrayImg.arrayGet(n-2);
+
+var koppenColors = [
+  "000000", "0000FF", "4169E1", "6495ED", "00BFFF",
+  "FF0000", "F08080", "FF8C00", "FFD700", "98FB98",
+  "3CB371", "2E8B57", "ADFF2F", "00FF00", "32CD32",
+  "FFFF00", "BDB76B", "808000", "7B68EE", "6A5ACD",
+  "483D8B", "191970", "00FFFF", "87CEFF", "008080",
+  "2F4F4F", "FF00FF", "9400D3", "800080", "D8BFD8",
+  "A9A9A9", "696969"
+];
+
+// Map.addLayer(best1,{ min:0, max:31, palette: koppenColors },'best zone index');
+// Map.addLayer(best2,{ min:0, max:31, palette: koppenColors },'2nd best zone index');
+// Map.addLayer(best1cnt,{ min:0, max:31 },'best zone count');
+// Map.addLayer(best2cnt,{ min:0, max:31 },'2nd best zone count');
+
+// Confidence thresholds
+var highConfidenceThreshold = 0.80;  // Above 80% confidence
+var mediumHighConfidenceThreshold = 0.60;  // 60%-80% confidence
+var mediumConfidenceThreshold = 0.50;  // 50%-60% confidence
+var mediumLowConfidenceThreshold = 0.40;  // 40%-50% confidence
+var lowConfidenceThreshold = 0.30;  // 30%-40% confidence
+var veryLowConfidenceThreshold = 0.00;  // Below 30% confidence
+
+// Confidence Masks for different thresholds
+var veryLowConfidenceMask = agreementNorm.lt(lowConfidenceThreshold);
+var lowConfidenceMask = agreementNorm.gte(lowConfidenceThreshold).and(agreementNorm.lt(mediumLowConfidenceThreshold));
+var mediumLowConfidenceMask = agreementNorm.gte(mediumLowConfidenceThreshold).and(agreementNorm.lt(mediumConfidenceThreshold));
+var mediumConfidenceMask = agreementNorm.gte(mediumConfidenceThreshold).and(agreementNorm.lt(mediumHighConfidenceThreshold));
+var mediumHighConfidenceMask = agreementNorm.gte(mediumHighConfidenceThreshold).and(agreementNorm.lt(highConfidenceThreshold));
+var highConfidenceMask = agreementNorm.gte(highConfidenceThreshold);
+
+// Modal layers for each confidence range
+var modalVeryLowConfidence = modalKoppen.updateMask(veryLowConfidenceMask);
+var modalLowConfidence = modalKoppen.updateMask(lowConfidenceMask);
+var modalMediumLowConfidence = modalKoppen.updateMask(mediumLowConfidenceMask);
+var modalMediumConfidence = modalKoppen.updateMask(mediumConfidenceMask);
+var modalMediumHighConfidence = modalKoppen.updateMask(mediumHighConfidenceMask);
+var modalHighConfidence = modalKoppen.updateMask(highConfidenceMask);
+
+// Color palettes for each confidence level
+var veryLowConfidenceColor = "FF3333";  // Dark red for very low confidence
+var lowConfidenceColor = "FF6666";  // Light red for low confidence
+var mediumLowConfidenceColor = "FFCC66";  // Light orange for medium-low confidence
+var mediumConfidenceColor = "FFFF66";  // Yellow for medium confidence
+var mediumHighConfidenceColor = "66FF66";  // Light green for medium-high confidence
+var highConfidenceColors = ["00FF00", "32CD32", "228B22", "006400"];  // Dark green shades for high confidence
+
+Map.setCenter(67.5, 48.0, 4);
+
+
+// // Add the modal Köppen class layer
+// Map.addLayer(modalKoppen, {
+//   min: 0,
+//   max: 31,
+//   palette: koppenColors
+// }, 'Modal Köppen Class');
+
+// // Add the agreement image layer
+// Map.addLayer(agreementImage, {
+//   min: 0,
+//   max: modelCount.getInfo(),
+//   palette: ['white', 'gray', 'black']
+// }, 'Agreement (Number of models - Count)');
+
+// // Add the normalized agreement layer
+// Map.addLayer(agreementNorm, {
+//   min: 0,
+//   max: 1,
+//   palette: ['white', 'yellow', 'green']
+// }, 'Agreement (% Normalized)');
+
+// // Add the modal Köppen layer for very low confidence zones (below 30%)
+// Map.addLayer(modalVeryLowConfidence, {
+//   min: 0,
+//   max: 31,
+//   palette: [veryLowConfidenceColor]
+// }, 'Modal Köppen (Very Low Confidence, Below 30%)');
+
+// // Add the modal Köppen layer for low confidence zones (30%-40%)
+// Map.addLayer(modalLowConfidence, {
+//   min: 0,
+//   max: 31,
+//   palette: [lowConfidenceColor]
+// }, 'Modal Köppen (Low Confidence, 30%-40%)');
+
+// // Add the modal Köppen layer for medium-low confidence zones (40%-50%)
+// Map.addLayer(modalMediumLowConfidence, {
+//   min: 0,
+//   max: 31,
+//   palette: [mediumLowConfidenceColor]
+// }, 'Modal Köppen (Medium-Low Confidence, 40%-50%)');
+
+// // Add the modal Köppen layer for medium confidence zones (50%-60%)
+// Map.addLayer(modalMediumConfidence, {
+//   min: 0,
+//   max: 31,
+//   palette: [mediumConfidenceColor]
+// }, 'Modal Köppen (Medium Confidence, 50%-60%)');
+
+// // Add the modal Köppen layer for medium-high confidence zones (60%-80%)
+// Map.addLayer(modalMediumHighConfidence, {
+//   min: 0,
+//   max: 31,
+//   palette: [mediumHighConfidenceColor]
+// }, 'Modal Köppen (Medium-High Confidence, 60%-80%)');
+
+// // Add the modal Köppen layer for high confidence zones (above 80%)
+// Map.addLayer(modalHighConfidence, {
+//   min: 0,
+//   max: 31,
+//   palette: highConfidenceColors
+// }, 'Modal Köppen (High Confidence, Above 80%)');
+
+// Map.addLayer(modalHighConfidence, {
+//   min: 0,
+//   max: 31,
+//   palette: koppenColors
+// }, 'Modal Köppen (High Confidence Zones, Above 80%)')
+
+var projectTitleLabel = ui.Label({ // Creates a label widget for the project title.
+  value: 'Confidence in Climate Models: Köppen Climate Classification',
+  style: {
+    fontWeight: 'bold',
+    fontSize: '24px',
+    margin: '0px 0 0 0',
+    textAlign: 'center',
+    width: '100%'
+  }
+});
+
+var infoPanel = ui.Panel({ // Creates a panel to display information about the project.
+  widgets: [ // Contains multiple label widgets with project information.
+    ui.Label('This work is part of a doctoral research project conducted by Kalamkas Yessimkhanova, supervised by Dr. Matyas Gede at ELTE Eötvös Loránd University, Budapest. ', { fontSize: '14px' }),
+    ui.Label('This map is part of the research presented in the Köppen Climate Map Generator repository https://github.com/yessimkhanova/koppen_maps. ', { fontSize: '14px' }),
+    ui.Label('The map classifies climate of Kazakhstan based on monthly mean temperature and precipitation amount parameters using CMIP6 datasets to generate future Köppen Climate Classification maps. ', { fontSize: '14px' }),
+    ui.Label('This work specifically focuses on the confidence among 32 models from the CMIP6 ensemble for the SSP585 scenario (2071-2100). The confidence levels in the maps show how much agreement there is among the models regarding specific climate zones. Higher confidence levels indicate a stronger consensus among the climate models, while lower confidence levels suggest greater uncertainty.', { fontSize: '14px' }),
+    ui.Label('Confidence Levels: ', { fontSize: '14px', fontWeight:'bold'}),
+    ui.Label('The confidence levels shown in this map reflect the degree of agreement between the climate models. Models with higher agreement lead to stronger confidence in predicting climate zones, while areas with low model agreement show lower confidence in the projections. ', { fontSize: '14px', fontWeight:'bold'}),
+    ui.Label('Credit is given to Google Earth Engine for its powerful geospatial analysis capabilities and NASA/Climate Analytics Group for providing valuable climate data. ', { fontSize: '14px' }),
+    ui.Label('Please contact Kalamkas Yessimkhanova for questions, comments, and feedback. ', { fontSize: '12px' }),
+    ui.Label('Email: kalamkasyessimkhanova@gmail.com', { fontSize: '12px', fontWeight: 'bold'}),
+    
+   ],
+  style: {
+    width: '350px'
+  }
+});
+
+var leftMainPanel = ui.Panel({
+  style:{
+    width: '390px',
+    position: 'middle-left',
+    padding: '10px'
+  }
+});
+
+leftMainPanel.add(infoPanel);
+Map.add(projectTitleLabel);
+Map.add(leftMainPanel);
+
+var colorizedModalKoppen = modalKoppen.visualize({
+  min: 0,
+  max: 31,
+  palette: koppenColors
+});
+
+var region = modalKoppen.geometry(); // You can specify a region if needed, e.g., a bounding box
+
+// // Export the colorized modalKoppen image to Google Drive as GeoTIFF
+// Export.image.toDrive({
+//   image: modalKoppen,  // The colorized modal Köppen image
+//   description: 'colorizedModalKoppen',  // Name for the exported image
+//   scale: 1000,  // Resolution in meters (same as your map scale)
+//   region: region,  // Define the region to export (geometry of the modalKoppen)
+//   fileFormat: 'GeoTIFF',  // Export as GeoTIFF (suitable for RGB images)
+//   maxPixels: 1e8  // Set max pixels (optional)
+// });
+
+
+// // Manually define a bounding box (or use geometry of modalKoppen if it's available)
+// var roi = ee.Geometry.Rectangle([45, 38, 90, 55]);  // Example: Bounding box for Kazakhstan
+
+// // Vectorize the modalKoppen image (converting raster to vector)
+// var vectorizedModalKoppen = modalKoppen.reduceToVectors({
+//   reducer: ee.Reducer.countEvery(),  // Counts the number of pixels in each vectorized region
+//   scale: 1000,  // Resolution (same as scale used in your map)
+//   maxPixels: 1e8,  // Set max pixels (optional)
+//   geometry: roi  // Define the region over which to perform the vectorization
+// });
+
+// // Export the vectorized modalKoppen as a Shapefile
+// Export.table.toDrive({
+//   collection: vectorizedModalKoppen,  // The vectorized FeatureCollection
+//   description: 'modalKoppenShapefile', // The name of the exported shapefile
+//   fileFormat: 'SHP'  // Export as Shapefile
+// });
+
+
+
+// // Vectorize the modalKoppen image for each confidence level
+// var vectorizedVeryLowConfidence = modalVeryLowConfidence.reduceToVectors({
+//   reducer: ee.Reducer.countEvery(),  // Counts the number of pixels in each vectorized region
+//   scale: 1000,  // Resolution (same as scale used in your map)
+//   maxPixels: 1e8,  // Set max pixels (optional)
+//   geometry: roi  // Define the region over which to perform the vectorization
+// });
+
+// var vectorizedLowConfidence = modalLowConfidence.reduceToVectors({
+//   reducer: ee.Reducer.countEvery(),
+//   scale: 1000,
+//   maxPixels: 1e8,
+//   geometry: roi
+// });
+
+// var vectorizedMediumLowConfidence = modalMediumLowConfidence.reduceToVectors({
+//   reducer: ee.Reducer.countEvery(),
+//   scale: 1000,
+//   maxPixels: 1e8,
+//   geometry: roi
+// });
+
+// var vectorizedMediumConfidence = modalMediumConfidence.reduceToVectors({
+//   reducer: ee.Reducer.countEvery(),
+//   scale: 1000,
+//   maxPixels: 1e8,
+//   geometry: roi
+// });
+
+// var vectorizedMediumHighConfidence = modalMediumHighConfidence.reduceToVectors({
+//   reducer: ee.Reducer.countEvery(),
+//   scale: 1000,
+//   maxPixels: 1e8,
+//   geometry: roi
+// });
+
+// var vectorizedHighConfidence = modalHighConfidence.reduceToVectors({
+//   reducer: ee.Reducer.countEvery(),
+//   scale: 1000,
+//   maxPixels: 1e8,
+//   geometry: roi
+// });
+
+// // Export the vectorized modalKoppen confidence levels as Shapefiles
+// Export.table.toDrive({
+//   collection: vectorizedVeryLowConfidence,
+//   description: 'modalKoppenVeryLowConfidenceShapefile',
+//   fileFormat: 'SHP'
+// });
+
+// Export.table.toDrive({
+//   collection: vectorizedLowConfidence,
+//   description: 'modalKoppenLowConfidenceShapefile',
+//   fileFormat: 'SHP'
+// });
+
+// Export.table.toDrive({
+//   collection: vectorizedMediumLowConfidence,
+//   description: 'modalKoppenMediumLowConfidenceShapefile',
+//   fileFormat: 'SHP'
+// });
+
+// Export.table.toDrive({
+//   collection: vectorizedMediumConfidence,
+//   description: 'modalKoppenMediumConfidenceShapefile',
+//   fileFormat: 'SHP'
+// });
+
+// Export.table.toDrive({
+//   collection: vectorizedMediumHighConfidence,
+//   description: 'modalKoppenMediumHighConfidenceShapefile',
+//   fileFormat: 'SHP'
+// });
+
+// Export.table.toDrive({
+//   collection: vectorizedHighConfidence,
+//   description: 'modalKoppenHighConfidenceShapefile',
+//   fileFormat: 'SHP'
+// });
+
+
+
+
+
+// Assume sortedIndices and sortedArrayImg are defined from earlier
+var best1Img = sortedIndices.arraySlice(0, n-1, n).arrayProject([0]).arrayFlatten([['best1']]).toInt16();
+var best2Img = sortedIndices.arraySlice(0, n-2, n-1).arrayProject([0]).arrayFlatten([['best2']]).toInt16();
+var best1cntImg = sortedArrayImg.arraySlice(0, n-1, n).arrayProject([0]).arrayFlatten([['best1cnt']]).toInt16();
+var best2cntImg = sortedArrayImg.arraySlice(0, n-2, n-1).arrayProject([0]).arrayFlatten([['best2cnt']]).toInt16();
+
+// Create the result image with the four bands
+var resultImg = best1Img
+  .addBands(best2Img)
+  .addBands(best1cntImg)
+  .addBands(best2cntImg);
+
+// Define the region of interest (optional, you can change the geometry as needed)
+var roi = ee.Geometry.Rectangle([45, 38, 90, 55]); // Adjust to your needs
+
+// Add artificial constant bands (with value 1) to each of the four bands
+var resultImgWithConstant = resultImg
+  .addBands(ee.Image(1).rename('best1_constant'))
+  .addBands(ee.Image(1).rename('best2_constant'))
+  .addBands(ee.Image(1).rename('best1cnt_constant'))
+  .addBands(ee.Image(1).rename('best2cnt_constant'));
+
+// Reduce to vectors for each band (now with two bands)
+var best1Vectors = resultImgWithConstant.select(['best1', 'best1_constant']).reduceToVectors({
+  reducer: ee.Reducer.count(),
+  scale: 1000,
+  maxPixels: 1e8,
+  geometryType: 'polygon',
+  labelProperty: 'best1',
+  geometry: roi
+});
+
+var best2Vectors = resultImgWithConstant.select(['best2', 'best2_constant']).reduceToVectors({
+  reducer: ee.Reducer.count(),
+  scale: 1000,
+  maxPixels: 1e8,
+  geometryType: 'polygon',
+  labelProperty: 'best2',
+  geometry: roi
+});
+
+var best1cntVectors = resultImgWithConstant.select(['best1cnt', 'best1cnt_constant']).reduceToVectors({
+  reducer: ee.Reducer.count(),
+  scale: 1000,
+  maxPixels: 1e8,
+  geometryType: 'polygon',
+  labelProperty: 'best1cnt',
+  geometry: roi
+});
+
+var best2cntVectors = resultImgWithConstant.select(['best2cnt', 'best2cnt_constant']).reduceToVectors({
+  reducer: ee.Reducer.count(),
+  scale: 1000,
+  maxPixels: 1e8,
+  geometryType: 'polygon',
+  labelProperty: 'best2cnt',
+  geometry: roi
+});
+
+// Combine the vectorized features into a single FeatureCollection
+var combinedVectors = best1Vectors
+  .merge(best2Vectors)
+  .merge(best1cntVectors)
+  .merge(best2cntVectors);
+
+// Export the combined vectorized result as a single shapefile
+Export.table.toDrive({
+  collection: combinedVectors,
+  description: 'Combined_Polygons',  // Name for the exported shapefile
+  folder: 'GEE_Exports',  // Folder in your Google Drive
+  fileFormat: 'SHP'  // Export as Shapefile
+});
