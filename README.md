@@ -47,20 +47,9 @@ Each file in the repository is associated with a specific dataset:
 
 - CRU data
 - ERA5-Land data 
-- CMIP6 ensemble, mean of 32 models, historical data 
-- CMIP6 ensemble, mean of 32 models, SSP 2-4.5 scenario data 
-- CMIP6 ensemble, mean of 32 models, SSP 5-8.5 scenario data 
-- GISS-E2-1-G model, historical data
-- GISS-E2-1-G model, SSP 2-4.5 scenario data
-- GISS-E2-1-G model, SSP 5-8.5 scenario data 
-- MIROC-ES2L model, historical data 
-- MIROC-ES2L model, SSP 2-4.5 scenario data 
-- MIROC-ES2L model, SSP 5-8.5 scenario data 
-- Fusion model, GISS-E2-1-G (temperature data) and MIROC-ESL2L (precipitation data) models, historical data 
-- Fusion model, GISS-E2-1-G (temperature data) and MIROC-ESL2L (precipitation data) models, SSP 2-4.5 scenario data 
-- Fusion model, GISS-E2-1-G (temperature data) and MIROC-ESL2L (precipitation data) models, SSP 5-8.5 scenario data 
-
-
+- CMIP6 ensemble, mean of 32 models (historical data, SSP 2-4.5 and SSP 5-8.5 scenario data) 
+- Fusion model 1, GISS-E2-1-G (temperature data) and MIROC-ESL2L (precipitation data) models (historical data, SSP 2-4.5 and SSP 5-8.5 scenario data)
+- Fusion model 2, CESM2 (temperature data) and BCC-CSM2-MR (precipitation data) models (historical data, SSP 2-4.5 and SSP 5-8.5 scenario data)
 
 ## Contact Information
 
