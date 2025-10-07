@@ -1,7 +1,7 @@
-# Köppen Climate Map Generator
+# Köppen–Geiger Climate Map Generator
 
 
-This project, part of a doctoral research conducted by **Kalamkas Yessimkhanova** under the supervision of Dr. Matyas Gede at Eötvös Loránd University, Budapest, utilizes Google Earth Engine and various datasets to generate Köppen Climate Classification maps. These maps classify the climate of Kazakhstan and worldwide based on monthly mean temperature and precipitation amount parameters.
+This project, part of a doctoral research conducted by **Kalamkas Yessimkhanova** under the supervision of Dr. Matyas Gede at Eötvös Loránd University, Budapest, utilizes Google Earth Engine and various datasets to generate Köppen–Geiger Climate Classification maps. These maps classify the climate of Kazakhstan and worldwide based on monthly mean temperature and precipitation amount parameters.
 
 
 ## Data Sources and Approaches
