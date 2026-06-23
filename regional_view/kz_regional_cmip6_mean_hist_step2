@@ -1,0 +1,108 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var image = ee.Image("users/kalamkas/kz_regional_cmip6_mean/pr_1981_hist_ensemble_mean"),
+    image2 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/pr_1982_hist_ensemble_mean"),
+    image3 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/pr_1983_hist_ensemble_mean"),
+    image4 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/pr_1984_hist_ensemble_mean"),
+    image5 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/pr_1985_hist_ensemble_mean"),
+    image6 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/pr_1986_hist_ensemble_mean"),
+    image7 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/pr_1987_hist_ensemble_mean"),
+    image8 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/pr_1988_hist_ensemble_mean"),
+    image9 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/pr_1989_hist_ensemble_mean"),
+    image10 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/pr_1990_hist_ensemble_mean"),
+    image11 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/pr_1991_hist_ensemble_mean"),
+    image12 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/pr_1992_hist_ensemble_mean"),
+    image13 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/pr_1993_hist_ensemble_mean"),
+    image14 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/pr_1994_hist_ensemble_mean"),
+    image15 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/pr_1995_hist_ensemble_mean"),
+    image16 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/pr_1996_hist_ensemble_mean"),
+    image17 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/pr_1997_hist_ensemble_mean"),
+    image18 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/pr_1998_hist_ensemble_mean"),
+    image19 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/pr_1999_hist_ensemble_mean"),
+    image20 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/pr_2000_hist_ensemble_mean"),
+    image21 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/pr_2001_hist_ensemble_mean"),
+    image22 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/pr_2002_hist_ensemble_mean"),
+    image23 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/pr_2003_hist_ensemble_mean"),
+    image24 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/pr_2004_hist_ensemble_mean"),
+    image25 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/pr_2005_hist_ensemble_mean"),
+    image26 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/pr_2006_hist_ensemble_mean"),
+    image27 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/pr_2007_hist_ensemble_mean"),
+    image28 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/pr_2008_hist_ensemble_mean"),
+    image29 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/pr_2009_hist_ensemble_mean"),
+    image30 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/pr_2010_hist_ensemble_mean"),
+    image31 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/t_1981_hist_ensemble_mean"),
+    image32 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/t_1982_hist_ensemble_mean"),
+    image33 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/t_1983_hist_ensemble_mean"),
+    image34 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/t_1984_hist_ensemble_mean"),
+    image35 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/t_1985_hist_ensemble_mean"),
+    image36 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/t_1986_hist_ensemble_mean"),
+    image37 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/t_1987_hist_ensemble_mean"),
+    image38 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/t_1988_hist_ensemble_mean"),
+    image39 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/t_1989_hist_ensemble_mean"),
+    image40 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/t_1990_hist_ensemble_mean"),
+    image41 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/t_1991_hist_ensemble_mean"),
+    image42 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/t_1992_hist_ensemble_mean"),
+    image43 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/t_1993_hist_ensemble_mean"),
+    image44 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/t_1994_hist_ensemble_mean"),
+    image45 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/t_1995_hist_ensemble_mean"),
+    image46 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/t_1996_hist_ensemble_mean"),
+    image47 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/t_1997_hist_ensemble_mean"),
+    image48 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/t_1998_hist_ensemble_mean"),
+    image49 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/t_1999_hist_ensemble_mean"),
+    image50 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/t_2000_hist_ensemble_mean"),
+    image51 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/t_2001_hist_ensemble_mean"),
+    image52 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/t_2002_hist_ensemble_mean"),
+    image53 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/t_2003_hist_ensemble_mean"),
+    image54 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/t_2004_hist_ensemble_mean"),
+    image55 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/t_2005_hist_ensemble_mean"),
+    image56 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/t_2006_hist_ensemble_mean"),
+    image57 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/t_2007_hist_ensemble_mean"),
+    image58 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/t_2008_hist_ensemble_mean"),
+    image59 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/t_2009_hist_ensemble_mean"),
+    image60 = ee.Image("users/kalamkas/kz_regional_cmip6_mean/t_2010_hist_ensemble_mean");
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+                              // THIS STEP 2 OF KOPPEN CLIMATE CLASSIFICATION USING CMIP6 DATA
+
+// Import previously exported images from your Earth Engine asset in Step 1
+
+// Combine multiple temperature images into a single multi-band image
+var multiBandImageP = image.addBands([image2, image3, image4, image5, image6, image7, image8, image9, image10, 
+                                      image11, image12, image13, image14, image15, image16, image17, image18, 
+                                      image19, image20, image21, image22, image23, image24, image25, image26, 
+                                      image27, image28, image29, image30]);
+
+print(multiBandImageP); // Print information about the multi-band temperature image to the console
+
+// Combine multiple precipitation images into a single multi-band image
+var multiBandImageT = image31.addBands([image32, image33, image34, 
+                                      image35, image36, image37, image38, image39, image40, image41, image42, 
+                                      image43, image44, image45, image46, image47, image48, image49, image50, 
+                                      image51, image52, image53, image54, image55, image56, image57, image58, 
+                                      image59, image60]);
+
+print(multiBandImageT); // Print information about the multi-band precipitation image to the console
+
+
+// // Export the multiband temperature image containing all yearsto your Earth Engine Assets
+Export.image.toAsset({
+    image: multiBandImageT,
+    description: 'kz_regional_temp_hist_ensemble_mean_all_years',
+    assetId: 'users/kalamkas/kz_regional_cmip6_mean/kz_regional_temp_hist_ensemble_mean_all_years',
+    scale: 27830,
+  });
+    // Comment: Export temperature image to your Earth Engine Assets.
+    // Make sure to change the assetId to your desired location.
+    // Example: 'users/your_username/your_asset_folder/temp_avgmodels_allyears'
+    // Exported images will be stored in your asset and will be used in the next step (Step 3).
+    
+// Export the multiband precipitation image containing all years data to your Earth Engine Assets
+Export.image.toAsset({
+    image: multiBandImageP,
+   description: 'kz_regional_pr_hist_ensemble_mean_all_years',
+    assetId: 'users/kalamkas/kz_regional_cmip6_mean/kz_regional_pr_hist_ensemble_mean_all_years',
+    scale: 27830,
+  });
+   
+    // Comment: Export ,ultiband precipitation image to your Earth Engine Assets.
+    // Make sure to change the assetId to your desired location.
+    // Example: 'users/your_username/your_asset_folder/precip_avgmodels_allyears'
+    // Exported images will be stored in your asset and will be used in the next step (Step 3).

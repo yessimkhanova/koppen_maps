@@ -1,0 +1,529 @@
+// CORRECTED
+var path = "FAO/GAUL_SIMPLIFIED_500m/2015/level0"; var country_code = 132; // Set the country code for Kazakhstan.
+var country = ee.FeatureCollection(path).filter(ee.Filter.eq('ADM0_CODE', country_code)); // Filter the country feature collection for Kazakhstan.
+
+var model1 = ee.Image('users/kalamkas/corrected_koppen_models_modal/ACCESS-CM2_koppen_ssp585_2071_2100').select('zone');
+var model2 = ee.Image('users/kalamkas/corrected_koppen_models_modal/BCC-CSM2-MR_koppen_ssp585_2071_2100').select('zone');
+var model3 = ee.Image('users/kalamkas/corrected_koppen_models_modal/CESM2_koppen_ssp585_2071_2100').select('zone');
+var model4 = ee.Image('users/kalamkas/corrected_koppen_models_modal/MIROC-ES2L_koppen_ssp585_2071_2100').select('zone');
+var model5 = ee.Image('users/kalamkas/corrected_koppen_models_modal/ACCESS-ESM1-5_koppen_ssp585_2071_2100').select('zone');
+var model6 = ee.Image('users/kalamkas/corrected_koppen_models_modal/CESM2-WACCM_koppen_ssp585_2071_2100').select('zone');
+var model7 = ee.Image('users/kalamkas/corrected_koppen_models_modal/CMCC-CM2-SR5_koppen_ssp585_2071_2100').select('zone');
+var model8 = ee.Image('users/kalamkas/corrected_koppen_models_modal/ACCESS-CM2_koppen_ssp585_2071_2100').select('zone');
+var model9 = ee.Image('users/kalamkas/corrected_koppen_models_modal/CMCC-ESM2_koppen_ssp585_2071_2100').select('zone');
+var model10 = ee.Image('users/kalamkas/corrected_koppen_models_modal/CNRM-CM6-1_koppen_ssp585_2071_2100').select('zone');
+var model11 = ee.Image('users/kalamkas/corrected_koppen_models_modal/CanESM5_koppen_ssp585_2071_2100').select('zone');
+var model12 = ee.Image('users/kalamkas/corrected_koppen_models_modal/EC-Earth3-Veg-LR_koppen_ssp585_2071_2100').select('zone');
+var model13 = ee.Image('users/kalamkas/corrected_koppen_models_modal/EC-Earth3_koppen_ssp585_2071_2100').select('zone');
+var model14 = ee.Image('users/kalamkas/corrected_koppen_models_modal/FGOALS-g3_koppen_ssp585_2071_2100').select('zone');
+var model15 = ee.Image('users/kalamkas/corrected_koppen_models_modal/GFDL-CM4_koppen_ssp585_2071_2100').select('zone');
+var model16 = ee.Image('users/kalamkas/corrected_koppen_models_modal/GFDL-ESM4_koppen_ssp585_2071_2100').select('zone');
+var model17 = ee.Image('users/kalamkas/corrected_koppen_models_modal/HadGEM3-GC31-LL_koppen_ssp585_2071_2100').select('zone');
+var model18 = ee.Image('users/kalamkas/corrected_koppen_models_modal/INM-CM4-8_koppen_ssp585_2071_2100').select('zone');
+var model19 = ee.Image('users/kalamkas/corrected_koppen_models_modal/INM-CM5-0_koppen_ssp585_2071_2100').select('zone');
+var model20 = ee.Image('users/kalamkas/corrected_koppen_models_modal/IPSL-CM6A-LR_koppen_ssp585_2071_2100').select('zone');
+var model21 = ee.Image('users/kalamkas/corrected_koppen_models_modal/KACE-1-0-G_koppen_ssp585_2071_2100').select('zone');
+var model22 = ee.Image('users/kalamkas/corrected_koppen_models_modal/KIOST-ESM_koppen_ssp585_2071_2100').select('zone');
+var model23 = ee.Image('users/kalamkas/corrected_koppen_models_modal/MIROC6_koppen_ssp585_2071_2100').select('zone');
+var model24 = ee.Image('users/kalamkas/corrected_koppen_models_modal/MPI-ESM1-2-HR_koppen_ssp585_2071_2100').select('zone');
+var model25 = ee.Image('users/kalamkas/corrected_koppen_models_modal/MPI-ESM1-2-LR_koppen_ssp585_2071_2100').select('zone');
+var model26 = ee.Image('users/kalamkas/corrected_koppen_models_modal/NESM3_koppen_ssp585_2071_2100').select('zone');
+var model27 = ee.Image('users/kalamkas/corrected_koppen_models_modal/HadGEM3-GC31-MM_koppen_ssp585_2071_2100').select('zone');
+var model28 = ee.Image('users/kalamkas/corrected_koppen_models_modal/NorESM2-MM_koppen_ssp585_2071_2100').select('zone');
+var model29 = ee.Image('users/kalamkas/corrected_koppen_models_modal/TaiESM1_koppen_ssp585_2071_2100').select('zone');
+var model30 = ee.Image('users/kalamkas/corrected_koppen_models_modal/UKESM1-0-LL_koppen_ssp585_2071_2100').select('zone');
+var model31 = ee.Image('users/kalamkas/corrected_koppen_models_modal/MRI-ESM2-0_koppen_ssp585_2071_2100').select('zone');
+var model32 = ee.Image('users/kalamkas/corrected_koppen_models_modal/CNRM-ESM2-1_koppen_ssp585_2071_2100').select('zone');
+
+
+var koppenCollection = ee.ImageCollection([
+  model1, model2, model3, model4, model5, model6, model7, model8,
+  model9, model10, model11, model12, model13, model14, model15, model16,
+  model17, model18, model19, model20, model21, model22, model23, model24,
+  model25, model26, model27, model28, model29, model30, model31, model32
+]);
+
+var modelCount = koppenCollection.size();
+
+var modalKoppen = koppenCollection
+  .reduce(ee.Reducer.mode())
+  .rename('modal_zone')
+  .clip(country);
+
+
+var n = 32; // zones 0–31
+var zonecount = [];
+
+// Function to count how many models predict a specific zone
+function countZone(zoneIndex) {
+  var matchingImages = koppenCollection.map(function(img) {
+    return img.eq(zoneIndex).rename('count');
+  });
+
+  return matchingImages
+    .reduce(ee.Reducer.sum())
+    .rename('count');
+}
+
+// Create one count image for each zone
+for (var i = 0; i < n; i++) {
+  zonecount[i] = countZone(i);
+}
+
+
+var arrayImg = ee.ImageCollection(zonecount).toArrayPerBand();
+
+var indicesImage = ee.Image(ee.Array(ee.List.sequence(0, n - 1)));
+
+var sortedIndices = indicesImage.arraySort(arrayImg);
+var sortedArrayImg = arrayImg.arraySort();
+
+var best1 = sortedIndices
+  .arrayGet([n - 1])
+  .rename('best1')
+  .int()
+  .clip(country);
+
+var best2 = sortedIndices
+  .arrayGet([n - 2])
+  .rename('best2')
+  .int()
+  .clip(country);
+
+var best1cnt = sortedArrayImg
+  .arrayGet([n - 1])
+  .rename('best1cnt')
+  .clip(country);
+
+var best2cnt = sortedArrayImg
+  .arrayGet([n - 2])
+  .rename('best2cnt')
+  .clip(country);
+
+
+var koppenColors = [
+  "000000",        // 0: Not classified
+  "0000FF",        // 1: Af
+  "4169E1",        // 2: Am
+  "6495ED",        // 3: Aw
+  "00BFFF",        // 4: As
+  "FF0000",        // 5: BWh
+  "F08080",        // 6: BWk
+  "FF8C00",        // 7: BSh
+  "FFD700",        // 8: BSk
+  "98FB98",        // 9: Cwa
+  "3CB371",        // 10: Cwb
+  "2E8B57",        // 11: Cwc
+  "ADFF2F",        // 12: Cfa
+  "00FF00",        // 13: Cfb
+  "32CD32",        // 14: Cfc
+  "FFFF00",        // 15: Csa
+  "BDB76B",        // 16: Csb
+  "808000",        // 17: Csc
+  "7B68EE",        // 18: Dwa
+  "6A5ACD",        // 19: Dwb
+  "483D8B",        // 20: Dwc
+  "191970",        // 21: Dwd
+  "00FFFF",        // 22: Dfa
+  "87CEFF",        // 23: Dfb
+  "008080",        // 24: Dfc
+  "2F4F4F",        // 25: Dfd
+  "FF00FF",        // 26: Dsa
+  "9400D3",        // 27: Dsb
+  "800080",        // 28: Dsc
+  "D8BFD8",        // 29: Dsd
+  "A9A9A9",        // 30: ET
+  "696969"         // 31: EF
+];
+
+
+var zoneCodes = [
+  '-',
+  'Af',
+  'Am',
+  'Aw',
+  'As',
+  'BWh',
+  'BWk',
+  'BSh',
+  'BSk',
+  'Cwa',
+  'Cwb',
+  'Cwc',
+  'Cfa',
+  'Cfb',
+  'Cfc',
+  'Csa',
+  'Csb',
+  'Csc',
+  'Dwa',
+  'Dwb',
+  'Dwc',
+  'Dwd',
+  'Dfa',
+  'Dfb',
+  'Dfc',
+  'Dfd',
+  'Dsa',
+  'Dsb',
+  'Dsc',
+  'Dsd',
+  'ET',
+  'EF'
+];
+
+var zoneNames = {
+  '-': 'Not classified',
+
+  'Af': 'Tropical Rainforest',
+  'Am': 'Tropical Monsoon',
+  'Aw': 'Tropical Wet & Dry',
+  'As': 'Tropical Savanna',
+
+  'BWh': 'Hot Desert',
+  'BWk': 'Cold Desert',
+  'BSh': 'Hot Semi-Arid',
+  'BSk': 'Cold Semi-Arid',
+
+  'Cwa': 'Humid Subtropical, Dry Winter',
+  'Cwb': 'Subtropical Highland',
+  'Cwc': 'Cold Subtropical Highland',
+  'Cfa': 'Humid Subtropical',
+  'Cfb': 'Oceanic Climate',
+  'Cfc': 'Subpolar Oceanic Climate',
+  'Csa': 'Mediterranean Hot Summer',
+  'Csb': 'Mediterranean Warm Summer',
+  'Csc': 'Mediterranean Cold Summer',
+
+  'Dwa': 'Humid Continental Hot Summer, Dry Winter',
+  'Dwb': 'Humid Continental Warm Summer, Dry Winter',
+  'Dwc': 'Subarctic Cool Summer, Dry Winter',
+  'Dwd': 'Subarctic Extreme Winter, Dry Winter',
+
+  'Dfa': 'Humid Continental Hot Summer',
+  'Dfb': 'Humid Continental Warm Summer',
+  'Dfc': 'Subarctic',
+  'Dfd': 'Subarctic Extreme Winter',
+
+  'Dsa': 'Continental Hot Summer, Dry Summer',
+  'Dsb': 'Continental Warm Summer, Dry Summer',
+  'Dsc': 'Subarctic Cool Summer, Dry Summer',
+  'Dsd': 'Subarctic Extreme Winter, Dry Summer',
+
+  'ET': 'Tundra',
+  'EF': 'Ice Cap'
+};
+
+Map.addLayer(best1, {
+  min: 0,
+  max: 31,
+  palette: koppenColors
+}, 'Best zone index');
+
+Map.addLayer(best2, {
+  min: 0,
+  max: 31,
+  palette: koppenColors
+}, 'Second best zone index', false);
+
+// Map.addLayer(best1cnt, {
+//   min: 0,
+//   max: 32,
+//   palette: ['ffffff', '808080', '000000']
+// }, 'Best zone model count', false);
+
+// Map.addLayer(best2cnt, {
+//   min: 0,
+//   max: 32,
+//   palette: ['ffffff', '808080', '000000']
+// }, 'Second best zone model count', false);
+/*
+Map.addLayer(modalKoppen, {
+  min: 0,
+  max: 31,
+  palette: koppenColors
+}, 'Modal Köppen Class', false);
+
+Map.setCenter(67.5, 48.0, 4);
+
+var projectTitleLabel = ui.Label({
+  value: 'Inter-model variability among CMIP6 projections of future Köppen–Geiger climate zones in Kazakhstan under SSP5-8.5.',
+  style: {
+    fontWeight: 'bold',
+    fontSize: '15px',
+    margin: '0px 0 0 0',
+    textAlign: 'center',
+    width: '100%',
+    backgroundColor: 'white',
+    padding: '6px'
+  }
+});
+
+var infoPanel = ui.Panel({
+  widgets: [
+    ui.Label(
+      'This work is part of a doctoral research project conducted by Kalamkas Yessimkhanova, supervised by Dr. Matyas Gede at ELTE Eötvös Loránd University, Budapest.',
+      {fontSize: '14px'}
+    ),
+
+    ui.Label(
+      'This map is part of the research presented in the Köppen Climate Map Generator repository: https://github.com/yessimkhanova/koppen_maps.',
+      {fontSize: '14px'}
+    ),
+
+    ui.Label(
+      'The map classifies the climate of Kazakhstan based on monthly mean temperature and precipitation parameters using CMIP6 datasets to generate future Köppen-Geiger Climate Classification maps. Please read more DOI: 10.30921/GK.77.2025.3.2',
+      {fontSize: '14px'}
+    ),
+
+    ui.Label(
+      'This work specifically focuses on the confidence among 32 models from the CMIP6 ensemble for the SSP585 scenario, 2071–2100. The confidence levels in the maps show the degree of agreement among the models regarding specific climate zones. Higher confidence indicates stronger consensus among climate models, while lower confidence indicates greater uncertainty.',
+      {fontSize: '14px'}
+    ),
+
+    ui.Label(
+      'Credit is given to Google Earth Engine for its geospatial analysis capabilities and to NASA/Climate Analytics Group for providing valuable climate data.',
+      {fontSize: '14px'}
+    ),
+
+    ui.Label(
+      'Please contact Kalamkas Yessimkhanova for questions, comments, and feedback.',
+      {fontSize: '12px'}
+    ),
+
+    ui.Label(
+      'Email: kalamkasyessimkhanova@gmail.com',
+      {
+        fontSize: '12px',
+        fontWeight: 'bold'
+      }
+    )
+  ],
+
+  style: {
+    width: '350px',
+    padding: '8px',
+    backgroundColor: 'white'
+  }
+});
+
+
+var legendBodyPanel = ui.Panel({
+  layout: ui.Panel.Layout.flow('vertical'),
+  style: {
+    padding: '6px',
+    backgroundColor: 'white',
+    height: '800px'
+  }
+});
+
+function makeLegendRow(color, code, name) {
+  var colorBox = ui.Label({
+    value: '',
+    style: {
+      backgroundColor: '#' + color,
+      padding: '8px',
+      margin: '0 6px 4px 0',
+      border: '1px solid black'
+    }
+  });
+
+  var label = ui.Label({
+    value: code + ' — ' + name,
+    style: {
+      fontSize: '11px',
+      margin: '0 0 4px 0',
+      color: 'black'
+    }
+  });
+
+  return ui.Panel({
+    widgets: [colorBox, label],
+    layout: ui.Panel.Layout.flow('horizontal'),
+    style: {
+      margin: '0 0 2px 0',
+      padding: '0'
+    }
+  });
+}
+
+
+for (var j = 0; j < zoneCodes.length; j++) {
+  var code = zoneCodes[j];
+  var name = zoneNames[code];
+  var color = koppenColors[j];
+
+  legendBodyPanel.add(makeLegendRow(color, code, name));
+}
+
+var leftMainPanel = ui.Panel({
+  style: {
+    width: '390px',
+    position: 'middle-left',
+    padding: '10px'
+  }
+});
+
+
+var rightMainPanel = ui.Panel({
+  style: {
+    width: '320px',
+    position: 'middle-right',
+     margin: '70px 10px 10px 0',
+     padding: '10px'
+  }
+});
+
+var legendPanel = ui.Panel({
+  widgets: [
+    
+    legendBodyPanel,
+   ],
+  layout: ui.Panel.Layout.flow('vertical'),
+  style: {
+    padding: '2px',
+    backgroundColor: 'white'
+  }
+});
+
+leftMainPanel.add(infoPanel);
+rightMainPanel.add(legendPanel);
+
+Map.add(projectTitleLabel);
+Map.add(leftMainPanel);
+Map.add(rightMainPanel);
+
+
+var colorizedModalKoppen = modalKoppen.visualize({
+  min: 0,
+  max: 31,
+  palette: koppenColors
+});
+
+
+// Vectorize the modalKoppen image (converting raster to vector)
+var vectorizedModalKoppen = modalKoppen.reduceToVectors({
+  reducer: ee.Reducer.countEvery(),  // Counts the number of pixels in each vectorized region
+  scale: 1000,  // Resolution (same as scale used in your map)
+  maxPixels: 1e8,  // Set max pixels (optional)
+  geometry: country  // Define the region over which to perform the vectorization
+});
+
+// Export the vectorized modalKoppen as a Shapefile
+Export.table.toDrive({
+  collection: vectorizedModalKoppen,  // The vectorized FeatureCollection
+  description: 'modalKoppenShapefile', // The name of the exported shapefile
+  fileFormat: 'SHP'  // Export as Shapefile
+});
+
+
+// Export the modal Köppen image to Google Drive
+Export.image.toDrive({
+  image: modalKoppen,  // The modal Köppen image
+  description: 'Modal_Koppen_Export',  // Name of the exported image
+  scale: 1000,  // Set the scale (pixel resolution) - adjust based on your region's needs
+  region: country,  // Use the geometry of the modal Köppen image for the region
+  fileFormat: 'GeoTIFF',  // The file format for the export (GeoTIFF is recommended)
+  maxPixels: 1e8  // This is a limit for the number of pixels you want to export, adjust as needed
+});
+*/
+// create a band which contains a value that can be the basis of the combined vector features
+var labelImg = best1.multiply(100).add(best2).multiply(100).add(best1cnt).multiply(100).add(best2cnt).int32().rename('title');
+
+// add other bands
+var vectorizable = labelImg.addBands([best1,best1cnt,best2,best2cnt]);
+print(vectorizable);
+Map.addLayer(vectorizable);
+
+// Vectorize the image (converting raster to vector)
+var vectorized = vectorizable.reduceToVectors({
+  reducer: ee.Reducer.first(),  // Counts the number of pixels in each vectorized region
+  scale: 1000,  // Resolution (same as scale used in your map)
+  maxPixels: 1e8,  // Set max pixels (optional)
+  geometry: country  // Define the region over which to perform the vectorization
+});
+
+print(vectorized);
+Map.addLayer(vectorized);
+
+// Export the vectorized modalKoppen as a Shapefile
+Export.table.toDrive({
+  collection: vectorized,  // The vectorized FeatureCollection
+  description: 'combinedBestAndSecond', // The name of the exported shapefile
+  folder: 'GEE_Exports',
+  fileFormat: 'SHP'  // Export as Shapefile
+});
+
+/*
+
+// Assume sortedIndices and sortedArrayImg are defined from earlier
+var best1Img = sortedIndices.arraySlice(0, n-1, n).arrayProject([0]).arrayFlatten([['best1']]).toInt16();
+var best2Img = sortedIndices.arraySlice(0, n-2, n-1).arrayProject([0]).arrayFlatten([['best2']]).toInt16();
+var best1cntImg = sortedArrayImg.arraySlice(0, n-1, n).arrayProject([0]).arrayFlatten([['best1cnt']]).toInt16();
+var best2cntImg = sortedArrayImg.arraySlice(0, n-2, n-1).arrayProject([0]).arrayFlatten([['best2cnt']]).toInt16();
+
+// Create the result image with the four bands
+var resultImg = best1Img
+  .addBands(best2Img)
+  .addBands(best1cntImg)
+  .addBands(best2cntImg);
+
+// Add artificial constant bands (with value 1) to each of the four bands
+var resultImgWithConstant = resultImg
+  .addBands(ee.Image(1).rename('best1_constant'))
+  .addBands(ee.Image(1).rename('best2_constant'))
+  .addBands(ee.Image(1).rename('best1cnt_constant'))
+  .addBands(ee.Image(1).rename('best2cnt_constant'));
+
+// Reduce to vectors for each band (now with two bands)
+var best1Vectors = resultImgWithConstant.select(['best1', 'best1_constant']).reduceToVectors({
+  reducer: ee.Reducer.count(),
+  scale: 1000,
+  maxPixels: 1e8,
+  geometryType: 'polygon',
+  labelProperty: 'best1',
+  geometry: country
+});
+
+var best2Vectors = resultImgWithConstant.select(['best2', 'best2_constant']).reduceToVectors({
+  reducer: ee.Reducer.count(),
+  scale: 1000,
+  maxPixels: 1e8,
+  geometryType: 'polygon',
+  labelProperty: 'best2',
+  geometry: country
+});
+
+var best1cntVectors = resultImgWithConstant.select(['best1cnt', 'best1cnt_constant']).reduceToVectors({
+  reducer: ee.Reducer.count(),
+  scale: 1000,
+  maxPixels: 1e8,
+  geometryType: 'polygon',
+  labelProperty: 'best1cnt',
+  geometry: country
+});
+
+var best2cntVectors = resultImgWithConstant.select(['best2cnt', 'best2cnt_constant']).reduceToVectors({
+  reducer: ee.Reducer.mean(),
+  scale: 1000,
+  maxPixels: 1e8,
+  geometryType: 'polygon',
+  labelProperty: 'best2cnt',
+  geometry: country
+});
+
+// Combine the vectorized features into a single FeatureCollection
+var combinedVectors = best1Vectors
+  .merge(best2Vectors)
+  .merge(best1cntVectors)
+  .merge(best2cntVectors);
+
+// Export the combined vectorized result as a single shapefile
+Export.table.toDrive({
+   collection: combinedVectors,
+   description: 'Combined_Polygons',  // Name for the exported shapefile
+   // region: country,
+   folder: 'GEE_Exports',  // Folder in your Google Drive
+   fileFormat: 'SHP'  // Export as Shapefile
+});
+*/

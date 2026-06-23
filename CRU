@@ -266,32 +266,9 @@ years.getInfo().forEach(function (year) {
                                        // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
                                        .rename('winterprecip'); // Rename the resulting band as 'winterprecip'
                 
-                // Calculate the maximum winter precipitation for each pixel in the year and convert to millimeters
-                var maxWinterP = yearImageP.select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
-                                          .reduce('max') // Find the maximum precipitation for selected months (October to March)
-                                          // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
-                                          .rename('maxwprecip'); // Rename the resulting band as 'maxwprecip'
                 
-                // Calculate the minimum winter precipitation for each pixel in the year and convert to millimeters
-                var minWinterP = yearImageP.select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
-                                          .reduce('min') // Find the minimum precipitation for selected months (October to March)
-                                          // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
-                                          .rename('minwprecip'); // Rename the resulting band as 'minwprecip'
-                
-                // Calculate the maximum summer precipitation for each pixel in the year and convert to millimeters
-                var maxSummerP = yearImageP.select(['p4','p5','p6', 'p7', 'p8', 'p9'])
-                                          .reduce('max') // Find the maximum precipitation for selected months (April to September)
-                                          // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
-                                          .rename('maxsprecip'); // Rename the resulting band as 'maxsprecip'
-                
-                // Calculate the minimum summer precipitation for each pixel in the year and convert to millimeters
-                var minSummerP = yearImageP.select(['p4','p5','p6', 'p7', 'p8', 'p9'])
-                                          .reduce('min') // Find the minimum precipitation for selected months (April to September)
-                                          // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
-                                          .rename('minsprecip'); // Rename the resulting band as 'minsprecip'
-            
             // Add the calculated precipitation bands to the original image
-            yearImageP = yearImageP.addBands([totalP, minP, maxP, summerP, winterP, maxWinterP, minWinterP, maxSummerP, minSummerP]);
+            yearImageP = yearImageP.addBands([totalP, minP, maxP, summerP, winterP]);
    
   yearImageT = yearImageT.set('year', year);
   yearImageP = yearImageP.set('year', year);
@@ -389,7 +366,7 @@ var B = maxtemp.gt(10).and(aridthreshold.gt(precip));
 var W = precip.lt(aridthreshold.multiply(0.5));
 
 // Condition to identify hot climates (h): Average temperature greater than 18°C.
-var h = avgtemp.gt(18);
+var h = avgtemp.gte(18);
 
 // Combination of conditions for B and W to identify arid climates with dry winters (BW)
 var BW = B.and(W);
@@ -500,7 +477,7 @@ var Dw = D.and(maxsprecip.gt(minwprecip.multiply(10))); // Winter precipitation 
 // Ds represents conditions for summer precipitation in continental climates.
 var Ds = D.and(Dw.not())
           .and(maxwprecip.gt(minsprecip.multiply(3))) // Maximum winter precipitation greater than 3 times the minimum summer precipitation
-          .and(minsprecip.lt(30)); // Minimum summer precipitation less than 30mm.
+          .and(minsprecip.lt(40)); // Minimum summer precipitation less than 30mm.
 
 // Df represents conditions for other cases within continental climates.
 var Df = D.and(Dw.not())
@@ -578,6 +555,7 @@ var ET = maxtemp.gte(0) // Maximum temperature greater than or equal to 0°C
 var classes = Af.multiply(1)                // Af class assigned numeric value 1 (color "0000FF")
                 .add(Am.multiply(2))        // Am class assigned numeric value 2 (color "4169E1")
                 .add(Aw.multiply(3))        // Aw class assigned numeric value 3 (color "6495ED")
+                // .add(As.multiply(4))
                 .add(BWh.multiply(5))       // BWh class assigned numeric value 5 (color "FF0000")
                 .add(BWk.multiply(6))       // BWk class assigned numeric value 6 (color "F08080")
                 .add(BSh.multiply(7))       // BSh class assigned numeric value 7 (color "FF8C00")
@@ -613,18 +591,57 @@ var classes = Af.multiply(1)                // Af class assigned numeric value 1
   return classes; // The resulting image with climate zone classifications and metadata is returned when the function is called.
 }
 
-function classificateImage(startDate, endDate) {
+function classificateImage(startYear, endYear) {
   
-  // filter yearly images by start/end date
-  var finalYearlyImages = yearlyImages.filter(ee.Filter.rangeContains('year',startDate,endDate)).mean();
+  // Filter yearly images by selected year range
+  var filteredYearlyImages = yearlyImages
+    .filter(ee.Filter.gte('year', startYear))
+    .filter(ee.Filter.lte('year', endYear));
   
-  // Perform climate zone classification using the Koppen climate classification function
+  // Average all normal yearly bands
+  var meanYearlyImages = filteredYearlyImages.mean();
+  
+  // Long-term monthly precipitation means for this selected period
+  var longTermMonthlyMeanP = filteredYearlyImages
+    .select([
+      'p1', 'p2', 'p3', 'p4', 'p5', 'p6',
+      'p7', 'p8', 'p9', 'p10', 'p11', 'p12'
+    ])
+    .mean();
+
+  // Correct seasonal precipitation extremes
+  var maxWinterP = longTermMonthlyMeanP
+    .select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
+    .reduce(ee.Reducer.max())
+    .rename('maxwprecip');
+
+  var minWinterP = longTermMonthlyMeanP
+    .select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
+    .reduce(ee.Reducer.min())
+    .rename('minwprecip');
+
+  var maxSummerP = longTermMonthlyMeanP
+    .select(['p4', 'p5', 'p6', 'p7', 'p8', 'p9'])
+    .reduce(ee.Reducer.max())
+    .rename('maxsprecip');
+
+  var minSummerP = longTermMonthlyMeanP
+    .select(['p4', 'p5', 'p6', 'p7', 'p8', 'p9'])
+    .reduce(ee.Reducer.min())
+    .rename('minsprecip');
+
+  // Add required bands before Koppen classification
+  var finalYearlyImages = meanYearlyImages.addBands([
+    maxWinterP,
+    minWinterP,
+    maxSummerP,
+    minSummerP
+  ]);
+
   var classification = koppenClass(finalYearlyImages);
 
-  // Return the resulting climate zone classification image
   return classification;
 }
-
 //-------------------------------------------------------//
                     // UI Sector
 //  Map Settings
@@ -657,7 +674,7 @@ var infoPanel = ui.Panel({ // Creates a panel to display information about the p
   widgets: [ // Contains multiple label widgets with project information.
     ui.Label('This Köppen Climate Classification map is generated using Google Earth Engine and Climatic Research Unit data.', { fontSize: '14px' }),
     ui.Label('The map classifies climate of Kazakhstan based on monthly mean temperature and precipitation amount parameters. ', { fontSize: '14px' }),
-    ui.Label('More information about methodology DOI. ', { fontSize: '14px' }),
+    ui.Label('Read about methodology in this artcile "Spatial and Temporal Analysis of Climatic Zones in Kazakhstan Using Google Earth Engine" https://doi.org/10.3390/ijgi15020057. ', { fontSize: '14px' }),
     ui.Label('Access the script https://github.com/yessimkhanova/koppen_maps. ', { fontSize: '14px', fontWeight: 'bold' }),
     ui.Label('This work is part of a doctoral research project conducted by Kalamkas Yessimkhanova, supervised by Dr. Matyas Gede at ELTE Eötvös Loránd University, Budapest.', { fontSize: '14px' }),
     ui.Label('Credit is given to Google Earth Engine for its powerful geospatial analysis capabilities and Climatic Research Unit for providing valuable climate data.', { fontSize: '14px' }),
@@ -710,7 +727,7 @@ var endYearLabel = ui.Label('Select End Year:');
 
 // Note Label
 var noteLabel = ui.Label({ // Creates a label for displaying a note to the user.
-  value: 'Please note that map generation may take some time',
+  value: 'The map producing might take some time',
   style: {
     fontSize: '12px',
     color: 'gray',
@@ -866,75 +883,114 @@ var yearFilterSlider = (ui.Panel({
 // Creates a panel to contain information and control elements.
 // Adds 'infoPanel' and 'yearFilterSlider' to this panel.
 var infoAndControlPanel = ui.Panel().add(infoPanel).add(yearFilterSlider);
-
-// Legend Title
-// Creates a label widget for the legend title.
-var legendTitle = ui.Label({
-  value: 'Legend',
-  style: {
-    fontWeight: 'bold',
-    fontSize: '18px',
-    margin: '0 0 4px 0',
-    padding: '10px'
-  }
-});
-
-// Widget Legend Record
-// Defines a function 'makeLegendRecord' to create a legend record containing a color box and zone code/name.
-var makeLegendRecord = function (color, zoneCode, zoneName){
+// Function to create a legend record (color + text)
+var makeLegendRecord = function (color, zoneCode, zoneName) {
   var colorBox = ui.Label({
     style: {
       backgroundColor: color,
       padding: '8px',
       margin: '0 0 8px 8px'
-    }});
+    }
+  });
+
   var zoneCodeAndName = ui.Label({
     value: zoneCode + ': ' + zoneName,
     style: {
       margin: '0 0 3px 6px'
-    }});
+    }
+  });
+
   return ui.Panel({
     widgets: [colorBox, zoneCodeAndName],
-    layout: ui.Panel.Layout.Flow('horizontal')
+    layout: ui.Panel.Layout.flow('horizontal')
   });
 };
 
-// Panel: Legend
-// Creates a panel to contain legend items.
-var legendPanel = ui.Panel({
-  // TODO: add style
-  style: {}
-}).add(legendTitle);
+// Panel that will hold the legend rows
+var legendBodyPanel = ui.Panel({
+  style: {
+    shown: true,           
+    padding: '0 0 0 0'
+  }
+});
 
-// Add legendRecord to Legend Panel
-// Iterates through each zone code/name pair and creates a legend record using the 'makeLegendRecord' function.
-// Adds each legend record to the legend panel.
-for (var i=0; i<Object.keys(zoneNames).length; i++){
+// Fill legend body
+Object.keys(zoneNames).forEach(function (code, i) {
   var row = makeLegendRecord(colors[i], zoneCodes[i], zoneNames[zoneCodes[i]]);
-  legendPanel.add(row);
+  legendBodyPanel.add(row);
+});
+
+// Visibility state: start COLLAPSED to save space
+var legendVisible = false;
+
+// Forward declarations so we can reference inside update function
+var legendTitleButton;
+var rightMainPanel;
+
+// Toggle function 
+function updateLegendVisibility() {
+  legendBodyPanel.style().set('shown', legendVisible);
+  if (legendTitleButton) {
+    legendTitleButton.setLabel(legendVisible ? 'Legend ▲' : 'Legend ▼');
+  }
+  if (rightMainPanel) {
+    rightMainPanel.style().set('width', legendVisible ? '344px' : '75px');
+  }
 }
 
-// Panel Settings
-// Creates left and right main panels for layout purposes.
+// Title = button
+legendTitleButton = ui.Button({
+  label: 'Legend ▼',   // collapsed at start
+  style: {
+    fontWeight: 'bold',
+    fontSize: '16px',
+    margin: '0 0 0px 0',
+    padding: '2px 2px',
+    textAlign: 'left'
+  },
+  onClick: function () {
+    legendVisible = !legendVisible;
+    updateLegendVisibility();
+  }
+});
+
+// Legend panel 
+var legendPanel = ui.Panel({
+  widgets: [legendTitleButton, legendBodyPanel],
+  layout: ui.Panel.Layout.flow('vertical'),
+  style: {
+    padding: '2px'
+  }
+});
+
+
 var leftMainPanel = ui.Panel({
-  style:{
+  style: {
     width: '370px',
     position: 'middle-left'
   }
 });
 
-var rightMainPanel = ui.Panel(
-  {
-    style: {
-      width: '344px',
-      position: 'middle-right'}
-  });
+rightMainPanel = ui.Panel({
+  style: {
+    width: '344px',        
+    position: 'middle-right'
+  }
+});
 
-// // Adds 'infoAndControlPanel' to the left panel and 'legendPanel' to the right panel.
+// Fill panels
 rightMainPanel.add(legendPanel);
-leftMainPanel.add(infoAndControlPanel).add(areaByZoneLabel).add(areaByZoneResultPanel);
 
-// Panel init
-// Clears the UI root and adds the left main panel, custom map, and right main panel to the UI root.
+leftMainPanel
+  .add(infoAndControlPanel)
+  .add(areaByZoneLabel)
+  .add(areaByZoneResultPanel);
+
+// Apply initial visibility state
+updateLegendVisibility();
+
 ui.root.clear();
-ui.root.add(leftMainPanel).add(customMap).add(rightMainPanel);
+ui.root
+  .add(leftMainPanel)
+  .add(customMap)      
+  .add(rightMainPanel);

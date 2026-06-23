@@ -306,32 +306,8 @@ years.getInfo().forEach(function (year) {
                                        // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
                                        .rename('winterprecip'); // Rename the resulting band as 'winterprecip'
                 
-                // Calculate the maximum winter precipitation for each pixel in the year and convert to millimeters
-                var maxWinterP = yearImageP.select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
-                                          .reduce('max') // Find the maximum precipitation for selected months (October to March)
-                                          // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
-                                          .rename('maxwprecip'); // Rename the resulting band as 'maxwprecip'
-                
-                // Calculate the minimum winter precipitation for each pixel in the year and convert to millimeters
-                var minWinterP = yearImageP.select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
-                                          .reduce('min') // Find the minimum precipitation for selected months (October to March)
-                                          // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
-                                          .rename('minwprecip'); // Rename the resulting band as 'minwprecip'
-                
-                // Calculate the maximum summer precipitation for each pixel in the year and convert to millimeters
-                var maxSummerP = yearImageP.select(['p4','p5','p6', 'p7', 'p8', 'p9'])
-                                          .reduce('max') // Find the maximum precipitation for selected months (April to September)
-                                          // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
-                                          .rename('maxsprecip'); // Rename the resulting band as 'maxsprecip'
-                
-                // Calculate the minimum summer precipitation for each pixel in the year and convert to millimeters
-                var minSummerP = yearImageP.select(['p4','p5','p6', 'p7', 'p8', 'p9'])
-                                          .reduce('min') // Find the minimum precipitation for selected months (April to September)
-                                          // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
-                                          .rename('minsprecip'); // Rename the resulting band as 'minsprecip'
-            
             // Add the calculated precipitation bands to the original image
-            yearImageP = yearImageP.addBands([totalP, minP, maxP, summerP, winterP, maxWinterP, minWinterP, maxSummerP, minSummerP]);
+            yearImageP = yearImageP.addBands([totalP, minP, maxP, summerP, winterP]);
    
   yearImageT = yearImageT.set('year', year);
   yearImageP = yearImageP.set('year', year);
@@ -539,7 +515,7 @@ var Dw = D.and(maxsprecip.gt(minwprecip.multiply(10))); // Winter precipitation 
 // Ds represents conditions for summer precipitation in continental climates.
 var Ds = D.and(Dw.not())
           .and(maxwprecip.gt(minsprecip.multiply(3))) // Maximum winter precipitation greater than 3 times the minimum summer precipitation
-          .and(minsprecip.lt(30)); // Minimum summer precipitation less than 30mm.
+          .and(minsprecip.lt(40)); // Minimum summer precipitation less than 30mm.
 
 // Df represents conditions for other cases within continental climates.
 var Df = D.and(Dw.not())
@@ -617,6 +593,7 @@ var ET = maxtemp.gte(0) // Maximum temperature greater than or equal to 0°C
 var classes = Af.multiply(1)                // Af class assigned numeric value 1 (color "0000FF")
                 .add(Am.multiply(2))        // Am class assigned numeric value 2 (color "4169E1")
                 .add(Aw.multiply(3))        // Aw class assigned numeric value 3 (color "6495ED")
+                // .add(As.multiply(4))
                 .add(BWh.multiply(5))       // BWh class assigned numeric value 5 (color "FF0000")
                 .add(BWk.multiply(6))       // BWk class assigned numeric value 6 (color "F08080")
                 .add(BSh.multiply(7))       // BSh class assigned numeric value 7 (color "FF8C00")
@@ -652,15 +629,55 @@ var classes = Af.multiply(1)                // Af class assigned numeric value 1
   return classes; // The resulting image with climate zone classifications and metadata is returned when the function is called.
 }
 
-function classificateImage(startDate, endDate) {
+function classificateImage(startYear, endYear) {
   
-  // Filter yearly images by start/end date
-  var finalYearlyImages = yearlyImages.filter(ee.Filter.rangeContains('year',startDate,endDate)).mean();
+  // Filter yearly images by selected year range
+  var filteredYearlyImages = yearlyImages
+    .filter(ee.Filter.gte('year', startYear))
+    .filter(ee.Filter.lte('year', endYear));
+  
+  // Average all normal yearly bands
+  var meanYearlyImages = filteredYearlyImages.mean();
+  
+  // Long-term monthly precipitation means for this selected period
+  var longTermMonthlyMeanP = filteredYearlyImages
+    .select([
+      'p1', 'p2', 'p3', 'p4', 'p5', 'p6',
+      'p7', 'p8', 'p9', 'p10', 'p11', 'p12'
+    ])
+    .mean();
 
-  // Perform climate zone classification using the Koppen climate classification function
+  // Correct seasonal precipitation extremes
+  var maxWinterP = longTermMonthlyMeanP
+    .select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
+    .reduce(ee.Reducer.max())
+    .rename('maxwprecip');
+
+  var minWinterP = longTermMonthlyMeanP
+    .select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
+    .reduce(ee.Reducer.min())
+    .rename('minwprecip');
+
+  var maxSummerP = longTermMonthlyMeanP
+    .select(['p4', 'p5', 'p6', 'p7', 'p8', 'p9'])
+    .reduce(ee.Reducer.max())
+    .rename('maxsprecip');
+
+  var minSummerP = longTermMonthlyMeanP
+    .select(['p4', 'p5', 'p6', 'p7', 'p8', 'p9'])
+    .reduce(ee.Reducer.min())
+    .rename('minsprecip');
+
+  // Add required bands before Koppen classification
+  var finalYearlyImages = meanYearlyImages.addBands([
+    maxWinterP,
+    minWinterP,
+    maxSummerP,
+    minSummerP
+  ]);
+
   var classification = koppenClass(finalYearlyImages);
 
-  // Return the resulting climate zone classification image
   return classification;
 }
 

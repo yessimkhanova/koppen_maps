@@ -7,21 +7,21 @@ var country = ee.FeatureCollection(path).filter(ee.Filter.eq('ADM0_CODE', countr
 // Load the multi-band temperature image from the specified Earth Engine asset generated in Step 2
 // Note: To add your own dataset, replace the asset ID with the proper path to your temperature image
 var multiBandImageTssp245 = ee.Image("users/kalamkas/cmip6/temp_hist_ssp245_ensemble_mean_all_years");
-print(multiBandImageTssp245); // Print the information about the loaded temperature image to the console
+// print(multiBandImageTssp245); // Print the information about the loaded temperature image to the console
 
 // Load the multi-band precipitation image from the specified Earth Engine asset generated in Step 2
 // Note: To add your own dataset, replace the asset ID with the proper path to your precipitation image
 var multiBandImagePssp245 = ee.Image("users/kalamkas/cmip6/precip_hist_ssp245_ensemble_mean_all_years");
-print(multiBandImagePssp245); // Print the information about the loaded precipitation image to the console
+// print(multiBandImagePssp245); // Print the information about the loaded precipitation image to the console
 
 
 var multiBandImageTssp585 = ee.Image("users/kalamkas/cmip6/temp_hist_ssp585_ensemble_mean_all_years");
-print(multiBandImageTssp585); // Print the information about the loaded temperature image to the console
+// print(multiBandImageTssp585); // Print the information about the loaded temperature image to the console
 
 // Load the multi-band precipitation image from the specified Earth Engine asset generated in Step 2
 // Note: To add your own dataset, replace the asset ID with the proper path to your precipitation image
 var multiBandImagePssp585 = ee.Image("users/kalamkas/cmip6/precip_hist_ssp585_ensemble_mean_all_years");
-print(multiBandImagePssp585); // Print the information about the loaded precipitation image to the console
+// print(multiBandImagePssp585); // Print the information about the loaded precipitation image to the console
 
 // Initialize arrays and dictionaries for colors, zone codes, and zone names
 //Init directory: Köppen climate classification system colors, zoneNames, zoneCodes
@@ -254,32 +254,8 @@ years.getInfo().forEach(function (year) {
                                        // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
                                        .rename('winterprecip'); // Rename the resulting band as 'winterprecip'
                 
-                // Calculate the maximum winter precipitation for each pixel in the year and convert to millimeters
-                var maxWinterPssp245 = yearImagePssp245.select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
-                                          .reduce('max') // Find the maximum precipitation for selected months (October to March)
-                                          // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
-                                          .rename('maxwprecip'); // Rename the resulting band as 'maxwprecip'
-                
-                // Calculate the minimum winter precipitation for each pixel in the year and convert to millimeters
-                var minWinterPssp245 = yearImagePssp245.select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
-                                          .reduce('min') // Find the minimum precipitation for selected months (October to March)
-                                          // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
-                                          .rename('minwprecip'); // Rename the resulting band as 'minwprecip'
-                
-                // Calculate the maximum summer precipitation for each pixel in the year and convert to millimeters
-                var maxSummerPssp245 = yearImagePssp245.select(['p4','p5','p6', 'p7', 'p8', 'p9'])
-                                          .reduce('max') // Find the maximum precipitation for selected months (April to September)
-                                          // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
-                                          .rename('maxsprecip'); // Rename the resulting band as 'maxsprecip'
-                
-                // Calculate the minimum summer precipitation for each pixel in the year and convert to millimeters
-                var minSummerPssp245 = yearImagePssp245.select(['p4','p5','p6', 'p7', 'p8', 'p9'])
-                                          .reduce('min') // Find the minimum precipitation for selected months (April to September)
-                                          // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
-                                          .rename('minsprecip'); // Rename the resulting band as 'minsprecip'
-            
-            // Add the calculated precipitation bands to the original image
-            yearImagePssp245 = yearImagePssp245.addBands([totalPssp245, minPssp245, maxPssp245, summerPssp245, winterPssp245, maxWinterPssp245, minWinterPssp245, maxSummerPssp245, minSummerPssp245]);
+               // Add the calculated precipitation bands to the original image
+              yearImagePssp245 = yearImagePssp245.addBands([totalPssp245, minPssp245, maxPssp245, summerPssp245, winterPssp245]);
    
   yearImageTssp245 = yearImageTssp245.set('year', year);
   yearImagePssp245 = yearImagePssp245.set('year', year);
@@ -370,32 +346,8 @@ years.getInfo().forEach(function (year) {
                                        // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
                                        .rename('winterprecip'); // Rename the resulting band as 'winterprecip'
                 
-                // Calculate the maximum winter precipitation for each pixel in the year and convert to millimeters
-                var maxWinterPssp585 = yearImagePssp585.select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
-                                          .reduce('max') // Find the maximum precipitation for selected months (October to March)
-                                          // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
-                                          .rename('maxwprecip'); // Rename the resulting band as 'maxwprecip'
-                
-                // Calculate the minimum winter precipitation for each pixel in the year and convert to millimeters
-                var minWinterPssp585 = yearImagePssp585.select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
-                                          .reduce('min') // Find the minimum precipitation for selected months (October to March)
-                                          // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
-                                          .rename('minwprecip'); // Rename the resulting band as 'minwprecip'
-                
-                // Calculate the maximum summer precipitation for each pixel in the year and convert to millimeters
-                var maxSummerPssp585 = yearImagePssp585.select(['p4','p5','p6', 'p7', 'p8', 'p9'])
-                                          .reduce('max') // Find the maximum precipitation for selected months (April to September)
-                                          // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
-                                          .rename('maxsprecip'); // Rename the resulting band as 'maxsprecip'
-                
-                // Calculate the minimum summer precipitation for each pixel in the year and convert to millimeters
-                var minSummerPssp585 = yearImagePssp585.select(['p4','p5','p6', 'p7', 'p8', 'p9'])
-                                          .reduce('min') // Find the minimum precipitation for selected months (April to September)
-                                          // .multiply(1000) // Uncomment this line if your data is in meters for conversion to millimeters
-                                          .rename('minsprecip'); // Rename the resulting band as 'minsprecip'
-            
-            // Add the calculated precipitation bands to the original image
-            yearImagePssp585 = yearImagePssp585.addBands([totalPssp585, minPssp585, maxPssp585, summerPssp585, winterPssp585, maxWinterPssp585, minWinterPssp585, maxSummerPssp585, minSummerPssp585]);
+                // Add the calculated precipitation bands to the original image
+                 yearImagePssp585 = yearImagePssp585.addBands([totalPssp585, minPssp585, maxPssp585, summerPssp585, winterPssp585]);
    
   yearImageTssp585 = yearImageTssp585.set('year', year);
   yearImagePssp585 = yearImagePssp585.set('year', year);
@@ -605,7 +557,7 @@ var Dw = D.and(maxsprecip.gt(minwprecip.multiply(10))); // Winter precipitation 
 // Ds represents conditions for summer precipitation in continental climates.
 var Ds = D.and(Dw.not())
           .and(maxwprecip.gt(minsprecip.multiply(3))) // Maximum winter precipitation greater than 3 times the minimum summer precipitation
-          .and(minsprecip.lt(30)); // Minimum summer precipitation less than 30mm.
+          .and(minsprecip.lt(40)); // Minimum summer precipitation less than 30mm.
 
 // Df represents conditions for other cases within continental climates.
 var Df = D.and(Dw.not())
@@ -683,6 +635,7 @@ var ET = maxtemp.gte(0) // Maximum temperature greater than or equal to 0°C
 var classes = Af.multiply(1)                // Af class assigned numeric value 1 (color "0000FF")
                 .add(Am.multiply(2))        // Am class assigned numeric value 2 (color "4169E1")
                 .add(Aw.multiply(3))        // Aw class assigned numeric value 3 (color "6495ED")
+                // .add(As.multiply(4))
                 .add(BWh.multiply(5))       // BWh class assigned numeric value 5 (color "FF0000")
                 .add(BWk.multiply(6))       // BWk class assigned numeric value 6 (color "F08080")
                 .add(BSh.multiply(7))       // BSh class assigned numeric value 7 (color "FF8C00")
@@ -718,32 +671,108 @@ var classes = Af.multiply(1)                // Af class assigned numeric value 1
   return classes; // The resulting image with climate zone classifications and metadata is returned when the function is called.
 }
 
-
-// Function for scenario SSP2-4.5
-function classificateImageSSP245(startDate, endDate) {
+function classificateImageSSP245(startYear, endYear) {
   
-  // filter yearly images by start/end date
-  var finalYearlyImagesssp245 = yearlyImagesssp245.filter(ee.Filter.rangeContains('year',startDate,endDate)).mean();
+  // Filter yearly images by selected year range
+  var filteredYearlyImagesSSP245 = yearlyImagesssp245
+    .filter(ee.Filter.gte('year', startYear))
+    .filter(ee.Filter.lte('year', endYear));
   
-  // Perform climate zone classification using the Koppen climate classification function
-  var classificationssp245 = koppenClass(finalYearlyImagesssp245);
+  // Average all normal yearly bands
+  var meanYearlyImagesSSP245 = filteredYearlyImagesSSP245.mean();
+  
+  // Long-term monthly precipitation means for this selected period
+  var longTermMonthlyMeanPSSP245 = filteredYearlyImagesSSP245
+    .select([
+      'p1', 'p2', 'p3', 'p4', 'p5', 'p6',
+      'p7', 'p8', 'p9', 'p10', 'p11', 'p12'
+    ])
+    .mean();
 
-  // Return the resulting climate zone classification image
-  return classificationssp245;
+  // Correct seasonal precipitation extremes
+  var maxWinterPSSP245 = longTermMonthlyMeanPSSP245
+    .select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
+    .reduce(ee.Reducer.max())
+    .rename('maxwprecip');
+
+  var minWinterPSSP245 = longTermMonthlyMeanPSSP245
+    .select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
+    .reduce(ee.Reducer.min())
+    .rename('minwprecip');
+
+  var maxSummerPSSP245 = longTermMonthlyMeanPSSP245
+    .select(['p4', 'p5', 'p6', 'p7', 'p8', 'p9'])
+    .reduce(ee.Reducer.max())
+    .rename('maxsprecip');
+
+  var minSummerPSSP245 = longTermMonthlyMeanPSSP245
+    .select(['p4', 'p5', 'p6', 'p7', 'p8', 'p9'])
+    .reduce(ee.Reducer.min())
+    .rename('minsprecip');
+
+  // Add required bands before Koppen classification
+  var finalYearlyImagesSSP245 = meanYearlyImagesSSP245.addBands([
+    maxWinterPSSP245,
+    minWinterPSSP245,
+    maxSummerPSSP245,
+    minSummerPSSP245
+  ]);
+
+  var classificationSSP245 = koppenClass(finalYearlyImagesSSP245);
+
+  return classificationSSP245;
 }
 
-
-// Function for scenario SSP5-8.5
-function classificateImageSSP585(startDate, endDate) {
+function classificateImageSSP585(startYear, endYear) {
   
-  // filter yearly images by start/end date
-  var finalYearlyImagesssp585 = yearlyImagesssp585.filter(ee.Filter.rangeContains('year',startDate,endDate)).mean();
+  // Filter yearly images by selected year range
+  var filteredYearlyImagesSSP585 = yearlyImagesssp585
+    .filter(ee.Filter.gte('year', startYear))
+    .filter(ee.Filter.lte('year', endYear));
   
-  // Perform climate zone classification using the Koppen climate classification function
-  var classificationssp585 = koppenClass(finalYearlyImagesssp585);
+  // Average all normal yearly bands
+  var meanYearlyImagesSSP585 = filteredYearlyImagesSSP585.mean();
+  
+  // Long-term monthly precipitation means for this selected period
+  var longTermMonthlyMeanPSSP585 = filteredYearlyImagesSSP585
+    .select([
+      'p1', 'p2', 'p3', 'p4', 'p5', 'p6',
+      'p7', 'p8', 'p9', 'p10', 'p11', 'p12'
+    ])
+    .mean();
 
-  // Return the resulting climate zone classification image
-  return classificationssp585;
+  // Correct seasonal precipitation extremes
+  var maxWinterPSSP585 = longTermMonthlyMeanPSSP585
+    .select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
+    .reduce(ee.Reducer.max())
+    .rename('maxwprecip');
+
+  var minWinterPSSP585 = longTermMonthlyMeanPSSP585
+    .select(['p10', 'p11', 'p12', 'p1', 'p2', 'p3'])
+    .reduce(ee.Reducer.min())
+    .rename('minwprecip');
+
+  var maxSummerPSSP585 = longTermMonthlyMeanPSSP585
+    .select(['p4', 'p5', 'p6', 'p7', 'p8', 'p9'])
+    .reduce(ee.Reducer.max())
+    .rename('maxsprecip');
+
+  var minSummerPSSP585 = longTermMonthlyMeanPSSP585
+    .select(['p4', 'p5', 'p6', 'p7', 'p8', 'p9'])
+    .reduce(ee.Reducer.min())
+    .rename('minsprecip');
+
+  // Add required bands before Koppen classification
+  var finalYearlyImagesSSP585 = meanYearlyImagesSSP585.addBands([
+    maxWinterPSSP585,
+    minWinterPSSP585,
+    maxSummerPSSP585,
+    minSummerPSSP585
+  ]);
+
+  var classificationSSP585 = koppenClass(finalYearlyImagesSSP585);
+
+  return classificationSSP585;
 }
 
 
@@ -778,7 +807,7 @@ var infoPanel = ui.Panel({ // Creates a panel to display information about the p
   widgets: [ // Contains multiple label widgets with project information.
     ui.Label('This Köppen Climate Classification map is generated using Google Earth Engine and CMIP6 ensemble.', { fontSize: '14px' }),
     ui.Label('The map classifies climate of Kazakhstan based on monthly mean temperature and precipitation amount parameters of the mean values of 32 climate models from the CMIP6 ensemble for historical data and scenarios SSP2-4.8 and SSP5-8.5. ', { fontSize: '14px' }),
-    ui.Label('More information about methodology DOI. ', { fontSize: '14px' }),
+    ui.Label('Read about methodology in this artcile "Spatial and Temporal Analysis of Climatic Zones in Kazakhstan Using Google Earth Engine" https://doi.org/10.3390/ijgi15020057. ', { fontSize: '14px' }),
     ui.Label('Access the script https://github.com/yessimkhanova/koppen_maps', { fontSize: '14px', fontWeight: 'bold' }),
     ui.Label('This work is part of a doctoral research project conducted by Kalamkas Yessimkhanova, supervised by Dr. Matyas Gede at ELTE Eötvös Loránd University, Budapest.', { fontSize: '14px' }),
     ui.Label('Credit is given to Google Earth Engine for its powerful geospatial analysis capabilities and NASA/Climate Analytics Group for providing valuable climate data.', { fontSize: '14px' }),
@@ -820,7 +849,7 @@ var endYearSlider = ui.Slider({
 
 // Note Label
 var noteLabel = ui.Label({
-  value: 'Please note that map generation may take some time',
+  value: 'The map producing might take some time',
   style: {
     fontSize: '12px',
     color: 'red',
@@ -905,7 +934,7 @@ var generateButton = ui.Button({
         maxPixels: 1e13
       }).getInfo(); // Convert the result to a client-side object
 
-      print(areaByZone);
+      // print(areaByZone);
       
       // Update area by zone label
       updateAreaByZoneResult(areaByZone.groups);
@@ -924,56 +953,6 @@ var yearFilterSlider = ui.Panel({
 }).add(scenarioLabel).add(scenarioDropdown).add(startYearLabel).add(startYearSlider).add(endYearLabel).add(endYearSlider).add(noteLabel).add(generateButton);
 
 var infoAndControlPanel = ui.Panel().add(infoPanel).add(yearFilterSlider);
-
-// Widget Legend Record
-// Defines a function 'makeLegendRecord' to create a legend record containing a color box and zone code/name.
-function makeLegendRecord(color, zoneCode, zoneName) {
-  var colorBox = ui.Label({
-    style: {
-      backgroundColor: color,
-      padding: '8px',
-      margin: '0 0 8px 8px',
-      width: '20px',
-      height: '20px'
-    }
-  });
-  var zoneLabel = ui.Label({
-    value: zoneCode + ': ' + zoneName,
-    style: {
-      margin: '0 0 3px 6px',
-      fontSize: '12px'
-    }
-  });
-  return ui.Panel({
-    widgets: [colorBox, zoneLabel],
-    layout: ui.Panel.Layout.Flow('horizontal')
-  });
-}
-
-// Legend Title
-// Creates a label widget for the legend title.
-var legendTitle = ui.Label({
-  value: 'Legend',
-  style: {
-    fontWeight: 'bold',
-    fontSize: '18px',
-    margin: '0 0 4px 0',
-    padding: '15px'
-  }
-});
-
-var legendPanel = ui.Panel({
-  style: {
-    padding: '3px',
-    backgroundColor: 'white',
-    border: '1px solid black'
-  }
-}).add(legendTitle);
-for (var i = 0; i < Object.keys(zoneNames).length; i++) {
-  var row = makeLegendRecord(colors[i], zoneCodes[i], zoneNames[zoneCodes[i]]);
-  legendPanel.add(row);
-}
-
 // Define area by zone label
 var areaByZoneLabel = ui.Label({
   value: 'Climate zone areas in square kilometers:',
@@ -995,14 +974,114 @@ var areaByZoneResultPanel = ui.Panel({
   }
 });
 
-var leftMainPanel = ui.Panel({
-  style: { width: '390px', padding: '10px', position: 'middle-left' }
+// Function to create a legend record (color + text)
+var makeLegendRecord = function (color, zoneCode, zoneName) {
+  var colorBox = ui.Label({
+    style: {
+      backgroundColor: color,
+      padding: '8px',
+      margin: '0 0 8px 8px'
+    }
+  });
+
+  var zoneCodeAndName = ui.Label({
+    value: zoneCode + ': ' + zoneName,
+    style: {
+      margin: '0 0 3px 6px'
+    }
+  });
+
+  return ui.Panel({
+    widgets: [colorBox, zoneCodeAndName],
+    layout: ui.Panel.Layout.flow('horizontal')
+  });
+};
+
+// Panel that will hold the legend rows
+var legendBodyPanel = ui.Panel({
+  style: {
+    shown: true,           
+    padding: '0 0 0 0'
+  }
 });
 
-var rightMainPanel = ui.Panel({
-  style: { width: '344px', position: 'middle-right' }
-}).add(legendPanel);
+// Fill legend body
+Object.keys(zoneNames).forEach(function (code, i) {
+  var row = makeLegendRecord(colors[i], zoneCodes[i], zoneNames[zoneCodes[i]]);
+  legendBodyPanel.add(row);
+});
 
-leftMainPanel.add(infoAndControlPanel).add(areaByZoneLabel).add(areaByZoneResultPanel);
+// Visibility state: start COLLAPSED to save space
+var legendVisible = false;
+
+// Forward declarations so we can reference inside update function
+var legendTitleButton;
+var rightMainPanel;
+
+// Toggle function 
+function updateLegendVisibility() {
+  legendBodyPanel.style().set('shown', legendVisible);
+  if (legendTitleButton) {
+    legendTitleButton.setLabel(legendVisible ? 'Legend ▲' : 'Legend ▼');
+  }
+  if (rightMainPanel) {
+    rightMainPanel.style().set('width', legendVisible ? '344px' : '75px');
+  }
+}
+
+// Title = button
+legendTitleButton = ui.Button({
+  label: 'Legend ▼',   // collapsed at start
+  style: {
+    fontWeight: 'bold',
+    fontSize: '16px',
+    margin: '0 0 0px 0',
+    padding: '2px 2px',
+    textAlign: 'left'
+  },
+  onClick: function () {
+    legendVisible = !legendVisible;
+    updateLegendVisibility();
+  }
+});
+
+// Legend panel 
+var legendPanel = ui.Panel({
+  widgets: [legendTitleButton, legendBodyPanel],
+  layout: ui.Panel.Layout.flow('vertical'),
+  style: {
+    padding: '2px'
+  }
+});
+
+
+var leftMainPanel = ui.Panel({
+  style: {
+    width: '370px',
+    position: 'middle-left'
+  }
+});
+
+rightMainPanel = ui.Panel({
+  style: {
+    width: '344px',        
+    position: 'middle-right'
+  }
+});
+
+// Fill panels
+rightMainPanel.add(legendPanel);
+
+leftMainPanel
+  .add(infoAndControlPanel)
+  .add(areaByZoneLabel)
+  .add(areaByZoneResultPanel);
+
+// Apply initial visibility state
+updateLegendVisibility();
+
 ui.root.clear();
-ui.root.add(leftMainPanel).add(customMap).add(rightMainPanel);
+ui.root
+  .add(leftMainPanel)
+  .add(customMap)      
+  .add(rightMainPanel);
